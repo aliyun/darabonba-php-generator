@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+node_modules
+.DS_Store
+/package-lock.json
+runtime/
+output/
+coverage/
+.nyc_output/

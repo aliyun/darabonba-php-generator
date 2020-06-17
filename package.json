@@ -1,0 +1,33 @@
+{
+  "name": "@darabonba/php-generator",
+  "version": "1.0.0",
+  "description": "The SDK generator for PHP",
+  "main": "src/generator",
+  "directories": {
+    "lib": "src"
+  },
+  "scripts": {
+    "lint": "eslint --fix src/ tests/",
+    "test": "mocha --reporter spec --timeout 3000 tests/*.tests.js",
+    "test-cov": "nyc -r=lcov -r=html -r=text -r=json mocha -t 3000 -R spec tests/*.tests.js",
+    "ci": "npm run lint && npm run test-cov && codecov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:aliyun/darabonba-php-generator.git"
+  },
+  "author": "Alibaba Cloud OpenAPI Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@darabonba/parser": "^1",
+    "camelcase": "^5.3.1",
+    "enum": "^2.5"
+  },
+  "devDependencies": {
+    "eslint": "^6",
+    "expect.js": "^0.3.1",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
+    "codecov": "^3"
+  }
+}

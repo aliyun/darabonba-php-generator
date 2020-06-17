@@ -1,0 +1,130 @@
+// top comment
+/**
+ top annotation
+*/
+// import comment
+import Source
+// type's comment
+type @a = [ string  ]
+
+/**
+  TestModel
+*/
+model Test1{
+  test: string(description='test desc', name='test'), //model的test back comment
+  test2: string(description='test2 desc', name='test2', deprecated=true), //model的test2 back comment
+}
+
+/**
+  TestModel2
+*/
+model Test2{
+  // model的test front comment
+  test: string(description='test desc', name='test'),
+  // model的test front comment
+  test2: string(description='test2 desc', name='test2'),
+}
+
+/**
+  TestModel3
+*/
+model Test3{
+  // model的test front comment
+  test: string(description='test desc', name='test'),
+
+  // empty comment1
+  // empy comment2
+
+  test1: string(description='test desc', name='test1'), //model的test back comment
+}
+
+/**
+  Init Func
+*/
+// comment between init and annotation
+init(){
+  // string declate comment
+  var str = 'sss';
+  // new model instance comment
+  var modelInstance = new Test1{
+    test = 'test', //test declare back comment
+    test2 = 'test2', //test2 declare back comment
+  };
+
+  var array = [ 
+    // array string comment
+    'string',
+    // array number comment
+    300
+    // array back comment
+  ];
+}
+
+/**
+  testAPI
+*/
+//testAPI comment one
+//testAPI comment two
+api testAPI(): void {
+  // new model instance comment
+  var modelInstance = new Test1{
+    // test declare front comment
+    test = 'test', 
+    // test2 declare front comment
+    test2 = 'test2', 
+  };
+  // number declare comment
+  var num = 123;
+  // static function call comment
+  staticFunc();
+} returns {
+  // static async function call
+  testFunc('test',true);
+  // return comment
+   return;
+} runtime {
+  // empty runtime comment
+  // another runtime comment
+}
+
+// testAPI2 comment
+api testAPI2(): void {
+  // new model instance comment
+  var modelInstance = new Test3{
+      //empty model 
+  };
+  // boolean declare comment
+  var bool = true;
+  if(bool){
+    //empty if
+  }else{
+    //empty else
+  }
+  // api function call comment
+  testAPI();
+  // back comment
+} returns {
+  // empty return comment
+} runtime {
+  // runtime retry comment
+  retry = true
+  // runtime back comment one
+  // runtime back comment two
+}
+
+static function staticFunc(): void{
+  var a = [
+    // empty annotation comment
+  ];
+}
+
+/**
+  * testFunc
+  * @param str description: string parameter
+  * @param val description: boolean parameter
+  * @return void description for return
+  */
+static async function testFunc(str: string, val: boolean): void {
+    // empty comment1
+    // empty comment2
+}

@@ -1,0 +1,126 @@
+import Source;
+
+extends Source;
+
+const version = '2019-01-08';
+
+model ComplexRequest = {
+  accessKey: string,
+  body: readable(name='Body', example='Body', description='Body'),
+  strs: [ string ](name='Strs', example='Strs', description='Strs'),
+  header: {
+    content: string(name='Content', example='Content', signed='true', description='Body')
+  }(description='header', name='header'),
+  Num: number,
+  part?: [
+    {
+      partNumber?: string(description='PartNumber', name='PartNumber')
+    }
+  ](description='Part', name='Part'),
+}
+
+async function hello(request: object, strs: [ string ]): [ string ] {
+  return array1();
+}
+
+static async function print(reqeust: $Request, reqs: [ ComplexRequest ], response: $Response, val: map[string]string): Source.Request {}
+
+api complex1(request: ComplexRequest, client: Source): Source.RuntimeObject {
+  var name = 'complex';
+  var mapVal = {test="ok"};
+  var version = `/${__module.version}${@pathname}`;
+  __request.protocol = @protocol;
+  __request.port = 80;
+  __request.method = 'GET';
+  __request.pathname = `/${@pathname}`;
+  __request.query = Source.query({
+    date = '2019',
+    ...request.header,
+    ...mapVal
+  });
+  __request.body = Source.body();
+} returns {
+  if (true && true) {
+    return null;
+  } else if (true || false) {
+    return new Source.RuntimeObject{};
+  }
+  client.print(request, '1');
+  client.printAsync(request, '1');
+  hello(request, ["1","2"]);
+  hello(null, null);
+  return {};
+  Complex3(null);
+} runtime {
+  timeouted = 'retry'
+} 
+
+api Complex2(request: ComplexRequest, str: [ string ], val: map[string]string): object {
+  var name = 'complex';
+  var config = new Source.Config{};
+  var client = new Source(config);
+  __request.protocol = 'HTTP';
+  __request.port = 80;
+  __request.method = 'GET';
+  __request.pathname = '/';
+  __request.query = Source.query({
+    date = '2019',
+    version = __module.version,
+    protocol = __request.protocol,
+
+  });
+  __request.body = Source.body();
+}
+
+api Complex3(request: ComplexRequest): ComplexRequest {
+  var name = 'complex';
+  __request.protocol = TemplateString();
+  __request.port = 80;
+  __request.method = 'GET';
+  __request.pathname = '/';
+  __request.query = Source.query({
+    date = '2019',
+  });
+  __request.body = Source.body();
+  __request.headers.host = 'hello';
+} returns {
+  var resp = __response;
+  var req = new Source.Request{
+    accesskey = request.accessKey,
+    region = resp.statusMessage
+  };
+  array0(request);
+  req.accesskey = 'accesskey';
+  req.accesskey = request.accessKey;
+  Source.parse(ComplexRequest);
+  Source.array(request, '1');
+  Source.asyncFunc();
+  return {
+    ...__request.query
+  };
+}
+
+static function array0(req: object): [ any ] {
+  return [];
+}
+
+static function array1(): [ string ] {
+  return ["1"];
+}
+
+async function TemplateString(): string {
+  return `/${@protocol}`;
+}
+
+async function emptyModel(): void {
+  new ComplexRequest;
+  new ComplexRequest.header;
+  var status = '';
+  try {
+    status = 'failed';
+  } catch(e) {
+    status = 'catch exception';
+  } finally {
+    status = 'ok';
+  }
+}

@@ -1,0 +1,61 @@
+static function helloIf(): void {
+  if (true) {
+  }
+
+  if (true) {
+
+  } else if (true) {
+
+  } else {
+
+  }
+}
+
+static function helloThrow() : void {
+  throw {};
+}
+
+static function helloForBreak() : void {
+  for (var item : []) {
+    break;
+  }
+}
+
+static function helloWhile() : void {
+  while (true) {
+    break;
+  }
+}
+
+static function helloDeclare() : void {
+  var hello = "world";
+  var helloNull: string = null;
+  hello = "hehe";
+}
+
+init();
+
+api hello(): void {
+  __request.method = 'GET';
+  __request.pathname = '/';
+  __request.headers = {
+    host = 'www.test.com',
+  };
+  if (true) {
+    __request.headers.host = 'www.test2.com';
+  }
+} returns {
+  if (true) {
+    retry;
+  } else {
+    true;
+  }
+
+  helloIf();
+  !false;
+
+  var a: string = null;
+  a = 'string';
+
+  return;
+}

@@ -1,0 +1,26 @@
+static function hello(): void {
+  return;
+}
+
+static function helloMap(): map[string]string {
+  var m: map[string]string = {};
+  return {
+    key = 'value',
+    key-1 = 'value-1',
+    ...m,
+  };
+}
+
+static function helloArrayMap(): [map[string]string] {
+  return [
+    {
+      key = 'value',
+    }
+  ];
+}
+
+static async function helloParams(a: string, b: string): void {
+}
+
+// interface mode
+static async function helloInterface(): void;
