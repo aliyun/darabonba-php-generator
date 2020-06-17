@@ -1,0 +1,19 @@
+model M = {};
+
+model MyModel = {
+  stringfield: string,
+  bytesfield: bytes,
+  stringarrayfield: [ string ],
+  mapfield: map[string]string,
+  name: string(name='realName'),
+  submodel: {
+    stringfield: string,
+  },
+  subarraymodel: [ {} ],
+  subarray: [ M ],
+  maparray: [ map[string]any ],
+  object: object,
+  numberfield: integer,
+  readable: readable,
+  existModel: M,
+};

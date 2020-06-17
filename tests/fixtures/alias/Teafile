@@ -1,0 +1,10 @@
+{
+  "scope": "darabonba",
+  "name": "main",
+  "version": "0.0.1",
+  "main": "./main.tea",
+  "libraries": {
+    "Import": "darabonba:Import:*",
+    "Source" : "darabonba:Source:*"
+  }
+}

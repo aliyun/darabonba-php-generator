@@ -1,0 +1,15 @@
+{
+  "scope": "darabonba",
+  "name": "import",
+  "version": "0.0.1",
+  "main": "./import.tea",
+  "php": {
+    "package": "Source",
+    "clientName": "SourceClient",
+    "modelDirName": "Models"
+  },
+  "python": {
+    "package": "Source",
+    "clientName": "SourceClient"
+  }
+}
