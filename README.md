@@ -4,9 +4,7 @@ English | [简体中文](/README-zh-CN.md)
 
 ## Installation
 
-> Darabonba Code Generator was designed to work in Node.js.
-> The preferred way to install the Generator is to use the [NPM](https://www.npmjs.com/) package manager.
-> Simply type the following into a terminal window:
+Darabonba Code Generator was designed to work in Node.js. The preferred way to install the Generator is to use the [NPM](https://www.npmjs.com/) package manager. Simply type the following into a terminal window:
 
 ```shell
 npm install @darabonba/php-generator
@@ -24,6 +22,7 @@ const fs = require('fs');
 
 const parser = require('@darabonba/parser');
 const PHPGenerator = require('@darabonba/php-generator');
+
 const sourceDir = "<Darabonda package directory>";
 const outputDir = "<Generate output directory>";
 
@@ -35,10 +34,10 @@ let ast = parser.parse(fs.readFileSync(mainFile, 'utf8'), mainFile);
 
 // initialize generator
 let generatorConfig = {
-      ...packageMeta,
-      pkgDir: sourceDir,
-      outputDir
-    };
+    ...packageMeta,
+    pkgDir: sourceDir,
+    outputDir
+};
 
 let generator = new PHPGenerator(generatorConfig);
 
