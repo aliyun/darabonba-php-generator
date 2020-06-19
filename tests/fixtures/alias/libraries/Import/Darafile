@@ -2,10 +2,10 @@
   "scope": "darabonba",
   "name": "import",
   "version": "0.0.1",
-  "main": "./import.tea",
+  "main": "./import.dara",
   "php": {
-    "package": "Source",
-    "clientName": "SourceClient",
+    "package": "Import",
+    "clientName": "Client",
     "modelDirName": "Models"
   }
 }
