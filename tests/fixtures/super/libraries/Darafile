@@ -1,11 +1,11 @@
 {
   "scope": "darabonba",
-  "name": "source",
+  "name": "import",
   "version": "0.0.1",
-  "main": "./source.tea",
+  "main": "./import.dara",
   "php": {
     "package": "Source",
-    "clientName": "Client",
+    "clientName": "SourceClient",
     "modelDirName": "Models"
   }
 }
