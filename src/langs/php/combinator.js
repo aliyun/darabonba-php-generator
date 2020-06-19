@@ -73,16 +73,27 @@ class Combinator extends CombinatorBase {
       const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
       let packageNameSet = [];
       let clientNameSet = [];
-      ast.imports.forEach(item => {
+      ast.imports.forEach((item) => {
         const aliasId = item.lexeme;
         const moduleDir = this.config.libraries[aliasId];
-        const targetPath = path.join(this.config.pkgDir, lock[moduleDir]);
-        const teaFilePath = path.join(targetPath, 'Teafile');
-        const teaFile = JSON.parse(fs.readFileSync(teaFilePath));
-        if (teaFile.php && teaFile.php.package && teaFile.php.clientName) {
-          const packageName = teaFile.php.package;
-          const clientName = teaFile.php.clientName ? teaFile.php.clientName : 'Client';
-          const modelDir = teaFile.php.modelDirName ? teaFile.php.modelDirName : 'Models';
+        let targetPath;
+        if (moduleDir.startsWith('/')) {
+          targetPath = moduleDir;
+        } else {
+          targetPath = path.join(this.config.pkgDir, lock[moduleDir]);
+        }
+        const daraFilePath = fs.existsSync(path.join(targetPath, 'Teafile'))
+          ? path.join(targetPath, 'Teafile')
+          : path.join(targetPath, 'Darafile');
+        const daraFile = JSON.parse(fs.readFileSync(daraFilePath));
+        if (daraFile.php && daraFile.php.package && daraFile.php.clientName) {
+          const packageName = daraFile.php.package;
+          const clientName = daraFile.php.clientName
+            ? daraFile.php.clientName
+            : 'Client';
+          const modelDir = daraFile.php.modelDirName
+            ? daraFile.php.modelDirName
+            : 'Models';
           // third package namespace
           if (packageNameSet.indexOf(packageName.toLowerCase()) < 0) {
             this.thirdPackageNamespace[aliasId] = packageName;
@@ -91,9 +102,12 @@ class Combinator extends CombinatorBase {
             debug.stack('Duplication namespace');
           }
           // third package model client name
-          if (clientNameSet.indexOf(clientName.toLowerCase()) > -1 ||
-            clientName.toLowerCase() === this.config.clientName.toLowerCase()) {
-            const alias = packageName.split('.').join('') + clientName.split('.').join('');
+          if (
+            clientNameSet.indexOf(clientName.toLowerCase()) > -1 ||
+            clientName.toLowerCase() === this.config.clientName.toLowerCase()
+          ) {
+            const alias =
+              packageName.split('.').join('') + clientName.split('.').join('');
             this.classAlias[aliasId] = alias;
             this.thirdPackageClient[aliasId] = clientName;
           } else {
@@ -103,8 +117,8 @@ class Combinator extends CombinatorBase {
           // third package model dir name
           this.thirdPackageModel[aliasId] = modelDir;
         }
-        if (teaFile.releases && teaFile.releases.php) {
-          this.requirePackage.push(teaFile.releases.php);
+        if (daraFile.releases && daraFile.releases.php) {
+          this.requirePackage.push(daraFile.releases.php);
         }
       });
     }

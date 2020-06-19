@@ -15,9 +15,9 @@ const fixturesDir = path.join(__dirname, 'fixtures');
 const outputDir = path.join(__dirname, '../', 'output/', 'tests/');
 
 function check(moduleName, expectedFiles = []) {
-  const mainFilePath = path.join(fixturesDir, moduleName, 'main.tea');
+  const mainFilePath = path.join(fixturesDir, moduleName, 'main.dara');
   const moduleOutputDir = path.join(outputDir, moduleName);
-  const pkgContent = fs.readFileSync(path.join(__dirname, `fixtures/${moduleName}/Teafile`), 'utf8');
+  const pkgContent = fs.readFileSync(path.join(__dirname, `fixtures/${moduleName}/Darafile`), 'utf8');
   const pkgInfo = JSON.parse(pkgContent);
   const config = {
     outputDir: moduleOutputDir,

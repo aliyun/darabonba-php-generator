@@ -5,7 +5,7 @@ const fs = require('fs');
 const BasePackageInfo = require('../common/package_info');
 
 const OPTION_LOCAL = 1;   // use local tmpl file to render content
-const OPTION_SOURCE = 2;  // config by Teafile.{lang}.packageInfo
+const OPTION_SOURCE = 2;  // config by Darafile.{lang}.packageInfo
 const OPTION_RENDER = 4;  // render content from tmpl
 const OPTION_UPDATE = 8;  // update if file already exist
 
