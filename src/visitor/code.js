@@ -551,7 +551,7 @@ class CodeVisitor extends BaseVisitor {
     }
   }
 
-  renderGrammerValue(valGrammer, object, expectedType = undefined) {
+  renderGrammerValue(valGrammer, object, expectedType = null) {
     if (!valGrammer) {
       valGrammer = new GrammerValue();
     }
@@ -738,7 +738,7 @@ class CodeVisitor extends BaseVisitor {
           if (object.left && object.left.id && object.left.id.lexeme) {
             if (object.left.id.type === 'variable') {
               call.addPath({ type: 'object' + callType, name: object.left.id.lexeme });
-            } else if (object.left.id.type === undefined && object.left.id.lexeme.indexOf('@') > -1) {
+            } else if (typeof object.left.id.type === 'undefined' && object.left.id.lexeme.indexOf('@') > -1) {
               call.addPath({ type: 'parent', name: object.left.id.lexeme.replace('@', '_') });
             } else {
               debug.stack('Unsupported object.left.id.type : ' + object.left.id.type, object);
@@ -833,7 +833,7 @@ class CodeVisitor extends BaseVisitor {
       debug.stack('unimpelemented : ' + object.type, object);
     }
 
-    if (valGrammer.type === undefined) {
+    if (typeof valGrammer.type === 'undefined') {
       debug.stack('valGrammer.type is undefined', object);
     }
 
@@ -891,7 +891,7 @@ class CodeVisitor extends BaseVisitor {
       node = this.visitIfElse(stmt, 'elseif');
     } else if (stmt.type === 'return') {
       node = new GrammerReturn();
-      if (stmt.expr === undefined) {
+      if (typeof stmt.expr === 'undefined') {
         node.type = 'null';
       } else if (stmt.expr.type === 'null') {
         node.type = 'null';
@@ -1023,7 +1023,7 @@ class CodeVisitor extends BaseVisitor {
       debug.stack(stmt);
     }
     if (belong) {
-      if (node === undefined) {
+      if (typeof node === 'undefined') {
         debug.stack(node, stmt);
       }
       node.belong = belong;

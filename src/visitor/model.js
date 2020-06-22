@@ -107,7 +107,7 @@ class ModelVisitor extends BaseVisitor {
     }
     subModelUsed.push(name);
     node.fieldValue.nodes.forEach(item => {
-      if (item.fieldValue.fieldType === undefined) {
+      if (typeof item.fieldValue.fieldType === 'undefined') {
         this.findSubModelsUsed(item, subModelUsed, name);
       }
     });
@@ -116,7 +116,7 @@ class ModelVisitor extends BaseVisitor {
   initProp(obj, nodes) {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
-      if (node.fieldValue.fieldType === undefined) {
+      if (typeof node.fieldValue.fieldType === 'undefined') {
         let subModelUsed = [];
         this.findSubModelsUsed(node, subModelUsed, obj.name);
         subModelUsed.forEach(subModel => {
@@ -202,11 +202,11 @@ class ModelVisitor extends BaseVisitor {
 
       node.attrs.forEach((attr) => {
         let value;
-        if (attr.attrValue.string !== undefined) {
+        if (typeof attr.attrValue.string !== 'undefined') {
           value = attr.attrValue.string;
-        } else if (attr.attrValue.value !== undefined) {
+        } else if (typeof attr.attrValue.value !== 'undefined') {
           value = attr.attrValue.value;
-        } else if (attr.attrValue.lexeme !== undefined) {
+        } else if (typeof attr.attrValue.lexeme !== 'undefined') {
           value = attr.attrValue.lexeme;
         } else {
           debug.stack(attr);

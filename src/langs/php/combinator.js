@@ -257,7 +257,7 @@ class Combinator extends CombinatorBase {
     // emit class
     let className = object.name;
     if (this.config.emitType === 'code') {
-      if (this.config.clientName === undefined || this.config.clientName === '') {
+      if (typeof this.config.clientName === 'undefined' || this.config.clientName === '') {
         let tmp = this.config.package.split('.');
         this.config.clientName = tmp[tmp.length - 1];
       }
@@ -303,7 +303,7 @@ class Combinator extends CombinatorBase {
     this.levelDown();
 
     emitter.emitln('}', this.level);
-    if (this.config.output === undefined || this.config.output === true) {
+    if (typeof this.config.output === 'undefined' || this.config.output === true) {
       this.emitInclude(globalEmitter);
       globalEmitter.emit(emitter.output);
       globalEmitter.save();
@@ -357,7 +357,7 @@ class Combinator extends CombinatorBase {
     this.levelUp();
     emitter.emitln('$res = [];', this.level);
     props.forEach(prop => {
-      let name = nameMap[prop.name] !== undefined ? nameMap[prop.name] : prop.name;
+      let name = typeof nameMap[prop.name] !== 'undefined' ? nameMap[prop.name] : prop.name;
       emitter.emitln(`if (null !== $this->${prop.name}) {`, this.level);
       this.levelUp();
       if (_type(prop.type) === 'array' && prop.itemType !== '') {
@@ -421,7 +421,7 @@ class Combinator extends CombinatorBase {
     this.levelUp();
     emitter.emitln('$model = new self();', this.level);
     props.forEach(prop => {
-      let name = nameMap[prop.name] !== undefined ? nameMap[prop.name] : prop.name;
+      let name = typeof nameMap[prop.name] !== 'undefined' ? nameMap[prop.name] : prop.name;
       let mapVal = `$map['${name}']`;
       emitter.emitln(`if(isset(${mapVal})){`, this.level);
       this.levelUp();
@@ -525,7 +525,7 @@ class Combinator extends CombinatorBase {
   }
 
   emitAnnotation(emitter, annotation, level) {
-    if (level === undefined) {
+    if (typeof level === 'undefined') {
       level = this.level;
     }
     if (annotation.mode === 'single') {
@@ -593,7 +593,7 @@ class Combinator extends CombinatorBase {
                 tmp = tmp.slice(tagIndex + 2);
                 paramDesc[paramName] = tmp.join(' ');
               } else if (tmp[tagIndex] === '@return') {
-                if (tmp[tagIndex + 2] !== undefined) {
+                if (typeof tmp[tagIndex + 2] !== 'undefined') {
                   returnDesc = tmp.slice(tagIndex + 2).join(' ');
                 }
               }

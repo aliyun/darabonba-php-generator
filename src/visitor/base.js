@@ -104,7 +104,7 @@ class BaseVisitor {
     if (comments.length > 0) {
       comments.forEach(c => {
         if (this.commentsSet.indexOf(c.index) < 0) {
-          if (obj.annotations !== undefined) {
+          if (typeof obj.annotations !== 'undefined') {
             obj.annotations.push(this.resolveAnnotation(c, obj.index));
           } else {
             debug.stack(obj, node);
@@ -121,9 +121,9 @@ class BaseVisitor {
     if (comments.length > 0) {
       comments.forEach(c => {
         if (this.commentsSet.indexOf(c.index) < 0) {
-          if (obj.body !== undefined) {
+          if (typeof obj.body !== 'undefined') {
             obj.body.push(this.resolveAnnotation(c, obj.index));
-          } else if (obj.value !== undefined) {
+          } else if (typeof obj.value !== 'undefined') {
             obj.value.push(this.resolveAnnotation(c, obj.index));
           } else {
             debug.stack(obj, node);
@@ -135,7 +135,7 @@ class BaseVisitor {
   }
 
   getComments(node, position = 'front') {
-    if (node.tokenRange === undefined) {
+    if (typeof node.tokenRange === 'undefined') {
       return [];
     }
     switch (position) {
