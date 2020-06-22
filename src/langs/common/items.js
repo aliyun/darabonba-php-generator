@@ -344,7 +344,7 @@ class NoteItem extends Item {
     }
     this.key = key;
     this.value = value;
-    this.type = typeof value;
+    this.type = type;
   }
 }
 
@@ -491,6 +491,8 @@ class BehaviorToMap extends Behavior {
 }
 
 module.exports = {
+  Counter,
+
   AnnotationItem,
   ConstructItem,
   ObjectItem,
