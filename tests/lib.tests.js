@@ -13,7 +13,7 @@ const {
   _string,
 } = require('../src/lib/helper');
 
-describe('debug tests', function () {
+describe('lib tests', function () {
   beforeEach(function () {
     this.sinon.stub(console, 'log');
     this.sinon.stub(process, 'exit');
