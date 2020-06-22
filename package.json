@@ -26,8 +26,12 @@
   "devDependencies": {
     "eslint": "^6",
     "expect.js": "^0.3.1",
-    "mocha": "^6.2.2",
+    "mocha": "^7.1",
     "nyc": "^14.1.1",
-    "codecov": "^3"
+    "codecov": "^3",
+    "chai": "^4.2.0",
+    "mocha-sinon": "^2.1.2",
+    "has-flag": "^4.0.0",
+    "sinon": "^9.0.2"
   }
 }
