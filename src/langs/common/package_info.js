@@ -43,7 +43,7 @@ class BasePackageInfo {
 
   checkParams(packageInfo, validateParam = []) {
     validateParam.forEach(key => {
-      if (packageInfo[key] === undefined) {
+      if (typeof packageInfo[key] === 'undefined') {
         debug.stack('need config packageInfo.' + key, packageInfo);
       }
     });

@@ -41,7 +41,7 @@ class BaseConbinator {
         prop.notes.forEach(note => {
           note.belong = prop.index;
           note.prop = prop.name;
-          if (notes[note.key] === undefined) {
+          if (typeof notes[note.key] === 'undefined') {
             notes[note.key] = [];
           }
           notes[note.key].push(note);
@@ -119,7 +119,7 @@ class BaseConbinator {
     } else {
       debug.stack('Unsupported', gram);
     }
-    if (this[method] !== undefined) {
+    if (typeof this[method] !== 'undefined') {
       this[method].call(this, emitter, gram);
     } else {
       debug.stack('Unimpelemented : ' + method);

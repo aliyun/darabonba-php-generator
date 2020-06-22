@@ -5,11 +5,11 @@ const expect = require('chai').expect;
 require('mocha-sinon');
 
 describe('debug tests', function () {
-  // eslint-disable-next-line no-undef
   beforeEach(function () {
     this.sinon.stub(console, 'log');
     this.sinon.stub(process, 'exit');
   });
+
   it('debug.dump should be ok', function () {
     debug.dump(null, 1, '1', 1.11111);
     expect(console.log.calledWith('foo')).to.be.false;
@@ -19,6 +19,7 @@ describe('debug tests', function () {
     expect(console.log.calledWith(1.11111)).to.be.true;
     expect(process.exit.calledWith(-1)).to.be.false;
   });
+
   it('debug.halt should be ok', function () {
     debug.halt(null, 1, '1', 1.11111);
     expect(console.log.calledWith('foo')).to.be.false;
@@ -28,6 +29,7 @@ describe('debug tests', function () {
     expect(console.log.calledWith(1.11111)).to.be.true;
     expect(process.exit.calledWith(-1)).to.be.true;
   });
+
   it('debug.jump should be ok', function () {
     for (let i = 0; i < 3; i++) {
       debug.jump(1, `jump output : ${i}`);
@@ -37,6 +39,7 @@ describe('debug tests', function () {
     expect(console.log.calledWith('jump output : 2')).to.be.false;
     expect(process.exit.calledWith(-1)).to.be.true;
   });
+
   it('debug.stack should be ok', function () {
     try {
       debug.stack('called debug stack with message', 'data1', 'data2');
