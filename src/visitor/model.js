@@ -75,28 +75,6 @@ class ModelVisitor extends BaseVisitor {
         });
       }
     }
-
-    if (predefined) {
-      // for parser 1.0+
-      // submodels
-      const subModels = Object.keys(predefined).filter((key) => {
-        return !key.startsWith('$')
-          && predefined[key].type === 'model'
-          && key.indexOf('.') !== -1
-          && key.indexOf(this.modelName + '.') !== -1;
-      }).map((key) => {
-        return predefined[key];
-      });
-
-      if (subModels.length !== 0) {
-        for (let i = 0; i < subModels.length; i++) {
-          let subModelObject = new ObjectItem();
-          subModelObject.addExtends(combinator.addInclude('$Model'));
-          this.initProp(subModelObject, subModels[i].modelBody.nodes);
-          this.object.addBodyNode(subModelObject);
-        }
-      }
-    }
     this.done();
   }
 

@@ -11,19 +11,8 @@ class ModuleVisitor extends BaseVisitor {
   visit(ast, level = 0) {
     assert.equal(ast.type, 'module');
     this.moduleInfo = {};
-    if (ast.moduleName) {
-      // for parser 1.0+
-      this.moduleInfo.name = ast.moduleName.lexeme;
-    }
 
     this.moduleInfo.comments = ast.comments;
-
-    // set moduleInfo prop
-    ast.moduleBody.nodes.filter((item) => {
-      return item.type === 'prop';
-    }).forEach((item) => {
-      this.moduleInfo[item.propName.lexeme] = item.propValue.string;
-    });
 
     const self = this;
 
@@ -53,14 +42,6 @@ class ModuleVisitor extends BaseVisitor {
     // init ApiVisitor
     const codeVisitor = new CodeVisitor(self.option, this.lang, this.moduleInfo);
     codeVisitor.init(ast);
-
-    // visit wrap (parser1)
-    ast.moduleBody.nodes.filter((item) => {
-      return item.type === 'wrap';
-    }).forEach((wrap) => {
-      assert.equal(wrap.type, 'wrap');
-      codeVisitor.visitWrap(wrap, ast.predefined);
-    });
 
     // visit api (parser1)
     ast.moduleBody.nodes.filter((item) => {
