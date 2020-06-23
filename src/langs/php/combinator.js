@@ -262,13 +262,13 @@ class Combinator extends CombinatorBase {
         this.config.clientName = tmp[tmp.length - 1];
       }
       className = this.config.clientName;
-      emitter.config.filename = className;
+      globalEmitter.config.filename = className;
     }
     if (object.annotations.length > 0) {
       this.emitAnnotations(emitter, object.annotations);
     }
     if (_isKeywords(className)) {
-      emitter.config.filename = _avoidKeywords(className);
+      globalEmitter.config.filename = _avoidKeywords(className);
     }
     emitter.emitln(`class ${_avoidKeywords(className)} ${parent}{`, this.level);
 
