@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.0.1 - 2020-06-23
+
+- Fixed update emitter.config failure.
+
 ## 1.0.0 - 2020-06-17
 
 > Initialization release of the `Darabonba Code Generator for PHP` Version 1.0.0 on NPM.
