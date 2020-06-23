@@ -1,5 +1,22 @@
 English | [简体中文](/README-zh-CN.md)
 
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![codecov][cov-image]][cov-url]
+[![David deps][david-image]][david-url]
+[![npm download][download-image]][download-url]
+
+[npm-image]: https://img.shields.io/npm/v/@darabonba/php-generator.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@darabonba/php-generator
+[travis-image]: https://img.shields.io/travis/aliyun/darabonba-php-generator.svg?style=flat-square
+[travis-url]: https://travis-ci.org/aliyun/darabonba-php-generator
+[cov-image]: https://codecov.io/gh/aliyun/darabonba-php-generator/branch/master/graph/badge.svg
+[cov-url]: https://codecov.io/gh/aliyun/darabonba-php-generator
+[david-image]: https://img.shields.io/david/aliyun/darabonba-php-generator.svg?style=flat-square
+[david-url]: https://david-dm.org/aliyun/darabonba-php-generator
+[download-image]: https://img.shields.io/npm/dm/@darabonba/php-generator.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@darabonba/php-generator
+
 # Darabonba Code Generator for PHP
 
 ## Installation
