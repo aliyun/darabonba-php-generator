@@ -240,13 +240,8 @@ class CodeVisitor extends BaseVisitor {
         param.type = 'map';
         this.keyItem = p.paramType.keyType.lexeme;
         param.itemType = p.paramType.valueType.lexeme;
-      } else {
-        debug.stack(p);
       }
       param.key = p.paramName.lexeme;
-      if (p.defaultValue) {
-        param.value = p.defaultValue;
-      }
       if (p.needValidate) {
         func.addBodyNode(new GrammerCall('method', [
           { type: 'object', name: param.key },
@@ -272,11 +267,6 @@ class CodeVisitor extends BaseVisitor {
           subType = ast.returnType.subType.lexeme;
         } else if (ast.returnType.subType.type === 'map') {
           subType = 'map';
-          if (!_isBasicType(ast.returnType.subType.valueType.lexeme)) {
-            debug.stack(ast.returnType);
-          }
-        } else {
-          debug.stack(ast.returnType);
         }
         func.return.push(new GrammerReturnType('array', false, null, subType));
       } else if (ast.returnType.type === 'map') {
@@ -284,27 +274,13 @@ class CodeVisitor extends BaseVisitor {
           func.return.push(
             new GrammerReturnType('map', false, ast.returnType.keyType.lexeme, ast.returnType.valueType.lexeme)
           );
-        } else {
-          debug.stack();
         }
-      } else {
-        debug.stack(ast.returnType);
       }
     } else if (ast.returnType && ast.returnType.lexeme) {
-      if (ast.returnType.idType && ast.returnType.idType === 'model') {
-        this.combinator.addModelInclude(ast.returnType.lexeme);
+      if (ast.returnType.idType && ast.returnType.idType === 'module') {
+        func.return.push(new GrammerReturnType(this.combinator.addInclude(ast.returnType.lexeme)));
       } else if (_isBasicType(ast.returnType.lexeme)) {
         func.return.push(new GrammerReturnType(ast.returnType.lexeme));
-      } else if (ast.returnType.lexeme === 'object') {
-        func.return.push(new GrammerReturnType(ast.returnType.lexeme));
-      } else if (ast.returnType.lexeme && !_isBasicType(ast.returnType.lexeme)) {
-        if (ast.returnType.idType && ast.returnType.idType === 'module') {
-          func.return.push(new GrammerReturnType(this.combinator.addInclude(ast.returnType.lexeme)));
-        } else {
-          func.return.push(new GrammerReturnType(this.combinator.addModelInclude(ast.returnType.lexeme)));
-        }
-      } else {
-        debug.stack(ast.returnType);
       }
     } else {
       debug.stack('Unsupported ast.returnType', ast.returnType);
@@ -574,8 +550,6 @@ class CodeVisitor extends BaseVisitor {
           grammerVar.name = this.combinator.addModelInclude(object.id.lexeme);
         } else if (object.type === 'variable') {
           grammerVar.varType = 'var';
-        } else {
-          debug.stack(object);
         }
         valGrammer.value = grammerVar;
       }
@@ -632,24 +606,6 @@ class CodeVisitor extends BaseVisitor {
         valGrammer.type = 'behavior';
         valGrammer.value = new BehaviorToMap(valGrammer.value, object.inferred);
       }
-    } else if (object.type === 'virtualCall') {
-      let call_type = this.statement[object.vid.lexeme]
-        && this.statement[object.vid.lexeme].static ? '_static' : '';
-      let call = new GrammerCall('method', [
-        { type: 'parent', name: '' },
-        { type: 'call' + call_type, name: object.vid.lexeme }
-      ]);
-      object.args.forEach(arg => {
-        let argCall = new GrammerValue();
-        this.renderGrammerValue(argCall, arg);
-        if (arg.inferred && arg.inferred.name === 'class') {
-          argCall.type = 'class';
-        }
-        argCall.needCast = arg.needCast;
-        call.addParams(argCall);
-      });
-      valGrammer.type = 'call';
-      valGrammer.value = call;
     } else if (object.type === 'number') {
       valGrammer.type = 'number';
       valGrammer.value = object.value.value;
@@ -676,16 +632,9 @@ class CodeVisitor extends BaseVisitor {
         n++;
       });
       valGrammer.value = expr;
-    } else if (object.type === 'variable') {
-      valGrammer.type = 'param';
-      valGrammer.value = object.id.lexeme;
     } else if (object.type === 'null') {
       valGrammer.type = 'null';
       valGrammer.value = 'null';
-    } else if (object.type === 'objectField') {
-      valGrammer.key = object.fieldName.lexeme;
-      valGrammer.type = 'expr';
-      this.renderGrammerValue(valGrammer, object.expr);
     } else if (object.type === 'construct_model') {
       let objectName = object.aliasId.lexeme ? object.aliasId.lexeme : '';
       if (object.propertyPath && object.propertyPath.length > 0) {
@@ -710,8 +659,6 @@ class CodeVisitor extends BaseVisitor {
         }
         if (object.object.inferred.type === 'map') {
           params.type = 'model_construct_params';
-        } else {
-          debug.stack(object.object);
         }
       }
       valGrammer.value = new GrammerNewObject(objectName, params);
@@ -743,8 +690,6 @@ class CodeVisitor extends BaseVisitor {
             } else {
               debug.stack('Unsupported object.left.id.type : ' + object.left.id.type, object);
             }
-          } else {
-            call.addPath({ type: 'object' + callType, name: object.left.id.lexeme });
           }
         } else if (object.left.type === 'static_call') {
           if (object.left.id.type === 'module') {
@@ -833,10 +778,6 @@ class CodeVisitor extends BaseVisitor {
       debug.stack('unimpelemented : ' + object.type, object);
     }
 
-    if (typeof valGrammer.type === 'undefined') {
-      debug.stack('valGrammer.type is undefined', object);
-    }
-
     return valGrammer;
   }
 
@@ -878,7 +819,7 @@ class CodeVisitor extends BaseVisitor {
           if (i === stmt.left.propertyPath.length - 1) {
             key = p.lexeme;
           } else {
-            variate.addPath({ type: 'key', name: p.lexeme });
+            variate.addPath({ type: 'map', name: p.lexeme });
           }
         });
         node = new BehaviorSetMapItem(variate, key, value);
@@ -1023,9 +964,6 @@ class CodeVisitor extends BaseVisitor {
       debug.stack(stmt);
     }
     if (belong) {
-      if (typeof node === 'undefined') {
-        debug.stack(node, stmt);
-      }
       node.belong = belong;
     }
     this.findComments(obj, stmt, belong);
@@ -1043,7 +981,6 @@ class CodeVisitor extends BaseVisitor {
         case 'and': opt = Symbol.and(); break;
         case 'or': opt = Symbol.or(); break;
         case 'not': opt = Symbol.not(); break;
-        default: debug.stack(stmtCondition);
         }
         condition = new GrammerExpr(
           this.renderGrammerValue(null, stmtCondition.left),
@@ -1102,7 +1039,7 @@ class CodeVisitor extends BaseVisitor {
 
     if (stmt.elseAssigns) {
       stmt.elseAssigns.forEach(elseAssign => {
-        node.else.push(this.visitIfElse(elseAssign, 'else'));
+        node.elseItem.push(this.visitIfElse(elseAssign, 'else'));
       });
     }
 
