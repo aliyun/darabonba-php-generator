@@ -32,6 +32,35 @@ module.exports = {
     'bytes': 'array',
     'long': 'integer'
   },
+  symbolMap: {
+    'ASSIGN': '=',
+    'EQ': '==',
+    'NOT': '!=',
+    'AND': '&&',
+    'OR': '||',
+    'PLUS': '+',
+    'SUB': '-',
+    'MULTI': '*',
+    'DIV': '/',
+    'POWER': '^',
+    'GREATER': '>',
+    'GREATER_EQ': '>=',
+    'LESS': '<',
+    'LESS_EQ': '<=',
+    'REVERSE': '!',
+    'CONCAT': '.'
+  },
+  modifyOrder: [
+    'PRIVATE',
+    'PROTECTED',
+    'PUBLIC',
+    'FINAL',
+    'ABSTRACT',
+    'STATIC'
+  ],
+  exceptionMap: {
+    'BASE': '\\Exception',
+  },
   model: {
     dir: 'Models',
     include: [],
@@ -41,6 +70,7 @@ module.exports = {
     include: []
   },
   tea: {
+    name: 'Tea',
     core: {
       name: '\\AlibabaCloud\\Tea\\Tea',
       doAction: 'send',

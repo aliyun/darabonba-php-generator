@@ -1,11 +1,16 @@
 'use strict';
 
+// eslint-disable-next-line no-unused-vars
+const debug = require('../lib/debug');
 const assert = require('assert');
-const BaseVisitor = require('./base');
+const BaseResolver = require('./base');
+
+const {
+  _isBasicType
+} = require('../lib/helper');
 
 const {
   AnnotationItem,
-  ObjectItem,
   PropItem,
   NoteItem,
 } = require('../langs/common/items');
@@ -14,88 +19,58 @@ const {
   Modify,
 } = require('../langs/common/enum');
 
-const {
-  _isBasicType
-} = require('../lib/helper');
+class ModelResolver extends BaseResolver{
+  resolve() {
+    const object = this.object;
+    const combinator = this.combinator;
+    const config = this.config;
+    const ast = this.ast;
 
-class ModelVisitor extends BaseVisitor {
-
-  init(ast, level) {
-    this.modelName = ast.modelName.lexeme;
-
-    if (this.langConfig.modelDirName) {
-      this.langConfig.model.dir = this.langConfig.modelDirName;
-      this.layer = this.langConfig.modelDirName;
-    } else {
-      this.layer = this.langConfig.model.dir;
-    }
-
-    this.emitConfig = {
-      ...this.emitConfig,
-      ext: this.langConfig.ext,
-      layer: this.layer,
-      filename: this.modelName,
-      emitType: 'model'
-    };
-  }
-
-  visit(ast, level = 0, predefined, globalAst) {
     assert.equal(ast.type, 'model');
+      
+    combinator.config.emitType = 'model';
 
-    this.init(ast, level);
-    const combinator = this.getCombinator();
-    combinator.includeList = this.langConfig.model.include;
-
-    combinator.init(globalAst);
-
-    this.object = new ObjectItem();
-    this.object.name = ast.modelName.lexeme;
-
+    object.name = ast.modelName.lexeme;
+    if (config.modelDirName) {
+      config.model.dir = config.modelDirName;
+    }
+    config.layer = config.model.dir;
+      
     if (ast.annotation) {
       this.initAnnotation(ast.annotation);
     }
-    this.object.topAnnotation.push(new AnnotationItem(
-      this.object.index,
+      
+    object.topAnnotation.push(new AnnotationItem(
+      object.index,
       'single',
-      this.emitConfig.generateFileInfo
+      config.generateFileInfo
     ));
-
-    this.object.addExtends(combinator.addInclude('$Model'));
-
-    // props
-    this.initProp(this.object, ast.modelBody.nodes);
+      
+    object.addExtends(combinator.addInclude('$Model'));
+      
+    this.initProp(ast.modelBody.nodes);
     if (ast.modelBody.nodes.length === 0) {
       if (ast.tokenRange) {
         this.resolveAnnotations(
           this.getBetweenComments(ast.tokenRange[0], ast.tokenRange[1]),
-          this.object.index
+          object.index
         ).forEach(c => {
-          this.object.addBodyNode(c);
+          object.addBodyNode(c);
         });
       }
     }
-    this.done();
+      
+    return object;
   }
+    
+  initProp(nodes) {
+    const object = this.object;
 
-  findSubModelsUsed(node, subModelUsed = [], pre = '') {
-    let name = node.fieldName.lexeme;
-    if (pre !== '') {
-      name = pre + '.' + name;
-    }
-    subModelUsed.push(name);
-    node.fieldValue.nodes.forEach(item => {
-      if (typeof item.fieldValue.fieldType === 'undefined') {
-        this.findSubModelsUsed(item, subModelUsed, name);
-      }
-    });
-  }
-
-  initProp(obj, nodes) {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i];
       if (typeof node.fieldValue.fieldType === 'undefined') {
         let subModelUsed = [];
-        this.findSubModelsUsed(node, subModelUsed, obj.name);
+        this.findSubModelsUsed(node, subModelUsed, object.name);
         subModelUsed.forEach(subModel => {
           this.combinator.addModelInclude(subModel);
         });
@@ -112,12 +87,12 @@ class ModelVisitor extends BaseVisitor {
       }
 
       const prop = new PropItem();
-      prop.belong = obj.index;
+      prop.belong = object.index;
       prop.name = node.fieldName.lexeme;
       if (node.fieldValue.fieldType) {
         prop.type = node.fieldValue.fieldType;
       } else if (node.fieldValue.type && node.fieldValue.type === 'modelBody') {
-        prop.type = this.combinator.addModelInclude([obj.name, node.fieldName.lexeme].join('.'));
+        prop.type = this.combinator.addModelInclude([object.name, node.fieldName.lexeme].join('.'));
       }
       if (node.fieldValue && node.fieldValue.fieldItemType) {
         if (node.fieldValue.fieldItemType.type) {
@@ -151,14 +126,14 @@ class ModelVisitor extends BaseVisitor {
       if (node.tokenRange) {
         let annotations = this.resolveAnnotations(
           this.getFrontComments(node.tokenRange[0]),
-          obj.index
+          object.index
         );
         annotations.forEach(c => {
-          obj.addBodyNode(c);
+          object.addBodyNode(c);
         });
       }
-
-      node.attrs.forEach((attr) => {
+      for (let i = 0; i < node.attrs.length; i++){
+        const attr = node.attrs[i];
         let value;
         if (typeof attr.attrValue.string !== 'undefined') {
           value = attr.attrValue.string;
@@ -172,19 +147,32 @@ class ModelVisitor extends BaseVisitor {
           value
         );
         prop.addNote(note);
-      });
-      obj.addBodyNode(prop);
+      }
+      object.addBodyNode(prop);
     }
     if (nodes[nodes.length - 1] && nodes[nodes.length - 1].tokenRange) {
       let annotations = this.resolveAnnotations(
         this.getBackComments(nodes[nodes.length - 1].tokenRange[1]),
-        obj.index
+        object.index
       );
       annotations.forEach(c => {
-        obj.addBodyNode(c);
+        object.addBodyNode(c);
       });
     }
   }
+
+  findSubModelsUsed(node, subModelUsed = [], pre = '') {
+    let name = node.fieldName.lexeme;
+    if (pre !== '') {
+      name = pre + '.' + name;
+    }
+    subModelUsed.push(name);
+    node.fieldValue.nodes.forEach(item => {
+      if (typeof item.fieldValue.fieldType === 'undefined') {
+        this.findSubModelsUsed(item, subModelUsed, name);
+      }
+    });
+  }
 }
 
-module.exports = ModelVisitor;
+module.exports = ModelResolver;

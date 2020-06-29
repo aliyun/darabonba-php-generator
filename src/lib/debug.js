@@ -25,7 +25,7 @@ function jump(jumpNumber = 0, ...data) {
 
 function stack(...data) {
   let msg = '';
-  if (data[0] && typeof(data[0]) === 'string') {
+  if (data[0] && typeof data[0] === 'string') {
     msg = data[0];
     data = data.slice(1);
   }

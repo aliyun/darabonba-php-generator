@@ -3,10 +3,13 @@
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
+const mm = require('mm');
+require('mocha-sinon');
 
 const DSL = require('@darabonba/parser');
 
-let Generator = require('../src/generator');
+const Generator = require('../src/generator');
+const PackageInfo = require('../src/langs/php/package_info');
 
 const lang = 'php';
 
@@ -25,7 +28,8 @@ function check(moduleName, expectedFiles = []) {
     ...pkgInfo,
     php: {
       package: 'Tea.PHP.Tests',
-      clientName: 'Client'
+      clientName: 'Client',
+      modelDirName: 'Models'
     }
   };
   const generator = new Generator(config, lang);
@@ -129,5 +133,26 @@ describe('New Generator', function () {
     check('alias', [
       'Client.php'
     ]);
+  });
+});
+
+describe('package_info tests', function () {
+  beforeEach(function () {
+    this.sinon.stub(console, 'log');
+    this.sinon.stub(fs, 'existsSync');
+    this.sinon.stub(fs, 'readFileSync');
+    this.sinon.stub(fs, 'writeFileSync');
+  });
+
+  it('emit package files shoule be ok', function () {
+    const packageInfo = new PackageInfo({ package: 'a.b.c' });
+    mm(packageInfo, 'resolveOutputDir', function () { return './output/'; });
+    mm(packageInfo, 'render', function () { return '{}'; });
+    packageInfo.emit({
+      name: 'name',
+      desc: 'desc',
+      github: 'github',
+    });
+    mm.restore();
   });
 });
