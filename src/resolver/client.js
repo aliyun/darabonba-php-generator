@@ -1,21 +1,12 @@
 'use strict';
 
 const debug = require('../lib/debug');
-const BaseVisitor = require('./base');
-
-const {
-  Symbol,
-  Modify,
-  Exceptions,
-  Types
-} = require('../langs/common/enum');
+const BaseResolver = require('./base');
 
 const {
   AnnotationItem,
   ConstructItem,
-  ObjectItem,
   FuncItem,
-  PropItem,
 
   GrammerVar,
   GrammerCall,
@@ -42,9 +33,12 @@ const {
   BehaviorSetMapItem,
 } = require('../langs/common/items');
 
-var REQUEST;
-var RESPONSE;
-var RUNTIME;
+const {
+  Symbol,
+  Modify,
+  Exceptions,
+  Types
+} = require('../langs/common/enum');
 
 const {
   _isBasicType
@@ -52,152 +46,99 @@ const {
 
 const systemPackage = ['Util'];
 
-class CodeVisitor extends BaseVisitor {
-  init(ast) {
-    this.layer = this.langConfig.resolvePathByPackage ?
-      this.emitConfig.layer : '';
+class ClientResolver extends BaseResolver {
+  resolve() {
+    const object = this.object;
+    const combinator = this.combinator;
+    const config = this.config;
+    const ast = this.ast;
 
-    const clientName = this.langConfig.clientName || 'Client';
-    this.emitConfig = {
-      ...this.emitConfig,
-      ext: this.langConfig.ext,
-      layer: this.layer,
-      filename: clientName,
-      emitType: 'code'
-    };
-    REQUEST = this.langConfig.request;
-    RESPONSE = this.langConfig.response;
-    RUNTIME = this.langConfig.runtime;
+    combinator.config.emitType = 'code';
 
-    this.object = new ObjectItem();
-    this.object.name = clientName;
+    object.name = config.clientName || 'Client';
 
-    this.variables(ast);
+    // resolve props
+    this.resolveProps(ast);
 
-    this.tea = this.langConfig.tea;
-    this.commentsSet = [];
-    this.getCombinator();
-    this.combinator.includeList = this.langConfig.client.include;
-    this.combinator.init(ast);
-
+    // resolve global annotation
     if (ast.annotation) {
       this.initAnnotation(ast.annotation);
     }
-    this.object.topAnnotation.push(new AnnotationItem(
-      this.object.index,
+    object.topAnnotation.push(new AnnotationItem(
+      object.index,
       'single',
-      this.emitConfig.generateFileInfo
+      config.generateFileInfo
     ));
-    let props = ast.moduleBody.nodes.filter((item) => {
-      return item.type === 'type';
-    });
-    this.initProp(this.object, props);
-    this.visitInitBody(ast);
-  }
 
-  initProp(obj, props) {
-    props.forEach(item => {
-      const prop = new PropItem();
-      prop.name = item.vid.lexeme.replace('@', '_');
-      const type = item.value.lexeme ? item.value.lexeme : item.value.type;
-      prop.type = type;
-      if (type === 'array') {
-        prop.itemType = item.value.subType;
-        if (!_isBasicType(item.value.subType.lexeme)) {
-          this.combinator.addModelInclude(item.value.subType.lexeme);
-        }
-      } else {
-        if (!_isBasicType(type)) {
-          if (item.value.idType && item.value.idType === 'module') {
-            this.combinator.addInclude(type);
-          } else if (item.value && item.value.returnType) {
-            if (!_isBasicType(item.value.returnType.lexeme)) {
-              this.combinator.addModelInclude(type);
-            }
-          } else {
-            debug.stack(item);
-          }
-        }
-      }
-      prop.addModify(Modify.protected());
-      if (item.tokenRange) {
-        let comments = this.getFrontComments(item.tokenRange[0]);
-        if (comments.length > 0) {
-          comments.forEach(c => {
-            obj.addBodyNode(this.resolveAnnotation(c, obj.index));
-          });
-        }
-      }
-      obj.addBodyNode(prop);
-    });
-    if (props[props.length - 1] && props[props.length - 1].tokenRange) {
-      let comments = this.getBackComments(props[props.length - 1].tokenRange[1]);
-      if (comments.length > 0) {
-        comments.forEach(c => {
-          obj.addBodyNode(this.resolveAnnotation(c, obj.index));
-        });
-      }
-    }
-  }
-
-  visitInitBody(ast) {
+    // resolve extends
     if (ast.extends) {
-      this.object.extends.push(this.combinator.addInclude(ast.extends.lexeme));
-    } else if (this.langConfig.baseClient) {
+      object.extends.push(combinator.addInclude(ast.extends.lexeme));
+    } else if (config.baseClient) {
       let extendsClass = [];
-      if (Array.isArray(this.langConfig.baseClient)) {
-        this.langConfig.baseClient.forEach(item => extendsClass.push(this.combinator.addInclude(item)));
+      if (Array.isArray(config.baseClient)) {
+        config.baseClient.forEach(item => extendsClass.push(combinator.addInclude(item)));
       } else {
-        extendsClass = [this.combinator.addInclude(this.langConfig.baseClient)];
+        extendsClass = [combinator.addInclude(config.baseClient)];
       }
-      this.object.extends = extendsClass;
+      object.extends = extendsClass;
     }
-    let [init] = ast.moduleBody.nodes.filter((item) => {
+
+    // resolve construct body
+    const [init] = ast.moduleBody.nodes.filter((item) => {
       return item.type === 'init';
     });
     if (init) {
-      let constructNode = new ConstructItem();
-      if (init.params && init.params.params) {
-        init.params.params.forEach(param => {
-          if (param.paramType.idType && param.paramType.idType === 'model') {
-            this.combinator.addModelInclude(param.paramType.lexeme);
-          } else if (param.paramType.idType && param.paramType.idType === 'module') {
-            this.combinator.addInclude(param.paramType.lexeme);
-          }
-          constructNode.addParamNode(new GrammerValue(param.paramType.lexeme, param.defaultValue, param.paramName.lexeme));
-        });
-      }
-      if (init.annotation) {
-        constructNode.addAnnotation(this.resolveAnnotation(init.annotation, constructNode.index));
-      }
-      if (init.initBody && init.initBody.stmts) {
-        init.initBody.stmts.forEach(stmt => {
-          this.visitStmt(constructNode, stmt, constructNode.index);
-        });
-      }
-      this.object.addBodyNode(constructNode);
+      this.resolveInitBody(init);
     }
+
+    // resolve api
+    ast.moduleBody.nodes.filter((item) => {
+      return item.type === 'api';
+    }).forEach(item => {
+      const func = new FuncItem();
+      func.name = item.apiName.lexeme;
+      this.resolveFunc(func, item, item.apiBody);
+    });
+
+    // resolve function
+    ast.moduleBody.nodes.filter((item) => {
+      return item.type === 'function';
+    }).forEach(item => {
+      const func = new FuncItem();
+      func.name = item.functionName.lexeme;
+      this.resolveFunc(func, item, item.functionBody);
+    });
+
+    return object;
   }
 
-  visitApi(ast, predefined) {
-    var func = new FuncItem();
-    func.name = ast.apiName.lexeme;
-    this.visit(func, ast, ast.apiBody, predefined);
+  resolveInitBody(init) {
+    const object = this.object;
+    const combinator = this.combinator;
+
+    let constructNode = new ConstructItem();
+    if (init.params && init.params.params) {
+      init.params.params.forEach(param => {
+        if (param.paramType.idType && param.paramType.idType === 'model') {
+          combinator.addModelInclude(param.paramType.lexeme);
+        } else if (param.paramType.idType && param.paramType.idType === 'module') {
+          combinator.addInclude(param.paramType.lexeme);
+        }
+        constructNode.addParamNode(new GrammerValue(param.paramType.lexeme, param.defaultValue, param.paramName.lexeme));
+      });
+    }
+    if (init.annotation) {
+      constructNode.addAnnotation(this.resolveAnnotation(init.annotation, constructNode.index));
+    }
+    if (init.initBody && init.initBody.stmts) {
+      init.initBody.stmts.forEach(stmt => {
+        this.visitStmt(constructNode, stmt, constructNode.index);
+      });
+    }
+    object.addBodyNode(constructNode);
   }
 
-  visitWrap(ast, predefined) {
-    var func = new FuncItem();
-    func.name = ast.wrapName.lexeme;
-    this.visit(func, ast, ast.wrapBody, predefined);
-  }
-
-  visitFunc(ast) {
-    var func = new FuncItem();
-    func.name = ast.functionName.lexeme;
-    this.visit(func, ast, ast.functionBody);
-  }
-
-  visit(func, ast, body, predefined) {
+  resolveFunc(func, ast, body) {
     if (ast.annotation) {
       func.addAnnotation(this.resolveAnnotation(ast.annotation, func.index));
     }
@@ -205,7 +146,7 @@ class CodeVisitor extends BaseVisitor {
     if (body === null) {
       func.addBodyNode(new GrammerThrows(Exceptions.base(), [], 'Un-implemented'));
     }
-    this.predefined = predefined;
+
     if (ast.isAsync) {
       func.modify.push(Modify.async());
     }
@@ -316,7 +257,7 @@ class CodeVisitor extends BaseVisitor {
 
     // _runtime = {}
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar(RUNTIME, Types.any.key), Symbol.assign(), val
+      new GrammerVar(this.config.runtime, Types.any.key), Symbol.assign(), val
     ));
 
     // _lastRequest = null;
@@ -351,10 +292,10 @@ class CodeVisitor extends BaseVisitor {
     whileOperation.addCondition(
       new GrammerCall('method', [
         { type: 'object_static', name: this.combinator.addInclude('$Core') },
-        { type: 'call_static', name: this.tea.core.allowRetry }
+        { type: 'call_static', name: this.config.tea.core.allowRetry }
       ], [
         new GrammerValue('call', new GrammerCall('key', [
-          { type: 'object', name: RUNTIME },
+          { type: 'object', name: this.config.runtime },
           { type: 'map', name: 'retry' }
         ], [], new GrammerReturnType(Types.any.key))),
         new GrammerValue('param', '_retryTimes'),
@@ -376,10 +317,10 @@ class CodeVisitor extends BaseVisitor {
         Symbol.assign(),
         new GrammerCall('method', [
           { type: 'object_static', name: this.combinator.addInclude('$Core') },
-          { type: 'call_static', name: this.tea.core.getBackoffTime }
+          { type: 'call_static', name: this.config.tea.core.getBackoffTime }
         ], [
           new GrammerValue('call', new GrammerCall('key', [
-            { type: 'object', name: RUNTIME },
+            { type: 'object', name: this.config.runtime },
             { type: 'map', name: 'backoff' }
           ])),
           new GrammerValue('param', '_retryTimes'),
@@ -398,7 +339,7 @@ class CodeVisitor extends BaseVisitor {
     backoffTimeIf.addBodyNode(
       new GrammerCall('method', [
         { type: 'object_static', name: this.combinator.addInclude('$Core') },
-        { type: 'call_static', name: this.tea.core.sleep }
+        { type: 'call_static', name: this.config.tea.core.sleep }
       ], [
         new GrammerValue('param', '_backoffTime'),
       ])
@@ -426,7 +367,7 @@ class CodeVisitor extends BaseVisitor {
       new GrammerCondition('if', [
         new GrammerCall('method', [
           { type: 'object_static', name: this.combinator.addInclude('$Core') },
-          { type: 'call_static', name: this.tea.core.isRetryable }
+          { type: 'call_static', name: this.config.tea.core.isRetryable }
         ], [exceptionVar])
       ], [
         new GrammerExpr(
@@ -461,7 +402,7 @@ class CodeVisitor extends BaseVisitor {
         // TeaRequest _request = new TeaRequest()
         func.addBodyNode(
           new GrammerExpr(
-            new GrammerVar(REQUEST, this.combinator.addInclude('$Request')),
+            new GrammerVar(this.config.request, this.combinator.addInclude('$Request')),
             Symbol.assign(),
             new GrammerNewObject(this.combinator.addInclude('$Request'))
           )
@@ -483,14 +424,14 @@ class CodeVisitor extends BaseVisitor {
 
       if (body.type === 'apiBody') {
         var doActionParams = [];
-        doActionParams.push(new GrammerValue('param', REQUEST));
+        doActionParams.push(new GrammerValue('param', this.config.request));
 
         if (ast.runtimeBody) {
-          doActionParams.push(new GrammerValue('param', RUNTIME));
+          doActionParams.push(new GrammerValue('param', this.config.runtime));
         }
 
         // response = Tea.doAction
-        const doActionBehavior = new BehaviorDoAction(new GrammerVar(RESPONSE, this.combinator.addInclude('$Response')), doActionParams);
+        const doActionBehavior = new BehaviorDoAction(new GrammerVar(this.config.response, this.combinator.addInclude('$Response')), doActionParams);
 
         if (body.stmts) {
           body.stmts.stmts.forEach(stmt => {
@@ -503,7 +444,7 @@ class CodeVisitor extends BaseVisitor {
           new GrammerExpr(
             new GrammerVar('_lastRequest', this.combinator.addInclude('$Request'), 'var'),
             Symbol.assign(),
-            new GrammerVar(REQUEST, this.combinator.addInclude('$Request'))
+            new GrammerVar(this.config.request, this.combinator.addInclude('$Request'))
           )
         );
 
@@ -584,24 +525,19 @@ class CodeVisitor extends BaseVisitor {
 
       let call = new GrammerCall('key');
       var paramName = object.id.lexeme;
-      if (paramName === '__module') {
-        valGrammer.type = object.propertyPathTypes[0].name;
-        valGrammer.value = this.__module[object.propertyPath[0].lexeme];
-      } else {
-        call.addPath({ type: 'object', name: paramName });
-        for (var i = 0; i < object.propertyPath.length; i++) {
-          var name = object.propertyPath[i].lexeme;
+      call.addPath({ type: 'object', name: paramName });
+      for (var i = 0; i < object.propertyPath.length; i++) {
+        var name = object.propertyPath[i].lexeme;
 
-          if (current.type === 'model') {
-            call.addPath({ type: 'prop', name: name });
-          } else {
-            call.addPath({ type: 'map', name: name });
-          }
-          current = object.propertyPathTypes[i];
+        if (current.type === 'model') {
+          call.addPath({ type: 'prop', name: name });
+        } else {
+          call.addPath({ type: 'map', name: name });
         }
-        valGrammer.type = 'call';
-        valGrammer.value = call;
+        current = object.propertyPathTypes[i];
       }
+      valGrammer.type = 'call';
+      valGrammer.value = call;
       if (object.needCast) {
         valGrammer.type = 'behavior';
         valGrammer.value = new BehaviorToMap(valGrammer.value, object.inferred);
@@ -805,14 +741,10 @@ class CodeVisitor extends BaseVisitor {
       node = new GrammerExpr(variate, Symbol.assign(), value);
     } else if (stmt.type === 'requestAssign') {
       let variate = new GrammerCall('prop', [
-        { type: 'object', name: REQUEST },
+        { type: 'object', name: this.config.request },
         { type: 'prop', name: stmt.left.id.lexeme }
       ]);
-      var def = this.predefined['$Request'].modelBody.nodes.find((item) => {
-        return item.fieldName.lexeme === stmt.left.id.lexeme;
-      });
-      let expectedType = def.fieldValue;
-      let value = this.renderGrammerValue(null, stmt.expr, expectedType);
+      let value = this.renderGrammerValue(null, stmt.expr);
       if (stmt.left.type === 'request_property_assign') {
         let key = '';
         stmt.left.propertyPath.forEach((p, i) => {
@@ -1047,4 +979,4 @@ class CodeVisitor extends BaseVisitor {
   }
 }
 
-module.exports = CodeVisitor;
+module.exports = ClientResolver;

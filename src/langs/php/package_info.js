@@ -34,16 +34,16 @@ class PackageInfo extends BasePackageInfo {
       let content = '';
       let optional = files[filename];
       if (optional & OPTION_UPDATE && fs.existsSync(path.join(outputDir, filename))) {
-        content = fs.readFileSync(path.join(outputDir, filename)).toString();
+        content = fs.readFileSync(path.join(outputDir, filename), 'utf-8');
       } else if (optional & OPTION_SOURCE && packageInfo.files && packageInfo.files[filename]) {
         let filepath = path.isAbsolute(packageInfo.files[filename]) ?
           packageInfo.files[filename] : path.join(this.config.pkgDir, packageInfo.files[filename]);
         if (!fs.existsSync(filepath)) {
           return;
         }
-        content = fs.readFileSync(filepath).toString();
+        content = fs.readFileSync(filepath, 'utf-8');
       } else if (optional & OPTION_LOCAL) {
-        content = fs.readFileSync(path.join(__dirname, './files/' + filename + '.tmpl')).toString();
+        content = fs.readFileSync(path.join(__dirname, './files/' + filename + '.tmpl'), 'utf-8');
       }
       if (content !== '') {
         if (optional & OPTION_RENDER) {

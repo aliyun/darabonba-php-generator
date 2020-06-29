@@ -403,8 +403,9 @@ class ObjectItem extends Item {
     this.name = '';              // object name
     this.extends = [];           // object extends
     this.body = [];              // PropItem | FuncItem | ConstructItem ...
-    this.annotations = [];        // AnnotationItem
+    this.annotations = [];       // AnnotationItem
     this.topAnnotation = [];     // AnnotationItem
+    this.subObject = [];         // ObjectItem
   }
 
   addBodyNode(node) {

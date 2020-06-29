@@ -11,6 +11,9 @@ const {
   _camelCase,
   _subModelName,
   _string,
+  _upperFirst,
+  _symbol,
+  _config
 } = require('../src/lib/helper');
 
 describe('lib tests', function () {
@@ -21,6 +24,7 @@ describe('lib tests', function () {
     this.sinon.stub(fs, 'writeFileSync');
     this.sinon.stub(fs, 'appendFileSync');
     this.sinon.stub(fs, 'existsSync');
+    _config(require('../src/langs/common/config.js'));
   });
 
   it('debug.dump should be ok', function () {
@@ -152,6 +156,10 @@ describe('lib tests', function () {
     expect(filename).to.be.eql('/tmp/filename.tmp');
   });
 
+  it('helper._upperFirst should be ok', function () { 
+    expect(_upperFirst(null)).to.be.eql('');
+  });
+
   it('helper._camelCase should be ok', function () {
     expect(_camelCase('test_camel_case')).to.be.eql('testCamelCase');
   });
@@ -165,5 +173,11 @@ describe('lib tests', function () {
       string: 'test'
     };
     expect(_string(obj)).to.be.eql('test');
+  });
+
+  it('helper._symbol should be ok', function () { 
+    expect(function () { 
+      _symbol('invalid');
+    }).to.be.throw('Unsupported symbol : invalid');
   });
 });

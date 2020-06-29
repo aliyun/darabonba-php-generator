@@ -5,8 +5,6 @@ const debug = require('../../lib/debug');
 const CombinatorBase = require('../common/combinator');
 const Emitter = require('../../lib/emitter');
 const PackageInfo = require('./package_info');
-const path = require('path');
-const fs = require('fs');
 
 const {
   Symbol,
@@ -26,101 +24,57 @@ const {
 } = require('../common/items');
 
 const {
-  _name,
-  _type,
+  _config,
   _symbol,
   _modify,
   _exception,
+  _upperFirst,
   _isKeywords,
-  _avoidKeywords,
-  _convertStaticParam
-} = require('./helper');
-
-const {
   _isBasicType,
-  _upperFirst
+  _avoidKeywords,
+  _convertStaticParam,
 } = require('../../lib/helper');
 
-class Combinator extends CombinatorBase {
-  constructor(config) {
-    super(config);
-    this.eol = ';';
-    this.thirdPackageNamespace = {};
-    this.thirdPackageModel = {};
-    this.thirdPackageClient = {};
-    this.classNameMap = {};
-    this.classAlias = {};
-
-    // Teafile: name (Tea Package name)
-    if (this.config.modelDirName) {
-      this.model_dir = this.config.modelDirName;
-    } else {
-      this.model_dir = this.config.model.dir;
-    }
-    if (this.config.packageInfo) {
-      this.config.dir = path.join(this.config.outputDir, 'src/');
-    }
-    this.config.layer = this.config.layer.split('.').map(m => {
-      return _avoidKeywords(m);
-    }).join('.');
+function _name(str) {
+  if (str.indexOf('-') > -1) {
+    let tmp = str.split('-');
+    tmp.map((s, i) => {
+      if (i !== 0) {
+        return s;
+      }
+      return s;
+    });
+    str = tmp.join('');
   }
+  return str;
+}
 
-  init(ast) {
-    const imports = ast.imports;
-    this.requirePackage = [];
-    if (imports.length > 0) {
-      const lockPath = path.join(this.config.pkgDir, '.libraries.json');
-      const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
-      let packageNameSet = [];
-      let clientNameSet = [];
-      ast.imports.forEach((item) => {
-        const aliasId = item.lexeme;
-        const moduleDir = this.config.libraries[aliasId];
-        let targetPath;
-        if (moduleDir.startsWith('/')) {
-          targetPath = moduleDir;
-        } else {
-          targetPath = path.join(this.config.pkgDir, lock[moduleDir]);
-        }
-        const daraFilePath = fs.existsSync(path.join(targetPath, 'Teafile'))
-          ? path.join(targetPath, 'Teafile')
-          : path.join(targetPath, 'Darafile');
-        const daraFile = JSON.parse(fs.readFileSync(daraFilePath));
-        if (daraFile.php && daraFile.php.package && daraFile.php.clientName) {
-          const packageName = daraFile.php.package;
-          const clientName = daraFile.php.clientName
-            ? daraFile.php.clientName
-            : 'Client';
-          const modelDir = daraFile.php.modelDirName
-            ? daraFile.php.modelDirName
-            : 'Models';
-          // third package namespace
-          if (packageNameSet.indexOf(packageName.toLowerCase()) < 0) {
-            this.thirdPackageNamespace[aliasId] = packageName;
-            packageNameSet.push(packageName.toLowerCase());
-          } else {
-            debug.stack('Duplication namespace');
-          }
-          // third package model client name
-          if (
-            clientNameSet.indexOf(clientName.toLowerCase()) > -1 ||
-            clientName.toLowerCase() === this.config.clientName.toLowerCase()
-          ) {
-            const alias =
-              packageName.split('.').join('') + clientName.split('.').join('');
-            this.classAlias[aliasId] = alias;
-            this.thirdPackageClient[aliasId] = clientName;
-          } else {
-            this.thirdPackageClient[aliasId] = clientName;
-            clientNameSet.push(clientName.toLowerCase());
-          }
-          // third package model dir name
-          this.thirdPackageModel[aliasId] = modelDir;
-        }
-        if (daraFile.releases && daraFile.releases.php) {
-          this.requirePackage.push(daraFile.releases.php);
-        }
-      });
+function _type(type) {
+  const config = _config();
+
+  let t = type instanceof Object ? type.lexeme : type;
+  if (config.typeMap[t]) {
+    return config.typeMap[t];
+  }
+  if (t.indexOf('map[') === 0) {
+    return 'map';
+  }
+  if (!_isBasicType(t)) {
+    return t;
+  }
+  if (t[0] === '$') {
+    t = t.replace('$', config.tea.name);
+  }
+  return t;
+}
+
+class Combinator extends CombinatorBase {
+  constructor(config, imports) {
+    super(config, imports);
+    this.eol = ';';
+    this.classNameMap = {};
+    if (this.config.modelDirName) {
+      this.config.model.dir = this.config.modelDirName;
     }
   }
 
@@ -132,8 +86,8 @@ class Combinator extends CombinatorBase {
     } else if (this.thirdPackageNamespace[className]) {
       // is third package
       realFullClassName = `\\${this.thirdPackageNamespace[className].split('.').join('\\')}\\${this.thirdPackageClient[className]}`;
-      if (this.classAlias[className]) {
-        last = this.classAlias[className];
+      if (this.thirdPackageClientAlias[className]) {
+        last = this.thirdPackageClientAlias[className].split('->').join('');
       }
     } else if (this.config.baseClient.indexOf(className) > -1) {
       realFullClassName = `\\${className.split('.').join('\\')}`;
@@ -160,9 +114,9 @@ class Combinator extends CombinatorBase {
     }
 
     this.classNameMap[last] = realFullClassName;
-    if (this.classAlias[className]) {
+    if (this.thirdPackageClientAlias[className]) {
       // has alias
-      this.includeList.push({ import: realFullClassName, alias: this.classAlias[className] });
+      this.includeList.push({ import: realFullClassName, alias: this.thirdPackageClientAlias[className] });
     } else {
       this.includeList.push({ import: realFullClassName, alias: null });
     }
@@ -180,7 +134,7 @@ class Combinator extends CombinatorBase {
       realFullClassName = `\\${this.thirdPackageNamespace[accessPath[0]].split('.').join('\\')}\\${this.thirdPackageModel[accessPath[0]]}\\${accessPath.slice(1).join('\\')}`;
     } else {
       // is not third package model
-      realFullClassName = `\\${this.config.package.split('.').join('\\')}\\${this.model_dir}\\${accessPath.join('\\')}`;
+      realFullClassName = `\\${this.config.package.split('.').join('\\')}\\${this.config.model.dir}\\${accessPath.join('\\')}`;
     }
 
     // avoid keywords
@@ -206,22 +160,31 @@ class Combinator extends CombinatorBase {
     return last;
   }
 
-  combine(emitter, object) {
+  combine(object) {
+    // Teafile: name (Tea Package name)
+    if (this.config.packageInfo) {
+      this.config.dir = this.config.outputDir + '/src/';
+    }
+    this.config.layer = this.config.layer.split('.').map(m => {
+      return _avoidKeywords(m);
+    }).join('.');
+
+    const outputParts = {};
+    let emitter = new Emitter();
+
     if (object.name.indexOf('.') > -1) {
       // reset layer&filename if object is sub model
       let tmp = object.name.split('.');
       object.name = tmp[tmp.length - 1];
       tmp.splice(tmp.length - 1, 1);
-      emitter.config.layer = emitter.config.layer + '.' + tmp.join('.');
-      emitter.config.filename = object.name;
-      this.config.layer = emitter.config.layer;
-      this.config.filename = emitter.config.filename;
+      this.config.layer = this.config.layer + '.' + tmp.join('.');
     }
+    this.config.filename = object.name;
     if (this.config.emitType === 'code' && this.config.packageInfo) {
       const packageInfo = new PackageInfo(this.config);
       packageInfo.emit(this.config.packageInfo, this.requirePackage);
     }
-    emitter.config.layer = emitter.config.layer.split('.').map(m => {
+    this.config.layer = this.config.layer.split('.').map(m => {
       return _avoidKeywords(m);
     }).join('.');
 
@@ -250,9 +213,9 @@ class Combinator extends CombinatorBase {
     }
     emitter.emitln(`namespace ${this.config.package.split('.').join('\\')}${appendNamespace};`).emitln();
 
-    const globalEmitter = emitter;
+    // save header emit result
+    outputParts['header'] = emitter.output;
     emitter = new Emitter();
-    // this.emitInclude(emitter);
 
     // emit class
     let className = object.name;
@@ -262,13 +225,13 @@ class Combinator extends CombinatorBase {
         this.config.clientName = tmp[tmp.length - 1];
       }
       className = this.config.clientName;
-      globalEmitter.config.filename = className;
+      this.config.filename = className;
     }
     if (object.annotations.length > 0) {
       this.emitAnnotations(emitter, object.annotations);
     }
     if (_isKeywords(className)) {
-      globalEmitter.config.filename = _avoidKeywords(className);
+      this.config.filename = _avoidKeywords(className);
     }
     emitter.emitln(`class ${_avoidKeywords(className)} ${parent}{`, this.level);
 
@@ -299,15 +262,30 @@ class Combinator extends CombinatorBase {
         debug.stack(node);
       }
     });
-
     this.levelDown();
-
     emitter.emitln('}', this.level);
+
+    // save class emit result
+    outputParts['class'] = emitter.output;
+    emitter = new Emitter();
+    this.emitInclude(emitter);
+
+    // save include emit result
+    outputParts['include'] = emitter.output;
+
+    // emit total
     if (typeof this.config.output === 'undefined' || this.config.output === true) {
-      this.emitInclude(globalEmitter);
-      globalEmitter.emit(emitter.output);
-      globalEmitter.save();
+      let emitter = new Emitter(this.config);
+      emitter.emit(outputParts.header);
+      emitter.emit(outputParts.include);
+      emitter.emit(outputParts.class);
+      if (!this.config.filename) {
+        debug.stack(object);
+      }
+      emitter.save();
     }
+
+    return emitter;
   }
 
   emitValidate(emitter, notes) {
@@ -664,7 +642,7 @@ class Combinator extends CombinatorBase {
     this.includeList.forEach(include => {
       const importClass = include.import.split('\\').filter(str => str.length > 0).join('\\');
       if (include.alias) {
-        emitter.emitln(`use ${importClass} as ${include.alias};`);
+        emitter.emitln(`use ${importClass} as ${include.alias.split('->').join('')};`);
       } else {
         emitter.emitln(`use ${importClass};`);
       }

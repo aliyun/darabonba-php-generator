@@ -5,6 +5,10 @@ module.exports = {
   ext: '.tea',
   resolvePathByPackage: false,
   keywords: [],
+  typeMap: {},
+  symbolMap: {},
+  modifyOrder: [],
+  exceptionMap: {},
   model: {
     include: [],
     constructor: {

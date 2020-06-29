@@ -12,17 +12,31 @@ const {
   AnnotationItem
 } = require('./items');
 
-const { _upperFirst, _lowerFirst } = require('../../lib/helper.js');
+const {
+  _config,
+  _upperFirst,
+  _lowerFirst,
+} = require('../../lib/helper.js');
 
 class BaseConbinator {
-  constructor(langConfig = {}) {
+  constructor(config = {}, imports = {}) {
     this.level = 0;
     this.eol = '';
 
     this.includeList = [];
     this.includeModelList = [];
     this.includeSet = [];
-    this.config = langConfig;
+
+    this.config = config;
+    this.imports = imports;
+
+    this.requirePackage = imports.requirePackage;
+    this.thirdPackageNamespace = imports.thirdPackageNamespace;
+    this.thirdPackageClient = imports.thirdPackageClient;
+    this.thirdPackageClientAlias = imports.thirdPackageClientAlias;
+    this.thirdPackageModel = imports.thirdPackageModel;
+
+    _config(this.config);
   }
 
   coreClass(objName) {
@@ -106,6 +120,7 @@ class BaseConbinator {
       debug.stack(`unimpelemented ${systemFunc}(emitter, gram){} method\n`, gram);
     }
   }
+
   grammer(emit, gram, eol = true, newLine = true) {
     if (gram instanceof AnnotationItem) {
       this.emitAnnotation(emit, gram);
