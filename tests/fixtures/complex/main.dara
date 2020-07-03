@@ -112,13 +112,26 @@ async function TemplateString(): string {
   return `/${@protocol}`;
 }
 
+async function isError(e: $Error): void {
+  
+}
+
 async function emptyModel(): void {
   new ComplexRequest;
   new ComplexRequest.header;
   var status = '';
   try {
     status = 'failed';
+    throw {
+      name = 'errorName',
+      message = 'some error',
+      code = 400
+    }
   } catch(e) {
+    e.name;
+    e.message;
+    e.code;
+    isError(e);
     status = 'catch exception';
   } finally {
     status = 'ok';

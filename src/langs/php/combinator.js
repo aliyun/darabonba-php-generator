@@ -992,10 +992,18 @@ class Combinator extends CombinatorBase {
   }
 
   grammerCatch(emitter, gram) {
+    let emitterVar = new Emitter();
+    this.grammerVar(emitterVar, gram.exceptions.exceptionVar);
+    let varName = emitterVar.output;
     emitter.emit(`catch (${_exception(gram.exceptions.type)} `, this.level);
-    this.grammerVar(emitter, gram.exceptions.exceptionVar);
+    emitter.emit(varName);
     emitter.emitln(') {');
     this.levelUp();
+    emitter.emitln(`if (!(${varName} instanceof ${this.addInclude('$Error')})) {`, this.level);
+    this.levelUp();
+    emitter.emitln(`${varName} = new ${this.addInclude('$Error')}([], ${varName}->message, ${varName}->code, ${varName});`, this.level);
+    this.levelDown();
+    emitter.emitln('}', this.level);
     gram.body.forEach(childGram => {
       this.grammer(emitter, childGram);
     });

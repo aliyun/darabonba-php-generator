@@ -724,7 +724,8 @@ class ClientResolver extends BaseResolver {
       'super',
       'map_access',
       'boolean',
-      'not'
+      'not',
+      'property_access'
     ];
     if (renderByGrammerValueTypes.indexOf(stmt.type) > -1) {
       node = this.renderGrammerValue(null, stmt);
