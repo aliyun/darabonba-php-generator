@@ -75,6 +75,9 @@ class Client extends SourceClient {
                 $this->Complex3(null);
             }
             catch (\Exception $e) {
+                if (!($e instanceof TeaError)) {
+                    $e = new TeaError([], $e->message, $e->code, $e);
+                }
                 if (Tea::isRetryable($e)) {
                     $_lastException = $e;
                     continue;
@@ -195,6 +198,14 @@ class Client extends SourceClient {
     }
 
     /**
+     * @param TeaError $e
+     * @return void
+     * @throws \Exception
+     */
+    public function isError(TeaError $e){
+    }
+
+    /**
      * @return void
      * @throws \Exception
      */
@@ -204,8 +215,20 @@ class Client extends SourceClient {
         $status = "";
         try {
             $status = "failed";
+            throw new TeaError([
+                "name" => "errorName",
+                "message" => "some error",
+                "code" => 400
+                ]);
         }
         catch (\Exception $e) {
+            if (!($e instanceof TeaError)) {
+                $e = new TeaError([], $e->message, $e->code, $e);
+            }
+            $e->name;
+            $e->message;
+            $e->code;
+            $this->isError($e);
             $status = "catch exception";
         }
         finally {

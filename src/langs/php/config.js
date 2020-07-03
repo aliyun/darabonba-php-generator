@@ -85,6 +85,7 @@ module.exports = {
     response: { name: '\\AlibabaCloud\\Tea\\Response' },
     request: { name: '\\AlibabaCloud\\Tea\\Request' },
     exception: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaError' },
+    error: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaError' },
     exceptionUnretryable: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaUnableRetryError' },
   }
 };
