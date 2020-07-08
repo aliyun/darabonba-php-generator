@@ -9,7 +9,8 @@ const {
 
   Behavior,
   PropItem,
-  AnnotationItem
+  AnnotationItem,
+  ObjectItem,
 } = require('./items');
 
 const {
@@ -37,6 +38,20 @@ class BaseConbinator {
     this.thirdPackageModel = imports.thirdPackageModel;
 
     _config(this.config);
+  }
+
+  combine(objects = []) {
+    if (objects.some(Object => !(Object instanceof ObjectItem))) {
+      throw new Error('Only supported ObjectItem.');
+    }
+  }
+
+  combineOutputParts(config, outputParts) {
+    const globalEmitter = new Emitter(config);
+    globalEmitter.emit(outputParts.head);
+    globalEmitter.emit(outputParts.body);
+    globalEmitter.emit(outputParts.foot);
+    globalEmitter.save();
   }
 
   coreClass(objName) {

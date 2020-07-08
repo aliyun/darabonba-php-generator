@@ -397,8 +397,10 @@ class ConstructItem extends Item {
 }
 
 class ObjectItem extends Item {
-  constructor() {
+  constructor(type) {
     super();
+    assert.equal(true, type === 'client' || type === 'model');
+    this.type = type;            // client | model
     this.modify = [];            // Modify
     this.name = '';              // object name
     this.extends = [];           // object extends
@@ -406,6 +408,8 @@ class ObjectItem extends Item {
     this.annotations = [];       // AnnotationItem
     this.topAnnotation = [];     // AnnotationItem
     this.subObject = [];         // ObjectItem
+    this.includeList = [];
+    this.includeModelList = [];
   }
 
   addBodyNode(node) {

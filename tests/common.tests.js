@@ -93,7 +93,7 @@ describe('common tests', function () {
   });
 
   it('items : ObjectItem should be ok', function () {
-    const objectItem = new ObjectItem();
+    const objectItem = new ObjectItem('client');
     expect(function () {
       objectItem.addBodyNode(null);
     }).to.be.throw('Only suppoted PropItem | FuncItem | ObjectItem | AnnotationItem | ConstructItem');
@@ -231,7 +231,7 @@ describe('common tests', function () {
     const emitter = new Emitter();
 
     emitter.output = '';
-    const obj = new ObjectItem();
+    const obj = new ObjectItem('client');
     expect(function () {
       combinator.grammer(emitter, obj);
     }).to.be.throw('Unsupported');

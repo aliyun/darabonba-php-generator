@@ -122,7 +122,7 @@ static function staticFunc(): void{
   * testFunc
   * @param str description: string parameter
   * @param val description: boolean parameter
-  * @return void description for return
+  * @return description for return
   */
 static async function testFunc(str: string, val: boolean): void {
     // empty comment1

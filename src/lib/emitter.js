@@ -22,6 +22,9 @@ class Emitter {
   }
 
   indent(level) {
+    if (typeof level === 'undefined') {
+      level = 0;
+    }
     return this.config.indent.repeat(level);
   }
 

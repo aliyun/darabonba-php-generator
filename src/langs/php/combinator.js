@@ -27,6 +27,7 @@ const {
   _config,
   _symbol,
   _modify,
+  _deepClone,
   _exception,
   _upperFirst,
   _isKeywords,
@@ -160,34 +161,82 @@ class Combinator extends CombinatorBase {
     return last;
   }
 
-  combine(object) {
-    // Teafile: name (Tea Package name)
+  combine(objectArr = []) {
     if (this.config.packageInfo) {
       this.config.dir = this.config.outputDir + '/src/';
+      const packageInfo = new PackageInfo(this.config);
+      packageInfo.emit(this.config.packageInfo, this.requirePackage);
     }
-    this.config.layer = this.config.layer.split('.').map(m => {
-      return _avoidKeywords(m);
-    }).join('.');
 
-    const outputParts = {};
-    let emitter = new Emitter();
+    const [clientObjectItem] = objectArr.filter(obj => obj.type === 'client');
+    this.combineOject(clientObjectItem);
 
+    const models = objectArr.filter(obj => obj.type === 'model');
+    if (models.length > 0) {
+      const self = this;
+      models.forEach(modelObjectItem => {
+        self.combineOject(modelObjectItem);
+        if (modelObjectItem.subObject && modelObjectItem.subObject.length > 0) {
+          modelObjectItem.subObject.forEach(subModelObjectItem => {
+            self.combineOject(subModelObjectItem);
+          });
+        }
+      });
+    }
+  }
+
+  combineOject(object) {
+    let layer = '';
+    if (object.type === 'client') {
+      this.config.emitType = 'client';
+    } else {
+      layer = this.config.model.dir;
+      this.config.emitType = 'model';
+    }
+    this.includeList = object.includeList;
+    this.includeModelList = object.includeModelList;
+
+    let emitter, outputParts = { head: '', body: '', foot: '' };
+
+    /******************************** emit body ********************************/
+    emitter = new Emitter(this.config);
     if (object.name.indexOf('.') > -1) {
       // reset layer&filename if object is sub model
       let tmp = object.name.split('.');
       object.name = tmp[tmp.length - 1];
       tmp.splice(tmp.length - 1, 1);
-      this.config.layer = this.config.layer + '.' + tmp.join('.');
+      layer = layer + '.' + tmp.join('.');
     }
-    this.config.filename = object.name;
-    if (this.config.emitType === 'code' && this.config.packageInfo) {
-      const packageInfo = new PackageInfo(this.config);
-      packageInfo.emit(this.config.packageInfo, this.requirePackage);
+    this.emitClass(emitter, object);
+    outputParts.body = emitter.output;
+
+    /******************************** emit head ********************************/
+    emitter = new Emitter(this.config);
+    emitter.emitln('<?php').emitln();
+    if (object.topAnnotation.length > 0) {
+      this.emitAnnotations(emitter, object.topAnnotation);
     }
-    this.config.layer = this.config.layer.split('.').map(m => {
+
+    let appendNamespace = '';
+    if (layer) {
+      appendNamespace = '\\' + layer.split('.').map(m => {
+        return _avoidKeywords(m);
+      }).join('\\');
+    }
+    emitter.emitln(`namespace ${this.config.package.split('.').join('\\')}${appendNamespace};`).emitln();
+    this.emitInclude(emitter);
+    outputParts.head = emitter.output;
+
+    /***************************** combine output ******************************/
+    const config = _deepClone(this.config);
+    config.filename = object.name;
+    config.layer = layer.split('.').map(m => {
       return _avoidKeywords(m);
     }).join('.');
+    this.combineOutputParts(config, outputParts);
+  }
 
+  emitClass(emitter, object) {
     var parent = '';
     if (object.extends.length > 0) {
       let tmp = [];
@@ -199,27 +248,8 @@ class Combinator extends CombinatorBase {
       });
       parent = 'extends ' + tmp.join(', ') + ' ';
     }
-
-    emitter.emitln('<?php').emitln();
-    if (object.topAnnotation.length > 0) {
-      this.emitAnnotations(emitter, object.topAnnotation);
-    }
-
-    let appendNamespace = '';
-    if (this.config.layer) {
-      appendNamespace = '\\' + this.config.layer.split('.').map(m => {
-        return _avoidKeywords(m);
-      }).join('\\');
-    }
-    emitter.emitln(`namespace ${this.config.package.split('.').join('\\')}${appendNamespace};`).emitln();
-
-    // save header emit result
-    outputParts['header'] = emitter.output;
-    emitter = new Emitter();
-
-    // emit class
     let className = object.name;
-    if (this.config.emitType === 'code') {
+    if (this.config.emitType === 'client') {
       if (typeof this.config.clientName === 'undefined' || this.config.clientName === '') {
         let tmp = this.config.package.split('.');
         this.config.clientName = tmp[tmp.length - 1];
@@ -234,7 +264,6 @@ class Combinator extends CombinatorBase {
       this.config.filename = _avoidKeywords(className);
     }
     emitter.emitln(`class ${_avoidKeywords(className)} ${parent}{`, this.level);
-
     this.levelUp();
     const notes = this.resolveNotes(object.body);
     if (Object.keys(notes).length > 0) {
@@ -264,28 +293,6 @@ class Combinator extends CombinatorBase {
     });
     this.levelDown();
     emitter.emitln('}', this.level);
-
-    // save class emit result
-    outputParts['class'] = emitter.output;
-    emitter = new Emitter();
-    this.emitInclude(emitter);
-
-    // save include emit result
-    outputParts['include'] = emitter.output;
-
-    // emit total
-    if (typeof this.config.output === 'undefined' || this.config.output === true) {
-      let emitter = new Emitter(this.config);
-      emitter.emit(outputParts.header);
-      emitter.emit(outputParts.include);
-      emitter.emit(outputParts.class);
-      if (!this.config.filename) {
-        debug.stack(object);
-      }
-      emitter.save();
-    }
-
-    return emitter;
   }
 
   emitValidate(emitter, notes) {
@@ -571,8 +578,8 @@ class Combinator extends CombinatorBase {
                 tmp = tmp.slice(tagIndex + 2);
                 paramDesc[paramName] = tmp.join(' ');
               } else if (tmp[tagIndex] === '@return') {
-                if (typeof tmp[tagIndex + 2] !== 'undefined') {
-                  returnDesc = tmp.slice(tagIndex + 2).join(' ');
+                if (typeof tmp[tagIndex + 1] !== 'undefined') {
+                  returnDesc = tmp.slice(tagIndex + 1).join(' ');
                 }
               }
             } else {
@@ -639,12 +646,13 @@ class Combinator extends CombinatorBase {
   }
 
   emitInclude(emitter) {
+    let emitSet = [];
     this.includeList.forEach(include => {
       const importClass = include.import.split('\\').filter(str => str.length > 0).join('\\');
-      if (include.alias) {
-        emitter.emitln(`use ${importClass} as ${include.alias.split('->').join('')};`);
-      } else {
-        emitter.emitln(`use ${importClass};`);
+      let emitContent = include.alias ? `use ${importClass} as ${include.alias.split('->').join('')};` : `use ${importClass};`;
+      if (emitSet.indexOf(emitContent) === -1) {
+        emitter.emitln(emitContent);
+        emitSet.push(emitContent);
       }
     });
     if (this.includeList.length) {
@@ -652,10 +660,10 @@ class Combinator extends CombinatorBase {
     }
     this.includeModelList.forEach(include => {
       const importClass = include.import.split('\\').filter(str => str.length > 0).join('\\');
-      if (include.alias) {
-        emitter.emitln(`use ${importClass} as ${include.alias};`);
-      } else {
-        emitter.emitln(`use ${importClass};`);
+      let emitContent = include.alias ? `use ${importClass} as ${include.alias};` : `use ${importClass};`;
+      if (emitSet.indexOf(emitContent) === -1) {
+        emitter.emitln(emitContent);
+        emitSet.push(emitContent);
       }
     });
     if (this.includeModelList.length) {
