@@ -9,7 +9,7 @@ const ClientResolver = require('./resolver/client');
 const ModelResolver = require('./resolver/model');
 
 class Generator {
-  constructor(meta = {}, lang = '') {
+  constructor(meta = {}, lang = 'php') {
     if (!meta.outputDir) {
       throw new Error('`option.outputDir` should not empty');
     }
@@ -19,42 +19,49 @@ class Generator {
 
   visit(ast) {
     this.imports = this.resolveImports(ast);
+    const objects = [];
 
     // combine client code
-    const clientCombinator = this.getCombinator(this.config);
-    let clientResolver = new ClientResolver(ast, clientCombinator, ast);
-    const clientObjectItem = clientResolver.resolve();
-    clientCombinator.combine(clientObjectItem);
+    const clientObjectItem = this.resolve('client', ast, ast);
+    objects.push(clientObjectItem);
 
     // combine model code
     ast.moduleBody.nodes.filter((item) => {
       return item.type === 'model';
     }).forEach((model) => {
-      const modelCombinator = this.getCombinator(this.config);
       const modelName = model.modelName.lexeme;
-      const modelResolver = new ModelResolver(model, modelCombinator, ast);
-      const modelObjectItem = modelResolver.resolve();
-
+      const modelObjectItem = this.resolve('model', model, ast);
       if (ast.models) {
         Object.keys(ast.models).filter((key) => {
           return key.startsWith(modelName + '.');
         }).forEach((key) => {
           const subModel = ast.models[key];
-          const subModelCombinator = this.getCombinator(this.config);
-          const subModelResolver = new ModelResolver(subModel, subModelCombinator, ast);
-          const subModelObjectItem = subModelResolver.resolve();
-          if (this.config.model.mode === 'group') {
-            subModelObjectItem.includeList = subModelCombinator.includeList;
-            subModelObjectItem.includeModelList = subModelCombinator.includeModelList;
-            modelObjectItem.subObject.push(subModelObjectItem);
-          } else {
-            subModelCombinator.combine(subModelObjectItem);
-          }
-          return ast.models[key];
+          const subModelObjectItem = this.resolve('model', subModel, ast);
+          modelObjectItem.subObject.push(subModelObjectItem);
         });
       }
-      modelCombinator.combine(modelObjectItem);
+      objects.push(modelObjectItem);
     });
+
+    const combinator = this.getCombinator(this.config);
+    combinator.combine(objects);
+  }
+
+  resolve(type, ast, globalAST) {
+    const combinator = this.getCombinator(this.config);
+    let resolver;
+    switch (type) {
+    case 'client':
+      resolver = new ClientResolver(ast, combinator, ast);
+      break;
+    case 'model':
+      resolver = new ModelResolver(ast, combinator, globalAST);
+      break;
+    }
+    const objectItem = resolver.resolve();
+    objectItem.includeList = combinator.includeList;
+    objectItem.includeModelList = combinator.includeModelList;
+    return objectItem;
   }
 
   getCombinator(configOriginal) {
@@ -73,8 +80,8 @@ class Generator {
     const langConfig = require(`./langs/${this.lang}/config`);
 
     const config = {
-      package: 'Alibabacloud.SDK',
-      clientName: 'Client',
+      package: 'DarabonbaSDK',
+      clientName: '',
       include: [],
       parent: [],
       pkgDir: '',

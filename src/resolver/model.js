@@ -10,6 +10,7 @@ const {
 } = require('../lib/helper');
 
 const {
+  ObjectItem,
   AnnotationItem,
   PropItem,
   NoteItem,
@@ -19,7 +20,12 @@ const {
   Modify,
 } = require('../langs/common/enum');
 
-class ModelResolver extends BaseResolver{
+class ModelResolver extends BaseResolver {
+  constructor(astNode, combinator, globalAst) {
+    super(astNode, combinator, globalAst);
+    this.object = new ObjectItem('model');
+  }
+
   resolve() {
     const object = this.object;
     const combinator = this.combinator;
@@ -62,7 +68,7 @@ class ModelResolver extends BaseResolver{
       
     return object;
   }
-    
+
   initProp(nodes) {
     const object = this.object;
 
@@ -132,7 +138,7 @@ class ModelResolver extends BaseResolver{
           object.addBodyNode(c);
         });
       }
-      for (let i = 0; i < node.attrs.length; i++){
+      for (let i = 0; i < node.attrs.length; i++) {
         const attr = node.attrs[i];
         let value;
         if (typeof attr.attrValue.string !== 'undefined') {

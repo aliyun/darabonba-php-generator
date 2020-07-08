@@ -4,6 +4,7 @@ const debug = require('../lib/debug');
 const BaseResolver = require('./base');
 
 const {
+  ObjectItem,
   AnnotationItem,
   ConstructItem,
   FuncItem,
@@ -47,14 +48,18 @@ const {
 const systemPackage = ['Util'];
 
 class ClientResolver extends BaseResolver {
+  constructor(astNode, combinator, globalAst) {
+    super(astNode, combinator, globalAst);
+    this.object = new ObjectItem('client');
+  }
+
   resolve() {
     const object = this.object;
     const combinator = this.combinator;
     const config = this.config;
     const ast = this.ast;
 
-    combinator.config.emitType = 'code';
-
+    combinator.config.emitType = 'client';
     object.name = config.clientName || 'Client';
 
     // resolve props
@@ -853,12 +858,23 @@ class ClientResolver extends BaseResolver {
       }
 
       if (!hasMapAccess) {
-        node = new GrammerExpr(
-          // 此处 ast 缺少是否需要添加声明关键字的判断，在组合器中判断是否为首次声明
-          this.renderGrammerValue(null, stmt.left),
-          Symbol.assign()
-        );
-        node.right = right;
+        const left = this.renderGrammerValue(null, stmt.left);
+        let isBehavior = false;
+        if (left.type === 'call' && left.value instanceof GrammerCall && left.value.type === 'key') {
+          const keyPath = left.value.path[left.value.path.length - 1];
+          if (keyPath.type === 'map') {
+            left.value.path = left.value.path.slice(0, left.value.path.length - 1);
+            node = new BehaviorSetMapItem(left.value, keyPath.name, right);
+            isBehavior = true;
+          }
+        }
+        if (!isBehavior) {
+          node = new GrammerExpr(
+            left,
+            Symbol.assign(),
+            right
+          );
+        }
       }
     } else if (stmt.type === 'call') {
       node = this.renderGrammerValue(null, stmt).value;

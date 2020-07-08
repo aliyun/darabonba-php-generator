@@ -20,10 +20,6 @@ const lang = 'php';
 const Combinator = require(`../src/langs/${lang}/combinator.js`);
 const config = require(`../src/langs/${lang}/config.js`);
 
-describe('base resolver should be ok', function () { 
-  
-});
-
 describe('client resolver should be ok', function () {
   beforeEach(function () {
     this.sinon.stub(console, 'log');

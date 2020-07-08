@@ -9,7 +9,6 @@ const {
 const {
   AnnotationItem,
   PropItem,
-  ObjectItem
 } = require('../langs/common/items');
 
 const {
@@ -29,8 +28,6 @@ class BaseResolver {
 
     this.comments = globalAst.comments ? globalAst.comments : {};
     this.commentsSet = [];
-
-    this.object = new ObjectItem();
   }
 
   resolveAnnotations(annotations, belong) {

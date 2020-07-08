@@ -96,6 +96,31 @@ function _exception(str) {
   return str;
 }
 
+function _underScoreCase(str) {
+  if (!str) {
+    return '';
+  }
+  let res = '';
+  let tmp = '';
+  for (const c of str) {
+    if (/[A-Z|0-9]/.test(c)) {
+      tmp += c;
+    } else {
+      if (tmp.length > 0) {
+        res += res === '' ? tmp.toLowerCase() : '_' + tmp.toLowerCase();
+        tmp = '';
+      }
+      res += c;
+    }
+  }
+  if (tmp.length > 0) {
+    res += '_' + tmp.toLowerCase();
+  }
+  res = res.replace(/-/g, '_');
+  return res;
+}
+
+
 module.exports = {
   _config,
   _upperFirst,
@@ -110,5 +135,6 @@ module.exports = {
   _isKeywords,
   _modify,
   _symbol,
-  _exception
+  _exception,
+  _underScoreCase
 };
