@@ -87,7 +87,7 @@ class Client {
             }
             catch (\Exception $e) {
                 if (!($e instanceof TeaError)) {
-                    $e = new TeaError([], $e->message, $e->code, $e);
+                    $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }
                 if (Tea::isRetryable($e)) {
                     $_lastException = $e;
@@ -146,7 +146,7 @@ class Client {
             }
             catch (\Exception $e) {
                 if (!($e instanceof TeaError)) {
-                    $e = new TeaError([], $e->message, $e->code, $e);
+                    $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }
                 if (Tea::isRetryable($e)) {
                     $_lastException = $e;

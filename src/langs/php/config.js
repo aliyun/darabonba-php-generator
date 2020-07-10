@@ -66,7 +66,7 @@ module.exports = {
     include: [],
   },
   client: {
-    filename: 'Client',
+    name: 'Client',
     include: []
   },
   tea: {

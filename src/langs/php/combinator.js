@@ -187,11 +187,8 @@ class Combinator extends CombinatorBase {
 
   combineOject(object) {
     let layer = '';
-    if (object.type === 'client') {
-      this.config.emitType = 'client';
-    } else {
+    if (object.type === 'model') {
       layer = this.config.model.dir;
-      this.config.emitType = 'model';
     }
     this.includeList = object.includeList;
     this.includeModelList = object.includeModelList;
@@ -249,12 +246,8 @@ class Combinator extends CombinatorBase {
       parent = 'extends ' + tmp.join(', ') + ' ';
     }
     let className = object.name;
-    if (this.config.emitType === 'client') {
-      if (typeof this.config.clientName === 'undefined' || this.config.clientName === '') {
-        let tmp = this.config.package.split('.');
-        this.config.clientName = tmp[tmp.length - 1];
-      }
-      className = this.config.clientName;
+    if (object.type === 'client') {
+      className = this.config.client.name;
       this.config.filename = className;
     }
     if (object.annotations.length > 0) {
@@ -270,7 +263,7 @@ class Combinator extends CombinatorBase {
       this.emitNotes(emitter, notes);
     }
 
-    if (this.config.emitType === 'model') {
+    if (object.type === 'model') {
       this.emitValidate(emitter, notes);
       let props = object.body.filter(node => node instanceof PropItem);
       this.emitToMap(emitter, props, notes);
@@ -477,21 +470,16 @@ class Combinator extends CombinatorBase {
     }
     if (construct.params.length > 0) {
       construct.params.forEach(param => {
-        let t = param.type ? param.type + ' ' : '';
         if (param.value !== null && param.value !== 'null') {
-          constructParams.push(`${t}$${param.key} = ${param.value}`);
+          constructParams.push(`$${param.key} = ${param.value}`);
         } else {
-          constructParams.push(`${t}$${param.key}`);
+          constructParams.push(`$${param.key}`);
         }
-        // parentConstructParams.push(`$${param.key}->toMap()`);
       });
       emitter.emit('public function __construct(', this.level);
       emitter.emit(constructParams.join(', '));
       emitter.emitln('){');
       this.levelUp();
-      // if (parent !== '') {
-      //   emitter.emitln(`parent::__construct(${parentConstructParams.join(', ')});`, this.level);
-      // }
 
       construct.body.forEach(gram => {
         this.grammer(emitter, gram);
@@ -533,16 +521,7 @@ class Combinator extends CombinatorBase {
     if (func.params.length > 0) {
       let params = [];
       func.params.forEach(p => {
-        let hadEmit = false;
-        if (p.type) {
-          if (!_isBasicType(p.type)) {
-            params.push(`${p.type} $${p.key}`);
-            hadEmit = true;
-          }
-        }
-        if (hadEmit === false) {
-          params.push(`$${p.key}`);
-        }
+        params.push(`$${p.key}`);
       });
       emitter.emit(params.join(', '));
     }
@@ -1009,7 +988,7 @@ class Combinator extends CombinatorBase {
     this.levelUp();
     emitter.emitln(`if (!(${varName} instanceof ${this.addInclude('$Error')})) {`, this.level);
     this.levelUp();
-    emitter.emitln(`${varName} = new ${this.addInclude('$Error')}([], ${varName}->message, ${varName}->code, ${varName});`, this.level);
+    emitter.emitln(`${varName} = new ${this.addInclude('$Error')}([], ${varName}->getMessage(), ${varName}->getCode(), ${varName});`, this.level);
     this.levelDown();
     emitter.emitln('}', this.level);
     gram.body.forEach(childGram => {
