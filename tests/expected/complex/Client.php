@@ -23,7 +23,7 @@ class Client extends SourceClient {
      * @return RuntimeObject
      * @throws \Exception
      */
-    public function complex1(ComplexRequest $request, Source $client){
+    public function complex1($request, $client){
         $request->validate();
         $_runtime = [
             "timeouted" => "retry"
@@ -76,7 +76,7 @@ class Client extends SourceClient {
             }
             catch (\Exception $e) {
                 if (!($e instanceof TeaError)) {
-                    $e = new TeaError([], $e->message, $e->code, $e);
+                    $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }
                 if (Tea::isRetryable($e)) {
                     $_lastException = $e;
@@ -95,7 +95,7 @@ class Client extends SourceClient {
      * @return object|array
      * @throws \Exception
      */
-    public function Complex2(ComplexRequest $request, array $str, $val){
+    public function Complex2($request, $str, $val){
         $request->validate();
         $_request = new Request();
         $name = "complex";
@@ -120,7 +120,7 @@ class Client extends SourceClient {
      * @return ComplexRequest
      * @throws \Exception
      */
-    public function Complex3(ComplexRequest $request){
+    public function Complex3($request){
         $request->validate();
         $_request = new Request();
         $name = "complex";
@@ -155,7 +155,7 @@ class Client extends SourceClient {
      * @return array
      * @throws \Exception
      */
-    public function hello($request, array $strs){
+    public function hello($request, $strs){
         return self::array1();
     }
 
@@ -167,7 +167,7 @@ class Client extends SourceClient {
      * @return \Source\Models\Request
      * @throws \Exception
      */
-    public static function print_(Request $reqeust, array $reqs, Response $response, $val){
+    public static function print_($reqeust, $reqs, $response, $val){
     }
 
     /**
@@ -202,7 +202,7 @@ class Client extends SourceClient {
      * @return void
      * @throws \Exception
      */
-    public function isError(TeaError $e){
+    public function isError($e){
     }
 
     /**
@@ -223,7 +223,7 @@ class Client extends SourceClient {
         }
         catch (\Exception $e) {
             if (!($e instanceof TeaError)) {
-                $e = new TeaError([], $e->message, $e->code, $e);
+                $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
             }
             $e->name;
             $e->message;

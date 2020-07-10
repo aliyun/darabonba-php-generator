@@ -13,7 +13,7 @@ class Client {
 
     protected $_str;
 
-    public function __construct($id, string $str){
+    public function __construct($id, $str){
         $this->_id = $id;
         $this->_str = $str;
     }
@@ -23,7 +23,7 @@ class Client {
      * @return void
      * @throws \Exception
      */
-    public static function Sample(Source $client){
+    public static function Sample($client){
         $runtime = new RuntimeObject([]);
         $request = new Request([
             "accesskey" => "accesskey",

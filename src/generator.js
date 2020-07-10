@@ -19,6 +19,13 @@ class Generator {
 
   visit(ast) {
     this.imports = this.resolveImports(ast);
+    if (this.config.clientName) {
+      this.config.client.name = this.config.clientName;
+    }
+    if (this.config.modelDirName) {
+      this.config.model.dir = this.config.modelDirName;
+    }
+
     const objects = [];
 
     // combine client code
@@ -81,7 +88,6 @@ class Generator {
 
     const config = {
       package: 'DarabonbaSDK',
-      clientName: '',
       include: [],
       parent: [],
       pkgDir: '',
@@ -136,14 +142,14 @@ class Generator {
           packageName = daraMeta[this.lang].package ? daraMeta[this.lang].package : daraMeta.name;
           clientName = daraMeta[this.lang].clientName
             ? daraMeta[this.lang].clientName
-            : 'Client';
+            : this.config.client.name;
           modelDir = daraMeta[this.lang].modelDirName
             ? daraMeta[this.lang].modelDirName
-            : 'Models';
+            : this.config.model.dir;
         } else {
           packageName = daraMeta.name;
-          clientName = 'Client';
-          modelDir = 'Models';
+          clientName = this.config.client.name;
+          modelDir = this.config.model.dir;
         }
 
         // resolve third package namespace
