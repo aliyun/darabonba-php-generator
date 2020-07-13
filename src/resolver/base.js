@@ -3,20 +3,8 @@
 const debug = require('../lib/debug');
 
 const {
-  _isBasicType
-} = require('../lib/helper');
-
-const {
   AnnotationItem,
-  PropItem,
 } = require('../langs/common/items');
-
-const {
-  //   Symbol,
-  Modify,
-  //   Exceptions,
-  //   Types
-} = require('../langs/common/enum');
 
 const DSL = require('@darabonba/parser');
 
@@ -129,47 +117,6 @@ class BaseResolver {
     if (annotation && annotation.value) {
       this.object.annotations.push(this.resolveAnnotation(annotation, this.object.index));
     }
-  }
-
-  resolveProps(ast) {
-    this.comments = ast.comments;
-
-    ast.moduleBody.nodes.filter((item) => {
-      return item.type === 'type';
-    }).forEach(item => {
-      const prop = new PropItem();
-      prop.name = item.vid.lexeme.replace('@', '_');
-      const type = item.value.lexeme ? item.value.lexeme : item.value.type;
-      prop.type = type;
-      if (type === 'array') {
-        prop.itemType = item.value.subType;
-        if (!_isBasicType(item.value.subType.lexeme)) {
-          this.combinator.addModelInclude(item.value.subType.lexeme);
-        }
-      } else {
-        if (!_isBasicType(type)) {
-          if (item.value.idType && item.value.idType === 'module') {
-            this.combinator.addInclude(type);
-          } else if (item.value && item.value.returnType) {
-            if (!_isBasicType(item.value.returnType.lexeme)) {
-              this.combinator.addModelInclude(type);
-            }
-          } else {
-            debug.stack(item);
-          }
-        }
-      }
-      prop.addModify(Modify.protected());
-      if (item.tokenRange) {
-        let comments = this.getFrontComments(item.tokenRange[0]);
-        if (comments.length > 0) {
-          comments.forEach(c => {
-            this.object.addBodyNode(this.resolveAnnotation(c, this.object.index));
-          });
-        }
-      }
-      this.object.addBodyNode(prop);
-    });
   }
 }
 

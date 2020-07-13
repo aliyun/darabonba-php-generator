@@ -47,6 +47,7 @@ class Client {
      * testAPI comment two
      * @return void
      * @throws \Exception
+     * @throws TeaUnableRetryError
      */
     public function testAPI(){
         $_runtime = [
@@ -103,6 +104,7 @@ class Client {
      * testAPI2 comment
      * @return void
      * @throws \Exception
+     * @throws TeaUnableRetryError
      */
     public function testAPI2(){
         $_runtime = [
@@ -160,7 +162,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function staticFunc(){
         $a = [
@@ -173,7 +174,6 @@ class Client {
      * @param string $str description: string parameter
      * @param bool $val description: boolean parameter
      * @return void description for return
-     * @throws \Exception
      */
     public static function testFunc($str, $val){
         // empty comment1

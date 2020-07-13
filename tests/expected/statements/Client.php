@@ -12,7 +12,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public function hello(){
         $_request = new Request();
@@ -41,7 +40,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function helloIf(){
         if (true) {
@@ -56,7 +54,7 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws TeaError
      */
     public static function helloThrow(){
         throw new TeaError([]);
@@ -64,7 +62,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function helloForBreak(){
         foreach($item as []){
@@ -74,7 +71,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function helloWhile(){
         while (true) {
@@ -84,7 +80,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function helloDeclare(){
         $hello = "world";

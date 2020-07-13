@@ -15,5 +15,6 @@ class Client extends SourceClient {
             ];
         $_endpointMap["ap-northeast-1"];
         $_endpointMap["ap-northeast-1"] = "";
+        $_endpointMap["test"] = "test";
     }
 }

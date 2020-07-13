@@ -22,6 +22,7 @@ class Client extends SourceClient {
      * @param Source $client
      * @return RuntimeObject
      * @throws \Exception
+     * @throws TeaUnableRetryError
      */
     public function complex1($request, $client){
         $request->validate();
@@ -93,7 +94,6 @@ class Client extends SourceClient {
      * @param array $str
      * @param array $val
      * @return object|array
-     * @throws \Exception
      */
     public function Complex2($request, $str, $val){
         $request->validate();
@@ -118,7 +118,6 @@ class Client extends SourceClient {
     /**
      * @param ComplexRequest $request
      * @return ComplexRequest
-     * @throws \Exception
      */
     public function Complex3($request){
         $request->validate();
@@ -153,7 +152,6 @@ class Client extends SourceClient {
      * @param object $request
      * @param array $strs
      * @return array
-     * @throws \Exception
      */
     public function hello($request, $strs){
         return self::array1();
@@ -165,7 +163,6 @@ class Client extends SourceClient {
      * @param Response $response
      * @param array $val
      * @return \Source\Models\Request
-     * @throws \Exception
      */
     public static function print_($reqeust, $reqs, $response, $val){
     }
@@ -173,7 +170,6 @@ class Client extends SourceClient {
     /**
      * @param object $req
      * @return array
-     * @throws \Exception
      */
     public static function array0($req){
         return [];
@@ -181,7 +177,6 @@ class Client extends SourceClient {
 
     /**
      * @return array
-     * @throws \Exception
      */
     public static function array1(){
         return [
@@ -191,7 +186,6 @@ class Client extends SourceClient {
 
     /**
      * @return string
-     * @throws \Exception
      */
     public function TemplateString(){
         return "/" . $this->_protocol . "";
@@ -200,14 +194,13 @@ class Client extends SourceClient {
     /**
      * @param TeaError $e
      * @return void
-     * @throws \Exception
      */
     public function isError($e){
     }
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws TeaError
      */
     public function emptyModel(){
         new ComplexRequest();

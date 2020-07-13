@@ -28,7 +28,7 @@ const PackageInfo = require('../src/langs/common/package_info');
 const Combinator = require('../src/langs/common/combinator');
 const Emitter = require('../src/lib/emitter');
 
-describe('common tests', function () {
+describe('common : enum should be ok', function () {
   beforeEach(function () {
     this.sinon.stub(console, 'log');
   });
@@ -52,6 +52,12 @@ describe('common tests', function () {
     expect(Modify.final()).to.be.eql('FINAL');
     expect(Modify.abstract()).to.be.eql('ABSTRACT');
   });
+});
+
+describe('common : counter should be ok', function () {
+  beforeEach(function () {
+    this.sinon.stub(console, 'log');
+  });
 
   it('counter should be ok', function () {
     const counter = new Counter(-2);
@@ -60,6 +66,12 @@ describe('common tests', function () {
     expect(counter.index).to.be.eql(18);
     counter.once();
     expect(counter.index).to.be.eql(19);
+  });
+});
+
+describe('common : items should be ok', function () {
+  beforeEach(function () {
+    this.sinon.stub(console, 'log');
   });
 
   it('items : Item.getItemByIndex&getParent should be ok', function () {
@@ -99,6 +111,12 @@ describe('common tests', function () {
     }).to.be.throw('Only suppoted PropItem | FuncItem | ObjectItem | AnnotationItem | ConstructItem');
     objectItem.addModify(Modify.private());
     expect(objectItem.modify.indexOf('PRIVATE') !== -1).to.be.true;
+  });
+});
+
+describe('package_info should be ok', function () {
+  beforeEach(function () {
+    this.sinon.stub(console, 'log');
   });
 
   it('package_info : render should be ok', function () {
@@ -155,8 +173,21 @@ describe('common tests', function () {
     expect(packageInfo.resolveOutputDir({ outputDir: 'output/' }, './')).to.be.eql('/tmp/output/');
     mm.restore();
   });
+});
 
-  it('combinator : coreClass should be ok', function () {
+describe('combinator should be ok', function () {
+  beforeEach(function () {
+    this.sinon.stub(console, 'log');
+  });
+
+  it('combine should be ok', function () {
+    const combinator = new Combinator({ tea: {} });
+    expect(function () {
+      combinator.combine([new ObjectItem('client'), 'not ObjectItem']);
+    }).to.be.throw('Only supported ObjectItem.');
+  });
+
+  it('coreClass should be ok', function () {
     const combinator = new Combinator({ tea: {} });
     expect(function () {
       combinator.coreClass('test');

@@ -13,7 +13,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public function hello(){
         $_request = new Request();
@@ -30,6 +29,7 @@ class Client {
     /**
      * @return void
      * @throws \Exception
+     * @throws TeaUnableRetryError
      */
     public function helloRuntime(){
         $_runtime = [];

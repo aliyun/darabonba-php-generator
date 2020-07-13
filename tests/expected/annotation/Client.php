@@ -23,6 +23,7 @@ class Client {
      * testAPI
      * @return void
      * @throws \Exception
+     * @throws TeaUnableRetryError
      */
     public function testAPI(){
         $_runtime = [];
@@ -61,7 +62,6 @@ class Client {
     /**
      * testFunc
      * @return void
-     * @throws \Exception
      */
     public static function testFunc(){
     }

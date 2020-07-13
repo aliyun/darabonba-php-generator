@@ -6,6 +6,10 @@ type @str = string;
 init(id: [ string ], str: string) {
     @id = id;
     @str = str;
+    throw {
+        code = 'SomeError',
+        messge = 'ErrorMessage'
+    };
 }
 
 static function Sample(client: Source): void {

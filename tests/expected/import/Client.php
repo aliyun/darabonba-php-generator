@@ -3,6 +3,7 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
+use AlibabaCloud\Tea\Exception\TeaError;
 use Source\SourceClient;
 
 use Source\Models\RuntimeObject;
@@ -16,12 +17,15 @@ class Client {
     public function __construct($id, $str){
         $this->_id = $id;
         $this->_str = $str;
+        throw new TeaError([
+            "code" => "SomeError",
+            "messge" => "ErrorMessage"
+            ]);
     }
 
     /**
      * @param Source $client
      * @return void
-     * @throws \Exception
      */
     public static function Sample($client){
         $runtime = new RuntimeObject([]);
