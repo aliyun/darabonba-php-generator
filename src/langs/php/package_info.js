@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const BasePackageInfo = require('../common/package_info');
 
+const { _deepClone } = require('../../lib/helper');
+
 const OPTION_LOCAL = 1;   // use local tmpl file to render content
 const OPTION_SOURCE = 2;  // config by Darafile.{lang}.packageInfo
 const OPTION_RENDER = 4;  // render content from tmpl
@@ -22,14 +24,24 @@ const files = {
 
 class PackageInfo extends BasePackageInfo {
   emit(packageInfo, requirePackage) {
-    let outputDir = this.resolveOutputDir(packageInfo);
+    const config = _deepClone(this.config);
+    let outputDir = this.resolveOutputDir(packageInfo, '');
     this.checkParams(packageInfo, ['name', 'desc', 'github']);
     const params = {
       name: packageInfo.name,
       desc: packageInfo.desc,
       github: packageInfo.github,
-      namespace: this.config.package.split('.').join('\\\\')
+      namespace: config.package.split('.').join('\\\\')
     };
+    if (config.withTest) {
+      if (!fs.existsSync(path.join(config.dir, 'tests'))) {
+        fs.mkdirSync(path.join(config.dir, 'tests'), { recursive: true });
+      }
+      fs.writeFileSync(
+        path.join(config.dir, 'tests', 'bootstrap.php'),
+        fs.readFileSync(path.join(__dirname, './files/bootstrap.php.tmpl'), 'utf-8')
+      );
+    }
     Object.keys(files).forEach(filename => {
       let content = '';
       let optional = files[filename];
@@ -37,7 +49,7 @@ class PackageInfo extends BasePackageInfo {
         content = fs.readFileSync(path.join(outputDir, filename), 'utf-8');
       } else if (optional & OPTION_SOURCE && packageInfo.files && packageInfo.files[filename]) {
         let filepath = path.isAbsolute(packageInfo.files[filename]) ?
-          packageInfo.files[filename] : path.join(this.config.pkgDir, packageInfo.files[filename]);
+          packageInfo.files[filename] : path.join(config.pkgDir, packageInfo.files[filename]);
         if (!fs.existsSync(filepath)) {
           return;
         }
@@ -58,9 +70,9 @@ class PackageInfo extends BasePackageInfo {
               json.require[p] = v;
             });
           }
-          if (this.config.maintainers) {
+          if (config.maintainers) {
             json.authors = [];
-            this.config.maintainers.forEach(maintainer => {
+            config.maintainers.forEach(maintainer => {
               let name = maintainer.name ? maintainer.name : '';
               let email = maintainer.email ? maintainer.email : '';
               json.authors.push({ name: name, email: email });

@@ -9,7 +9,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function hello(){
         return null;
@@ -17,7 +16,6 @@ class Client {
 
     /**
      * @return array
-     * @throws \Exception
      */
     public static function helloMap(){
         $m = [];
@@ -29,7 +27,6 @@ class Client {
 
     /**
      * @return array
-     * @throws \Exception
      */
     public static function helloArrayMap(){
         return [
@@ -43,7 +40,6 @@ class Client {
      * @param string $a
      * @param string $b
      * @return void
-     * @throws \Exception
      */
     public static function helloParams($a, $b){
     }
@@ -51,7 +47,6 @@ class Client {
     /**
      * interface mode
      * @return void
-     * @throws \Exception
      */
     public static function helloInterface(){
         throw new \Exception('Un-implemented');

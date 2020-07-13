@@ -10,7 +10,6 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
      */
     public static function emptyModel(){
         ImportClient::test();

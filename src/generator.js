@@ -116,6 +116,8 @@ class Generator {
     let thirdPackageClient = {};
     let thirdPackageClientAlias = {};
 
+    const selfClientName = this.config.clientName ? this.config.clientName : this.config.client.name;
+
     if (imports.length > 0) {
       const lockPath = path.join(this.config.pkgDir, '.libraries.json');
       const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
@@ -163,7 +165,7 @@ class Generator {
         // resolve third package model client name
         if (
           clientNameSet.indexOf(clientName.toLowerCase()) > -1 ||
-          clientName.toLowerCase() === this.config.clientName.toLowerCase()
+          clientName.toLowerCase() === selfClientName.toLowerCase()
         ) {
           const alias = packageName.split('.').join('') + '->' + clientName.split('.').join('');
           thirdPackageClientAlias[aliasId] = alias;

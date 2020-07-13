@@ -8,12 +8,13 @@ const PackageInfo = require('./package_info');
 
 const {
   Symbol,
-  Exceptions
+  Modify
 } = require('../common/enum');
 
 const {
   AnnotationItem,
   ConstructItem,
+  ObjectItem,
   FuncItem,
   PropItem,
 
@@ -163,7 +164,6 @@ class Combinator extends CombinatorBase {
 
   combine(objectArr = []) {
     if (this.config.packageInfo) {
-      this.config.dir = this.config.outputDir + '/src/';
       const packageInfo = new PackageInfo(this.config);
       packageInfo.emit(this.config.packageInfo, this.requirePackage);
     }
@@ -183,9 +183,30 @@ class Combinator extends CombinatorBase {
         }
       });
     }
+
+    if (this.config.withTest) {
+      const object = new ObjectItem('test');
+      object.name = `Tests.${clientObjectItem.name}Test`;
+      object.extends = ['TestCase'];
+      object.includeList = [{ import: 'PHPUnit\\Framework\\TestCase', alias: null }];
+      clientObjectItem.body.forEach(node => {
+        if (node instanceof FuncItem) {
+          const func = new FuncItem();
+          func.name = `test${_upperFirst(node.name)}`;
+          func.modify.push(Modify.public());
+          object.addBodyNode(func);
+        }
+      });
+      const outputParts = this.combineOject(object, false);
+      const config = _deepClone(this.config);
+      config.filename = `${clientObjectItem.name}Test`;
+      config.dir = `${config.dir}/tests/`;
+      config.layer = '';
+      this.combineOutputParts(config, outputParts);
+    }
   }
 
-  combineOject(object) {
+  combineOject(object, output = true) {
     let layer = '';
     if (object.type === 'model') {
       layer = this.config.model.dir;
@@ -202,7 +223,7 @@ class Combinator extends CombinatorBase {
       let tmp = object.name.split('.');
       object.name = tmp[tmp.length - 1];
       tmp.splice(tmp.length - 1, 1);
-      layer = layer + '.' + tmp.join('.');
+      layer = layer ? layer + '.' + tmp.join('.') : tmp.join('.');
     }
     this.emitClass(emitter, object);
     outputParts.body = emitter.output;
@@ -225,12 +246,18 @@ class Combinator extends CombinatorBase {
     outputParts.head = emitter.output;
 
     /***************************** combine output ******************************/
-    const config = _deepClone(this.config);
-    config.filename = object.name;
-    config.layer = layer.split('.').map(m => {
-      return _avoidKeywords(m);
-    }).join('.');
-    this.combineOutputParts(config, outputParts);
+    if (output) {
+      const config = _deepClone(this.config);
+      config.filename = object.name;
+      config.layer = layer.split('.').map(m => {
+        return _avoidKeywords(m);
+      }).join('.');
+      if (config.packageInfo) {
+        config.dir = config.outputDir + '/src/';
+      }
+      this.combineOutputParts(config, outputParts);
+    }
+    return outputParts;
   }
 
   emitClass(emitter, object) {
@@ -596,8 +623,11 @@ class Combinator extends CombinatorBase {
         const desc = returnDesc ? ' ' + returnDesc : '';
         emitter.emitln(` * @return ${t}${desc}`, this.level);
       }
-
-      emitter.emitln(' * @throws ' + _exception(_exception(Exceptions.base())), this.level);
+      if (func.throws.length) {
+        func.throws.forEach(exception => { 
+          emitter.emitln(' * @throws ' + _exception(_exception(exception)), this.level);
+        });
+      }
     }
     emitter.emitln(' */', this.level);
   }

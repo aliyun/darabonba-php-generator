@@ -378,6 +378,7 @@ class ConstructItem extends Item {
     this.params = params;
     this.body = body;
     this.annotations = annotations;
+    this.throws = [];
   }
 
   addParamNode(node) {
@@ -399,7 +400,7 @@ class ConstructItem extends Item {
 class ObjectItem extends Item {
   constructor(type) {
     super();
-    assert.equal(true, type === 'client' || type === 'model');
+    assert.equal(true, type === 'client' || type === 'model' || type === 'test');
     this.type = type;            // client | model
     this.modify = [];            // Modify
     this.name = '';              // object name

@@ -4,10 +4,11 @@ const debug = require('../lib/debug');
 const BaseResolver = require('./base');
 
 const {
-  ObjectItem,
   AnnotationItem,
   ConstructItem,
+  ObjectItem,
   FuncItem,
+  PropItem,
 
   GrammerVar,
   GrammerCall,
@@ -51,6 +52,7 @@ class ClientResolver extends BaseResolver {
   constructor(astNode, combinator, globalAst) {
     super(astNode, combinator, globalAst);
     this.object = new ObjectItem('client');
+    this.currThrows = {};
   }
 
   resolve() {
@@ -117,11 +119,53 @@ class ClientResolver extends BaseResolver {
     return object;
   }
 
+  resolveProps(ast) {
+    this.comments = ast.comments;
+
+    ast.moduleBody.nodes.filter((item) => {
+      return item.type === 'type';
+    }).forEach(item => {
+      const prop = new PropItem();
+      prop.name = item.vid.lexeme.replace('@', '_');
+      const type = item.value.lexeme ? item.value.lexeme : item.value.type;
+      prop.type = type;
+      if (type === 'array') {
+        prop.itemType = item.value.subType;
+        if (!_isBasicType(item.value.subType.lexeme)) {
+          this.combinator.addModelInclude(item.value.subType.lexeme);
+        }
+      } else {
+        if (!_isBasicType(type)) {
+          if (item.value.idType && item.value.idType === 'module') {
+            this.combinator.addInclude(type);
+          } else if (item.value && item.value.returnType) {
+            if (!_isBasicType(item.value.returnType.lexeme)) {
+              this.combinator.addModelInclude(type);
+            }
+          } else {
+            debug.stack(item);
+          }
+        }
+      }
+      prop.addModify(Modify.protected());
+      if (item.tokenRange) {
+        let comments = this.getFrontComments(item.tokenRange[0]);
+        if (comments.length > 0) {
+          comments.forEach(c => {
+            this.object.addBodyNode(this.resolveAnnotation(c, this.object.index));
+          });
+        }
+      }
+      this.object.addBodyNode(prop);
+    });
+  }
+
   resolveInitBody(init) {
     const object = this.object;
     const combinator = this.combinator;
 
     let constructNode = new ConstructItem();
+    this.currThrows = {};
     if (init.params && init.params.params) {
       init.params.params.forEach(param => {
         if (param.paramType.idType && param.paramType.idType === 'model') {
@@ -140,10 +184,14 @@ class ClientResolver extends BaseResolver {
         this.visitStmt(constructNode, stmt, constructNode.index);
       });
     }
+    if (Object.keys(this.currThrows).length > 0) {
+      constructNode.throws = Object.values(this.currThrows);
+    }
     object.addBodyNode(constructNode);
   }
 
   resolveFunc(func, ast, body) {
+    this.currThrows = {};
     if (ast.annotation) {
       func.addAnnotation(this.resolveAnnotation(ast.annotation, func.index));
     }
@@ -248,6 +296,9 @@ class ClientResolver extends BaseResolver {
       this.findComments(func, body, 'between');
     }
 
+    if (Object.keys(this.currThrows).length > 0) {
+      func.throws = Object.values(this.currThrows);
+    }
     this.object.addBodyNode(func);
   }
 
@@ -384,6 +435,7 @@ class ClientResolver extends BaseResolver {
       ]),
       new GrammerThrows(null, [exceptionParam])
     ], catchException);
+    this.currThrows[Exceptions.base()] = Exceptions.base();
     this.requestBody(ast, body, requestTryCatch);
     requestTryCatch.addCatch(tryCatch);
 
@@ -399,6 +451,7 @@ class ClientResolver extends BaseResolver {
         ]
       )
     );
+    this.currThrows['$ExceptionUnretryable'] = this.combinator.addInclude('$ExceptionUnretryable');
   }
 
   requestBody(ast, body, func) {
@@ -789,6 +842,7 @@ class ClientResolver extends BaseResolver {
         node.expr = new BehaviorToModel(node.expr, stmt.expectedType.name);
       }
     } else if (stmt.type === 'throw') {
+      this.currThrows['$Exception'] = this.combinator.addInclude('$Exception');
       node = new GrammerThrows(this.combinator.addInclude('$Exception'));
       if (Array.isArray(stmt.expr)) {
         stmt.expr.forEach(e => {
