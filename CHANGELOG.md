@@ -1,5 +1,13 @@
 # ChangeLog
 
+## 1.1.0 2020-07-14
+
+- Supported emit test files.
+- Supported catch TeaError
+- Optimization emit comment.
+- Discard strongly typed types in PHP code.
+- `ast.predefined` is no longer supported.
+
 ## 1.0.1 - 2020-06-23
 
 - Fixed update emitter.config failure.
