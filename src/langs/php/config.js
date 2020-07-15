@@ -1,9 +1,6 @@
 'use strict';
 
-const defaultConfig = require('../common/config');
-
 module.exports = {
-  ...defaultConfig,
   indent: '    ',
   ext: '.php',
   keywords: [

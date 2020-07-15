@@ -120,21 +120,78 @@ function _underScoreCase(str) {
   return res;
 }
 
+function _flatten(obj, sep = '.') {
+  function recurse(curr, prefix, res = {}) {
+    if (Array.isArray(curr)) {
+      curr.forEach((item, index) => {
+        const p = prefix ? `${prefix}${sep}${index}` : `${index}`;
+        recurse(item, p, res);
+      });
+    } else if (curr instanceof Object) {
+      Object.keys(curr).forEach((key) => {
+        const p = prefix ? `${prefix}${sep}${key}` : `${key}`;
+        recurse(curr[key], p, res);
+      });
+    } else {
+      res[prefix] = curr;
+    }
+  }
+  let output = {};
+  recurse(obj, '', output);
+  return output;
+}
+
+function _unflatten(obj, sep = '.') {
+  let output = {};
+  Object.keys(obj).forEach(key => {
+    if (key.indexOf(sep) !== -1) {
+      const tmp = key.split('.').filter(item => item !== '');
+      let currObj = output;
+      tmp.forEach((k, i) => {
+        if (typeof currObj[k] === 'undefined') {
+          if (i === tmp.length - 1) {
+            currObj[k] = obj[key];
+          } else {
+            const lastKey = tmp[i + 1];
+            currObj[k] = isNaN(lastKey) ? {} : [];
+          }
+        }
+        currObj = currObj[k];
+      });
+    } else {
+      output[key] = obj[key];
+    }
+  });
+  return output;
+}
+
+function _assignObject(targetObj, ...objs) {
+  const res = _flatten(targetObj);
+  objs.forEach(obj => {
+    const tmp = _flatten(obj);
+    Object.assign(res, tmp);
+  });
+  Object.assign(targetObj, _unflatten(res));
+  return targetObj;
+}
 
 module.exports = {
   _config,
-  _upperFirst,
-  _camelCase,
   _string,
-  _subModelName,
-  _lowerFirst,
-  _isBasicType,
-  _deepClone,
-  _avoidKeywords,
-  _convertStaticParam,
-  _isKeywords,
   _modify,
   _symbol,
+  _flatten,
+  _unflatten,
+  _camelCase,
   _exception,
-  _underScoreCase
+  _deepClone,
+  _upperFirst,
+  _lowerFirst,
+  _isKeywords,
+  _isBasicType,
+  _assignObject,
+  _subModelName,
+  _avoidKeywords,
+  _underScoreCase,
+  _convertStaticParam,
 };

@@ -15,8 +15,8 @@ function halt(...data) {
 
 function jump(jumpNumber = 0, ...data) {
   if (count === jumpNumber) {
-    this.halt(...data);
     count = 0;
+    this.halt(...data);
   } else {
     count++;
   }
