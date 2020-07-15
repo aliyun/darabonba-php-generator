@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const debug = require('./lib/debug');
 
-const { _deepClone } = require('./lib/helper');
+const { _deepClone, _assignObject } = require('./lib/helper');
 const ClientResolver = require('./resolver/client');
 const ModelResolver = require('./resolver/model');
 
@@ -86,23 +86,12 @@ class Generator {
     }
     const langConfig = require(`./langs/${this.lang}/config`);
 
-    const config = {
-      package: 'DarabonbaSDK',
-      include: [],
-      parent: [],
-      pkgDir: '',
-      output: true,
+    const config = _deepClone(require('./langs/common/config'));
+    _assignObject(config, {
       dir: meta.outputDir,
-      layer: '',
-    };
-    Object.assign(config,
-      langConfig,
-      meta,
-    );
+    }, langConfig, meta);
     if (meta[this.lang]) {
-      Object.assign(config,
-        meta[this.lang],
-      );
+      _assignObject(config, meta[this.lang]);
     }
     this.config = config;
   }
