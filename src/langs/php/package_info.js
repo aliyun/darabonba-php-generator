@@ -19,7 +19,8 @@ const files = {
   'LICENSE': OPTION_SOURCE,
   'README-CN.md': OPTION_SOURCE | OPTION_RENDER,
   'README.md': OPTION_SOURCE | OPTION_RENDER,
-  'phpunit.xml': OPTION_SOURCE
+  'phpunit.xml': OPTION_SOURCE,
+  'autoload.php': OPTION_LOCAL | OPTION_RENDER
 };
 
 class PackageInfo extends BasePackageInfo {
