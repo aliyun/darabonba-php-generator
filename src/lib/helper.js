@@ -124,13 +124,11 @@ function _flatten(obj, sep = '.') {
   function recurse(curr, prefix, res = {}) {
     if (Array.isArray(curr)) {
       curr.forEach((item, index) => {
-        const p = prefix ? `${prefix}${sep}${index}` : `${index}`;
-        recurse(item, p, res);
+        recurse(item, prefix ? `${prefix}${sep}${index}` : `${index}`, res);
       });
     } else if (curr instanceof Object) {
       Object.keys(curr).forEach((key) => {
-        const p = prefix ? `${prefix}${sep}${key}` : `${key}`;
-        recurse(curr[key], p, res);
+        recurse(curr[key], prefix ? `${prefix}${sep}${key}` : `${key}`, res);
       });
     } else {
       res[prefix] = curr;
@@ -145,15 +143,14 @@ function _unflatten(obj, sep = '.') {
   let output = {};
   Object.keys(obj).forEach(key => {
     if (key.indexOf(sep) !== -1) {
-      const tmp = key.split('.').filter(item => item !== '');
+      const keyArr = key.split('.').filter(item => item !== '');
       let currObj = output;
-      tmp.forEach((k, i) => {
+      keyArr.forEach((k, i) => {
         if (typeof currObj[k] === 'undefined') {
-          if (i === tmp.length - 1) {
+          if (i === keyArr.length - 1) {
             currObj[k] = obj[key];
           } else {
-            const lastKey = tmp[i + 1];
-            currObj[k] = isNaN(lastKey) ? {} : [];
+            currObj[k] = isNaN(keyArr[i + 1]) ? {} : [];
           }
         }
         currObj = currObj[k];
@@ -168,8 +165,7 @@ function _unflatten(obj, sep = '.') {
 function _assignObject(targetObj, ...objs) {
   const res = _flatten(targetObj);
   objs.forEach(obj => {
-    const tmp = _flatten(obj);
-    Object.assign(res, tmp);
+    Object.assign(res, _flatten(obj));
   });
   Object.assign(targetObj, _unflatten(res));
   return targetObj;
