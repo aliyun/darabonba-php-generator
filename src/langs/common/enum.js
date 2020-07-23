@@ -116,64 +116,12 @@ class ModifyEnum extends Enum {
     return this.STATIC.key;
   }
 }
-
-class ExceptionEnum extends Enum {
-  constructor() {
-    super([
-      'BASE',
-    ], { name: 'exceptions', ignoreCase: true });
-  }
-
-  base() {
-    return this.BASE.key;
-  }
-}
-
-class TypeEnum extends Enum {
-  constructor() {
-    super([
-      'any',
-      'anyReference',
-      'void',
-      'null',
-      'empty',
-      'char',
-      'string',
-      'boolean',
-      'number',
-      'integer',
-      'uint8',
-      'int8',
-      'uint16',
-      'int16',
-      'uint32',
-      'int32',
-      'uint64',
-      'int64',
-      'long',
-      'ulong',
-      'float',
-      'double',
-      'single',
-      'decimal',
-      'byte',
-      'map',
-      'list',
-      'object',
-      'readable',
-      'writable'
-    ], { name: 'types', ignoreCase: true });
-  }
-}
-
 const Symbol = new SymbolEnum();
 const Modify = new ModifyEnum();
-const Exceptions = new ExceptionEnum();
-const Types = new TypeEnum();
+// const Exceptions = new ExceptionEnum();
+// const Types = new TypeEnum();
 
 module.exports = {
   Symbol,
   Modify,
-  Exceptions,
-  Types
 };

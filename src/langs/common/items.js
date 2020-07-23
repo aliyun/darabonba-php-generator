@@ -44,6 +44,83 @@ class Item {
   }
 }
 
+class TypeItem extends Item {
+  constructor() {
+    super();
+    this.isOptional = false;
+  }
+}
+
+class TypeBase extends TypeItem { }
+
+class TypeVoid extends TypeBase { }
+
+class TypeGeneric extends TypeBase { }
+
+class TypeString extends TypeBase {
+  constructor() { super(); }
+}
+
+class TypeNumber extends TypeBase {
+  constructor() {
+    super();
+  }
+}
+
+class TypeInteger extends TypeNumber {
+  constructor(length = 16) {
+    super();
+    this.length = length;
+  }
+}
+
+class TypeDecimal extends TypeNumber {
+  constructor(decimalPlaces = 6) {
+    super();
+    this.places = decimalPlaces;
+  }
+}
+
+class TypeBool extends TypeBase { }
+
+class TypeArray extends TypeBase {
+  constructor(itemType = null) {
+    super();
+    assert.equal(true, itemType instanceof TypeItem);
+    this.itemType = itemType; // TypeItem
+  }
+}
+
+class TypeBytes extends TypeArray {
+  constructor() {
+    super(new TypeInteger(8));
+  }
+}
+
+class TypeMap extends TypeBase {
+  constructor(keyType, valType) {
+    super();
+    assert.equal(true, keyType instanceof TypeItem);
+    assert.equal(true, valType instanceof TypeItem);
+    this.keyType = keyType;
+    this.valType = valType;
+  }
+}
+
+class TypeObject extends TypeItem {
+  constructor(objectName = null) {
+    super();
+    this.objectName = objectName;
+  }
+}
+
+class TypeStream extends TypeItem {
+  constructor(readable = null) {
+    super();
+    this.readable = readable;
+  }
+}
+
 class AnnotationItem extends Item {
   constructor(belong, mode = 'single', content = null) {
     super();
@@ -69,7 +146,6 @@ class GrammerValue extends Grammer {
     this.value = value;
     this.needCast = needCast;
     this.keyType = '';
-    this.itemType = '';
     this.isExpand = false;
   }
 }
@@ -88,13 +164,13 @@ class GrammerNewObject extends Grammer {
 }
 
 class GrammerVar extends Grammer {
-  constructor(name = '', dataType = '', varType = 'var', itemType = '') {
+  constructor(name = '', dataType = '', varType = 'var') {
     super();
     this.name = name;
-    this.type = dataType;      // Types Enum
+    this.type = dataType;      // TypeItem
     this.varType = varType;    // static_class 静态类名 || var 可变 || const 不可变
-    this.itemType = itemType;
     this.eol = false;
+    assert.equal(true, this.type instanceof TypeItem);
   }
 }
 
@@ -118,8 +194,12 @@ class GrammerCall extends Grammer {
       this.addPath(p);
     });
     this.params = params;
-    this.returnType = returnType;
+    if (returnType === null) {
+      returnType = new TypeVoid();
+    }
+    this.returnType = returnType;  // TypeItem
     this.hasThrow = hasThrow;
+    assert.equal(true, this.returnType instanceof TypeItem);
   }
 
   addPath(path) {
@@ -174,7 +254,7 @@ class GrammerCondition extends Grammer {
 }
 
 class GrammerException extends Grammer {
-  constructor(type = '', exceptionVar = null) {
+  constructor(type, exceptionVar = null) {
     super();
     this.type = type;
     this.exceptionVar = exceptionVar; // GrammerVar
@@ -243,16 +323,6 @@ class GrammerThrows extends Grammer {
   }
 }
 
-class GrammerReturnType extends Grammer {
-  constructor(type = '', isOptional = false, keyType = null, itemType = null) {
-    super();
-    this.type = type;
-    this.optional = isOptional;
-    this.keyType = keyType;
-    this.itemType = itemType;
-  }
-}
-
 class GrammerReturn extends Grammer {
   constructor(expr = '', type = '') {
     super();
@@ -315,8 +385,7 @@ class PropItem extends Item {
     super();
     this.modify = [];       // Modify
     this.name = '';
-    this.type = '';
-    this.itemType = '';
+    this.type = '';         // TypeItem
     this.value = null;
     this.notes = [];        // [{key:'name', value:'test', type:'string'}, {key:'length', value:10, type:'number'}]
   }
@@ -497,6 +566,22 @@ class BehaviorToMap extends Behavior {
 }
 
 module.exports = {
+  TypeStream,
+  TypeObject,
+
+  TypeGeneric,
+  TypeDecimal,
+  TypeInteger,
+  TypeString,
+  TypeNumber,
+  TypeArray,
+  TypeBytes,
+  TypeBool,
+  TypeBase,
+  TypeItem,
+  TypeVoid,
+  TypeMap,
+
   Counter,
 
   AnnotationItem,
@@ -524,7 +609,6 @@ module.exports = {
   GrammerNewObject,
   GrammerCondition,
   GrammerException,
-  GrammerReturnType,
 
   Behavior,
   BehaviorToMap,
