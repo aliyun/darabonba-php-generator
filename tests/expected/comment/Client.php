@@ -5,10 +5,11 @@
 namespace Tea\PHP\Tests;
 
 use AlibabaCloud\Tea\Request;
-use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
 use AlibabaCloud\Tea\Tea;
 use AlibabaCloud\Tea\Response;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Exception\TeaError;
 
 use Tea\PHP\Tests\Models\Test1;
 use Tea\PHP\Tests\Models\Test3;
@@ -46,7 +47,7 @@ class Client {
      * testAPI comment one
      * testAPI comment two
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @throws TeaUnableRetryError
      */
     public function testAPI(){
@@ -86,7 +87,7 @@ class Client {
                 // return comment
                 return null;
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 if (!($e instanceof TeaError)) {
                     $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }
@@ -103,7 +104,7 @@ class Client {
     /**
      * testAPI2 comment
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @throws TeaUnableRetryError
      */
     public function testAPI2(){
@@ -146,7 +147,7 @@ class Client {
                 // empty return comment
                 // back comment
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 if (!($e instanceof TeaError)) {
                     $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }

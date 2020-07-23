@@ -4,10 +4,12 @@
 namespace Tea\PHP\Tests\Models;
 
 use AlibabaCloud\Tea\Model;
+use GuzzleHttp\Psr7\Stream;
 
 use Tea\PHP\Tests\Models\MyModel\submodel;
 use Tea\PHP\Tests\Models\MyModel\subarraymodel;
 use Tea\PHP\Tests\Models\M;
+use AlibabaCloud\Tea\Request;
 
 class MyModel extends Model {
     protected $_name = [
@@ -27,6 +29,8 @@ class MyModel extends Model {
         Model::validateRequired('numberfield', $this->numberfield, true);
         Model::validateRequired('readable', $this->readable, true);
         Model::validateRequired('existModel', $this->existModel, true);
+        Model::validateRequired('request', $this->request, true);
+        Model::validateRequired('complexList', $this->complexList, true);
     }
     public function toMap() {
         $res = [];
@@ -37,10 +41,7 @@ class MyModel extends Model {
             $res['bytesfield'] = $this->bytesfield;
         }
         if (null !== $this->stringarrayfield) {
-            $res['stringarrayfield'] = [];
-            if(null !== $this->stringarrayfield){
-                $res['stringarrayfield'] = $this->stringarrayfield;
-            }
+            $res['stringarrayfield'] = $this->stringarrayfield;
         }
         if (null !== $this->mapfield) {
             $res['mapfield'] = $this->mapfield;
@@ -70,10 +71,7 @@ class MyModel extends Model {
             }
         }
         if (null !== $this->maparray) {
-            $res['maparray'] = [];
-            if(null !== $this->maparray){
-                $res['maparray'] = $this->maparray;
-            }
+            $res['maparray'] = $this->maparray;
         }
         if (null !== $this->object) {
             $res['object'] = $this->object;
@@ -86,6 +84,12 @@ class MyModel extends Model {
         }
         if (null !== $this->existModel) {
             $res['existModel'] = null !== $this->existModel ? $this->existModel->toMap() : null;
+        }
+        if (null !== $this->request) {
+            $res['request'] = null !== $this->request ? $this->request->toMap() : null;
+        }
+        if (null !== $this->complexList) {
+            $res['complexList'] = $this->complexList;
         }
         return $res;
     }
@@ -103,7 +107,6 @@ class MyModel extends Model {
         }
         if(isset($map['stringarrayfield'])){
             if(!empty($map['stringarrayfield'])){
-                $model->stringarrayfield = [];
                 $model->stringarrayfield = $map['stringarrayfield'];
             }
         }
@@ -136,7 +139,6 @@ class MyModel extends Model {
         }
         if(isset($map['maparray'])){
             if(!empty($map['maparray'])){
-                $model->maparray = [];
                 $model->maparray = $map['maparray'];
             }
         }
@@ -151,6 +153,14 @@ class MyModel extends Model {
         }
         if(isset($map['existModel'])){
             $model->existModel = M::fromMap($map['existModel']);
+        }
+        if(isset($map['request'])){
+            $model->request = Request::fromMap($map['request']);
+        }
+        if(isset($map['complexList'])){
+            if(!empty($map['complexList'])){
+                $model->complexList = $map['complexList'];
+            }
         }
         return $model;
     }
@@ -200,12 +210,12 @@ class MyModel extends Model {
     public $maparray;
 
     /**
-     * @var object
+     * @var array
      */
     public $object;
 
     /**
-     * @var integer
+     * @var int
      */
     public $numberfield;
 
@@ -218,5 +228,15 @@ class MyModel extends Model {
      * @var M
      */
     public $existModel;
+
+    /**
+     * @var Request
+     */
+    public $request;
+
+    /**
+     * @var array
+     */
+    public $complexList;
 
 }

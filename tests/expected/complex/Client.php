@@ -5,10 +5,11 @@ namespace Tea\PHP\Tests;
 
 use Source\SourceClient;
 use AlibabaCloud\Tea\Request;
-use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
 use AlibabaCloud\Tea\Tea;
 use AlibabaCloud\Tea\Response;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Exception\TeaError;
 
 use Tea\PHP\Tests\Models\ComplexRequest;
 use Source\Models\RuntimeObject;
@@ -19,9 +20,9 @@ class Client extends SourceClient {
 
     /**
      * @param ComplexRequest $request
-     * @param Source $client
+     * @param SourceClient $client
      * @return RuntimeObject
-     * @throws \Exception
+     * @throws Exception
      * @throws TeaUnableRetryError
      */
     public function complex1($request, $client){
@@ -75,7 +76,7 @@ class Client extends SourceClient {
                 return RuntimeObject::fromMap([]);
                 $this->Complex3(null);
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 if (!($e instanceof TeaError)) {
                     $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }
@@ -93,7 +94,7 @@ class Client extends SourceClient {
      * @param ComplexRequest $request
      * @param array $str
      * @param array $val
-     * @return object|array
+     * @return array
      */
     public function Complex2($request, $str, $val){
         $request->validate();
@@ -149,7 +150,7 @@ class Client extends SourceClient {
     }
 
     /**
-     * @param object $request
+     * @param array $request
      * @param array $strs
      * @return array
      */
@@ -168,7 +169,7 @@ class Client extends SourceClient {
     }
 
     /**
-     * @param object $req
+     * @param array $req
      * @return array
      */
     public static function array0($req){
@@ -214,7 +215,7 @@ class Client extends SourceClient {
                 "code" => 400
                 ]);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             if (!($e instanceof TeaError)) {
                 $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
             }

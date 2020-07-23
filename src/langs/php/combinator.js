@@ -418,7 +418,7 @@ class Combinator extends CombinatorBase {
           this.levelDown();
           emitter.emitln('}', this.level);
         }
-      } else if (prop.type instanceof TypeBase) {
+      } else if (prop.type instanceof TypeBase || prop.type instanceof TypeBytes || prop.type instanceof TypeStream) {
         emitter.emitln(`$res['${name}'] = $this->${prop.name};`, this.level);
       } else {
         emitter.emitln(`$res['${name}'] = null !== $this->${prop.name} ? $this->${prop.name}->toMap() : null;`, this.level);
@@ -1114,7 +1114,7 @@ class Combinator extends CombinatorBase {
   }
 
   behaviorRetry(emitter, behavior) {
-    emitter.emitln(`throw new ${this.addInclude('$Exception')}($${this.config.request}, $${this.config.response});`, this.level);
+    emitter.emitln(`throw new ${this.addInclude('$Error')}($${this.config.request}, $${this.config.response});`, this.level);
   }
 
   behaviorToModel(emitter, behavior) {

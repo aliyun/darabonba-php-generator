@@ -118,8 +118,6 @@ class ModifyEnum extends Enum {
 }
 const Symbol = new SymbolEnum();
 const Modify = new ModifyEnum();
-// const Exceptions = new ExceptionEnum();
-// const Types = new TypeEnum();
 
 module.exports = {
   Symbol,

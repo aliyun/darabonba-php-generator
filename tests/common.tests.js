@@ -79,6 +79,7 @@ describe('common : items should be ok', function () {
     const childGrammer = new GrammerNewLine();
     const childGrammer2 = new GrammerSymbol();
     childGrammer.belong = parentGrammer.index;
+    childGrammer2.belong = parentGrammer.index;
 
     expect(function () {
       childGrammer.getItemByIndex(-100);

@@ -4,6 +4,7 @@
 namespace Tea\PHP\Tests\Models;
 
 use AlibabaCloud\Tea\Model;
+use GuzzleHttp\Psr7\Stream;
 
 use Tea\PHP\Tests\Models\ComplexRequest\header;
 use Tea\PHP\Tests\Models\ComplexRequest\part;
@@ -31,10 +32,7 @@ class ComplexRequest extends Model {
             $res['Body'] = $this->body;
         }
         if (null !== $this->strs) {
-            $res['Strs'] = [];
-            if(null !== $this->strs){
-                $res['Strs'] = $this->strs;
-            }
+            $res['Strs'] = $this->strs;
         }
         if (null !== $this->header) {
             $res['header'] = null !== $this->header ? $this->header->toMap() : null;
@@ -67,7 +65,6 @@ class ComplexRequest extends Model {
         }
         if(isset($map['Strs'])){
             if(!empty($map['Strs'])){
-                $model->strs = [];
                 $model->strs = $map['Strs'];
             }
         }
@@ -114,7 +111,7 @@ class ComplexRequest extends Model {
     public $header;
 
     /**
-     * @var integer
+     * @var int
      */
     public $Num;
 

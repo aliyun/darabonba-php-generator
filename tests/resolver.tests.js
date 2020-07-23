@@ -40,33 +40,6 @@ describe('client resolver should be ok', function () {
     mm.restore();
   });
 
-  it('resolveProps should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
-      package: 'test', model: { dir: 'Models' }
-    }), {});
-    const code = new ClientResolver({ moduleBody: { nodes: [] } }, combinator, {});
-    const ast = {
-      comments: {},
-      moduleBody: {
-        nodes: [
-          { type: 'type', value: { type: 'array', subType: { lexeme: '$Model' } }, vid: { lexeme: 'test' } },
-          { type: 'type', value: { type: '$Model', idType: 'module' }, vid: { lexeme: 'test2' } }
-        ]
-      }
-    };
-    code.resolveProps(ast);
-    expect(code.combinator.includeModelList.length).to.be.eql(1);
-
-    ast.moduleBody.nodes.push({ type: 'type', value: { type: '$Model', returnType: { lexeme: '$Model' } }, vid: { lexeme: 'test3' } });
-    code.resolveProps(ast);
-    expect(code.combinator.includeModelList.length).to.be.eql(1);
-
-    ast.moduleBody.nodes.push({ type: 'type', value: { type: '$Model' }, vid: { lexeme: 'test4' } });
-    expect(function () {
-      code.resolveProps(ast);
-    }).to.be.throw('');
-  });
-
   it('resolveInitBody should be ok', function () {
     const combinator = new Combinator(Object.assign(_deepClone(config), {
       package: 'test', model: { dir: 'Models' }
@@ -101,46 +74,6 @@ describe('client resolver should be ok', function () {
       }
     };
     code.resolveInitBody(init);
-    mm.restore();
-  });
-
-  it('resolveFunc should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
-      package: 'test', model: { dir: 'Models' }
-    }), {});
-    const code = new ClientResolver({}, combinator, {});
-    const funcItem = new FuncItem();
-    expect(function () {
-      code.resolveFunc(funcItem, {
-        params: { params: [] }
-      }, {}, {});
-    }).to.be.throw('Unsupported ast.returnType');
-
-    mm(code.combinator, 'addInclude', function (className) {
-      return className;
-    });
-    code.resolveFunc(funcItem, {
-      params: { params: [] },
-      returnType: {
-        idType: 'module',
-        lexeme: 'object',
-      }
-    }, {});
-    code.resolveFunc(funcItem, {
-      params: {
-        params: [
-          {
-            paramType: { type: 'moduleModel', subType: { lexeme: '' }, path: ['a'] },
-            paramName: { lexeme: 'test' }
-          }
-        ]
-      },
-      returnType: {
-        idType: 'module',
-        lexeme: 'object',
-      }
-    }, {});
-
     mm.restore();
   });
 
@@ -424,6 +357,7 @@ describe('model resolver should be ok', function () {
     });
     model.initProp([{
       fieldValue: {
+        type: 'fieldType',
         fieldType: { type: 'moduleModel', path: [{ lexeme: 'a' }] }
       },
       fieldName: {
@@ -437,7 +371,7 @@ describe('model resolver should be ok', function () {
     });
     model.initProp([{
       type: 'modelField',
-      fieldValue: { fieldType: 'array', fieldItemType: { lexeme: '' } },
+      fieldValue: { type: 'fieldType', fieldType: 'array', fieldItemType: { lexeme: 'string' } },
       fieldName: { lexeme: 'test' },
       attrs: []
     }]);
