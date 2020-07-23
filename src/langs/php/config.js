@@ -67,6 +67,7 @@ module.exports = {
     include: []
   },
   tea: {
+    namespace: '\\AlibabaCloud\\Tea\\',
     name: 'Tea',
     core: {
       name: '\\AlibabaCloud\\Tea\\Tea',
@@ -78,10 +79,11 @@ module.exports = {
       toModel: 'toModel',
       merge: 'merge'
     },
+    stream: { name: '\\GuzzleHttp\\Psr7\\Stream' },
     model: { name: '\\AlibabaCloud\\Tea\\Model' },
     response: { name: '\\AlibabaCloud\\Tea\\Response' },
     request: { name: '\\AlibabaCloud\\Tea\\Request' },
-    exception: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaError' },
+    exception: { name: '\\Exception' },
     error: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaError' },
     exceptionUnretryable: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaUnableRetryError' },
   }

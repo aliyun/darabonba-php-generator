@@ -4,7 +4,20 @@ const debug = require('../lib/debug');
 
 const {
   AnnotationItem,
+  TypeString,
+  TypeArray,
+  TypeInteger,
+  TypeBytes,
+  TypeMap,
+  TypeObject,
+  TypeGeneric,
+  TypeStream,
+  TypeVoid,
+  TypeNumber,
+  TypeBool
 } = require('../langs/common/items');
+
+const { _isBasicType } = require('../lib/helper');
 
 const DSL = require('@darabonba/parser');
 
@@ -117,6 +130,93 @@ class BaseResolver {
     if (annotation && annotation.value) {
       this.object.annotations.push(this.resolveAnnotation(annotation, this.object.index));
     }
+  }
+
+  resolveTypeItem(typeNode, sourceNode = null) {
+    if (typeNode.idType) {
+      if (typeNode.idType === 'model') {
+        return new TypeObject(this.combinator.addModelInclude(typeNode.lexeme));
+      } else if (typeNode.idType === 'module') {
+        const name = sourceNode.vid ? sourceNode.vid.lexeme : typeNode.lexeme;
+        return new TypeObject(this.combinator.addInclude(name));
+      }
+      debug.stack(typeNode, sourceNode);
+    } else if (typeNode.type) {
+      if (typeNode.type === 'fieldType') {
+        if (typeNode.fieldType.idType) {
+          return new TypeObject(this.combinator.addModelInclude(typeNode.fieldType.lexeme));
+        }
+        return this.resolveTypeItem(typeNode.fieldType, typeNode);
+      } else if (typeNode.type === 'modelBody') {
+        // is sub model
+        const modelName = this.combinator.addModelInclude([this.object.name, sourceNode.fieldName.lexeme].join('.'));
+        return new TypeObject(modelName);
+      } else if (_isBasicType(typeNode.type)) {
+        return this.resolveTypeItem(typeNode.type, typeNode);
+      } else if (typeNode.type === 'basic') {
+        return this.resolveTypeItem(typeNode.name);
+      } else if (typeNode.type === 'model') {
+        let name = typeNode.name;
+        if (typeNode.moduleName) {
+          name = typeNode.moduleName + '.' + name;
+        }
+        return new TypeObject(this.combinator.addModelInclude(name));
+      } else if (typeNode.type === 'module_instance') {
+        return new TypeObject(this.combinator.addInclude(typeNode.name));
+      } else if (typeNode.type === 'param') {
+        if (typeNode.paramType.idType) {
+          return new TypeObject(this.combinator.addModelInclude(typeNode.paramType.lexeme));
+        }
+        return this.resolveTypeItem(typeNode.paramType, typeNode);
+      } else if (typeNode.type === 'array') {
+        const subType = typeNode.subType ? typeNode.subType : typeNode.itemType;
+        return new TypeArray(this.resolveTypeItem(subType));
+      } else if (typeNode.type === 'moduleModel') {
+        let tmp = [];
+        typeNode.path.forEach(item => {
+          tmp.push(item.lexeme);
+        });
+        return new TypeObject(this.combinator.addModelInclude(tmp.join('.')));
+      }
+      debug.stack(typeNode, sourceNode);
+    } else if (typeNode.lexeme) {
+      return this.resolveTypeItem(typeNode.lexeme, sourceNode);
+    } else if (typeNode === 'string') {
+      return new TypeString();
+    } else if (typeNode === 'bytes') {
+      return new TypeBytes();
+    } else if (typeNode === 'array') {
+      let itemType;
+      if (sourceNode.fieldItemType.type === 'modelBody') {
+        itemType = new TypeObject(this.combinator.addModelInclude(sourceNode.itemType));
+      } else if (sourceNode.fieldItemType.idType === 'model') {
+        itemType = new TypeObject(this.combinator.addModelInclude(sourceNode.fieldItemType.lexeme));
+      } else {
+        itemType = this.resolveTypeItem(sourceNode.fieldItemType, sourceNode);
+      }
+      return new TypeArray(itemType);
+    } else if (typeNode === 'map') {
+      const keyType = this.resolveTypeItem(sourceNode.keyType);
+      const valType = this.resolveTypeItem(sourceNode.valueType);
+      return new TypeMap(keyType, valType);
+    } else if (typeNode === 'any') {
+      return new TypeGeneric();
+    } else if (typeNode === 'object') {
+      return new TypeMap(new TypeString(), new TypeGeneric());
+    } else if (typeNode === 'integer') {
+      return new TypeInteger();
+    } else if (typeNode === 'readable') {
+      return new TypeStream();
+    } else if (typeNode === 'class') {
+      return new TypeObject();
+    } else if (typeNode === 'void') {
+      return new TypeVoid();
+    } else if (typeNode === 'number') {
+      return new TypeNumber();
+    } else if (typeNode === 'boolean') {
+      return new TypeBool();
+    }
+    debug.stack('Unsupported type node', { typeNode, sourceNode });
   }
 }
 

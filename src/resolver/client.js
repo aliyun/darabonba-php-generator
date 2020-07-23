@@ -25,7 +25,6 @@ const {
   GrammerNewObject,
   GrammerCondition,
   GrammerException,
-  GrammerReturnType,
 
   BehaviorRetry,
   BehaviorToMap,
@@ -33,20 +32,30 @@ const {
   BehaviorTimeNow,
   BehaviorDoAction,
   BehaviorSetMapItem,
+  TypeVoid,
+  TypeObject,
+  TypeGeneric,
+  TypeInteger,
+  TypeBool,
+  TypeMap,
+  TypeString,
+  TypeItem,
+  TypeArray,
 } = require('../langs/common/items');
 
 const {
   Symbol,
   Modify,
-  Exceptions,
-  Types
 } = require('../langs/common/enum');
 
 const {
   _isBasicType
 } = require('../lib/helper');
+const { assert } = require('chai');
 
 const systemPackage = ['Util'];
+
+const int16 = new TypeInteger(16);
 
 class ClientResolver extends BaseResolver {
   constructor(astNode, combinator, globalAst) {
@@ -127,26 +136,7 @@ class ClientResolver extends BaseResolver {
     }).forEach(item => {
       const prop = new PropItem();
       prop.name = item.vid.lexeme.replace('@', '_');
-      const type = item.value.lexeme ? item.value.lexeme : item.value.type;
-      prop.type = type;
-      if (type === 'array') {
-        prop.itemType = item.value.subType;
-        if (!_isBasicType(item.value.subType.lexeme)) {
-          this.combinator.addModelInclude(item.value.subType.lexeme);
-        }
-      } else {
-        if (!_isBasicType(type)) {
-          if (item.value.idType && item.value.idType === 'module') {
-            this.combinator.addInclude(type);
-          } else if (item.value && item.value.returnType) {
-            if (!_isBasicType(item.value.returnType.lexeme)) {
-              this.combinator.addModelInclude(type);
-            }
-          } else {
-            debug.stack(item);
-          }
-        }
-      }
+      prop.type = this.resolveTypeItem(item.value, item);
       prop.addModify(Modify.protected());
       if (item.tokenRange) {
         let comments = this.getFrontComments(item.tokenRange[0]);
@@ -168,12 +158,19 @@ class ClientResolver extends BaseResolver {
     this.currThrows = {};
     if (init.params && init.params.params) {
       init.params.params.forEach(param => {
+        let type = param.paramType.lexeme;
         if (param.paramType.idType && param.paramType.idType === 'model') {
-          combinator.addModelInclude(param.paramType.lexeme);
+          type = combinator.addModelInclude(param.paramType.lexeme);
         } else if (param.paramType.idType && param.paramType.idType === 'module') {
-          combinator.addInclude(param.paramType.lexeme);
+          type = combinator.addInclude(param.paramType.lexeme);
+        } else if (param.paramType.type === 'moduleModel') {
+          let tmp = [];
+          param.paramType.path.forEach(item => {
+            tmp.push(item.lexeme);
+          });
+          type = this.combinator.addModelInclude(tmp.join('.'));
         }
-        constructNode.addParamNode(new GrammerValue(param.paramType.lexeme, param.defaultValue, param.paramName.lexeme));
+        constructNode.addParamNode(new GrammerValue(type, param.defaultValue, param.paramName.lexeme));
       });
     }
     if (init.annotation) {
@@ -197,7 +194,7 @@ class ClientResolver extends BaseResolver {
     }
     this.addAnnotations(func, ast);
     if (body === null) {
-      func.addBodyNode(new GrammerThrows(Exceptions.base(), [], 'Un-implemented'));
+      func.addBodyNode(new GrammerThrows('$Exception', [], 'Un-implemented'));
     }
 
     if (ast.isAsync) {
@@ -210,43 +207,19 @@ class ClientResolver extends BaseResolver {
 
     ast.params.params.forEach(p => {
       var param = new GrammerValue();
-      if (p.paramType && p.paramType.lexeme && p.paramType.lexeme.indexOf('$') > -1) {
-        param.type = this.combinator.addInclude(p.paramType.lexeme);
-      } else if (p.paramType.type && p.paramType.type === 'array') {
-        param.type = 'array';
-        param.itemType = p.paramType.subType.lexeme;
-      } else if (p.paramType.type === 'moduleModel') {
-        let tmp = [];
-        p.paramType.path.forEach(item => {
-          tmp.push(item.lexeme);
-        });
-        param.type = this.combinator.addModelInclude(tmp.join('.'));
-      } else if (p.type === 'param' && p.paramType.lexeme) {
-        if (!_isBasicType(p.paramType.lexeme)) {
-          if (p.paramType.idType && p.paramType.idType === 'module') {
-            this.combinator.addInclude(p.paramType.lexeme);
-          } else {
-            this.combinator.addModelInclude(p.paramType.lexeme);
-          }
-        }
-        param.type = p.paramType.lexeme;
-      } else if (p.type === 'param' && p.paramType.type === 'map') {
-        param.type = 'map';
-        this.keyItem = p.paramType.keyType.lexeme;
-        param.itemType = p.paramType.valueType.lexeme;
-      }
+      param.type = this.resolveTypeItem(p);
       param.key = p.paramName.lexeme;
       if (p.needValidate) {
         func.addBodyNode(new GrammerCall('method', [
           { type: 'object', name: param.key },
           { type: 'call', name: 'validate' }
-        ], [], null, true)); // validator
+        ], [], new TypeVoid(), true)); // validator
       }
       func.params.push(param);
     });
 
     if (ast.returnType && ast.returnType.idType && ast.returnType.idType === 'model') {
-      func.return.push(new GrammerReturnType(this.combinator.addModelInclude(ast.returnType.lexeme)));
+      func.return.push(new TypeObject(this.combinator.addModelInclude(ast.returnType.lexeme)));
     } else if (ast.returnType && ast.returnType.type) {
       if (ast.returnType.type === 'moduleModel') {
         let tmp = [];
@@ -254,27 +227,21 @@ class ClientResolver extends BaseResolver {
           tmp.push(p.lexeme);
         });
         let type = tmp.join('.');
-        func.return.push(new GrammerReturnType(this.combinator.addModelInclude(type)));
+        func.return.push(new TypeObject(this.combinator.addModelInclude(type)));
       } else if (ast.returnType.type === 'array') {
-        let subType = '';
-        if (ast.returnType.subType.lexeme) {
-          subType = ast.returnType.subType.lexeme;
-        } else if (ast.returnType.subType.type === 'map') {
-          subType = 'map';
-        }
-        func.return.push(new GrammerReturnType('array', false, null, subType));
+        func.return.push(new TypeArray(this.resolveTypeItem(ast.returnType.subType)));
       } else if (ast.returnType.type === 'map') {
         if (ast.returnType.valueType.lexeme && _isBasicType(ast.returnType.valueType.lexeme)) {
           func.return.push(
-            new GrammerReturnType('map', false, ast.returnType.keyType.lexeme, ast.returnType.valueType.lexeme)
+            new TypeMap(this.resolveTypeItem(ast.returnType.keyType), this.resolveTypeItem(ast.returnType.valueType))
           );
         }
       }
     } else if (ast.returnType && ast.returnType.lexeme) {
       if (ast.returnType.idType && ast.returnType.idType === 'module') {
-        func.return.push(new GrammerReturnType(this.combinator.addInclude(ast.returnType.lexeme)));
+        func.return.push(new TypeObject(this.combinator.addInclude(ast.returnType.lexeme)));
       } else if (_isBasicType(ast.returnType.lexeme)) {
-        func.return.push(new GrammerReturnType(ast.returnType.lexeme));
+        func.return.push(this.resolveTypeItem(ast.returnType));
       }
     } else {
       debug.stack('Unsupported ast.returnType', ast.returnType);
@@ -313,33 +280,33 @@ class ClientResolver extends BaseResolver {
 
     // _runtime = {}
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar(this.config.runtime, Types.any.key), Symbol.assign(), val
+      new GrammerVar(this.config.runtime, new TypeMap(new TypeString(), new TypeGeneric())), Symbol.assign(), val
     ));
 
     // _lastRequest = null;
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar('_lastRequest', this.combinator.addInclude('$Request'), 'var'),
+      new GrammerVar('_lastRequest', new TypeObject(this.combinator.addInclude('$Request')), 'var'),
       Symbol.assign(),
       new GrammerValue('null')
     ));
 
     // _lastException = null;
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar('_lastException', this.combinator.addInclude('$Exception'), 'var'),
+      new GrammerVar('_lastException', new TypeObject(this.combinator.addInclude('$Exception')), 'var'),
       Symbol.assign(),
       new GrammerValue('null')
     ));
 
     // _now = Date.now();
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar('_now', Types.int32.key),
+      new GrammerVar('_now', int16),
       Symbol.assign(),
       new GrammerValue('behavior', new BehaviorTimeNow())
     ));
 
     // let _retryTimes = 0;
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar('_retryTimes', Types.int16.key, 'var'),
+      new GrammerVar('_retryTimes', int16, 'var'),
       Symbol.assign(),
       new GrammerValue('number', 0)
     ));
@@ -353,23 +320,23 @@ class ClientResolver extends BaseResolver {
         new GrammerValue('call', new GrammerCall('key', [
           { type: 'object', name: this.config.runtime },
           { type: 'map', name: 'retry' }
-        ], [], new GrammerReturnType(Types.any.key))),
+        ], [], new TypeGeneric())),
         new GrammerValue('param', '_retryTimes'),
         new GrammerValue('param', '_now'),
-      ])
+      ], new TypeBool())
     );
 
     let retryTimesIf = new GrammerCondition('if');
     retryTimesIf.addCondition(
       new GrammerExpr(
-        new GrammerVar('_retryTimes'),
+        new GrammerVar('_retryTimes', int16),
         Symbol.greater(),
         new GrammerValue('number', 0)
       )
     );
     retryTimesIf.addBodyNode(
       new GrammerExpr(
-        new GrammerVar('_backoffTime', Types.int16.key),
+        new GrammerVar('_backoffTime', int16),
         Symbol.assign(),
         new GrammerCall('method', [
           { type: 'object_static', name: this.combinator.addInclude('$Core') },
@@ -387,7 +354,7 @@ class ClientResolver extends BaseResolver {
     let backoffTimeIf = new GrammerCondition('if');
     backoffTimeIf.addCondition(
       new GrammerExpr(
-        new GrammerVar('_backoffTime'),
+        new GrammerVar('_backoffTime', int16),
         Symbol.greater(),
         new GrammerValue('number', 0)
       )
@@ -405,19 +372,19 @@ class ClientResolver extends BaseResolver {
     whileOperation.addBodyNode(retryTimesIf);
 
     whileOperation.addBodyNode(new GrammerExpr(
-      new GrammerVar('_retryTimes'),
+      new GrammerVar('_retryTimes', int16),
       Symbol.assign(),
       new GrammerExpr(
-        new GrammerVar('_retryTimes'),
+        new GrammerVar('_retryTimes', int16),
         Symbol.plus(),
         new GrammerValue('number', 1)
       )
     ));
 
     let requestTryCatch = new GrammerTryCatch();
-    let exceptionVar = new GrammerVar('e');
+    let exceptionVar = new GrammerVar('e', new TypeObject(this.combinator.addInclude('$Exception')));
     let exceptionParam = new GrammerValue('var', exceptionVar);
-    let catchException = new GrammerException(Exceptions.base(), exceptionVar);
+    let catchException = new GrammerException(this.combinator.addInclude('$Exception'), exceptionVar);
 
     let tryCatch = new GrammerCatch([
       new GrammerCondition('if', [
@@ -427,7 +394,7 @@ class ClientResolver extends BaseResolver {
         ], [exceptionVar])
       ], [
         new GrammerExpr(
-          new GrammerVar('_lastException', this.combinator.addInclude('$Exception'), 'var'),
+          new GrammerVar('_lastException', new TypeObject(this.combinator.addInclude('$Exception')), 'var'),
           Symbol.assign(),
           exceptionVar
         ),
@@ -435,7 +402,7 @@ class ClientResolver extends BaseResolver {
       ]),
       new GrammerThrows(null, [exceptionParam])
     ], catchException);
-    this.currThrows[Exceptions.base()] = Exceptions.base();
+    this.currThrows['base'] = new TypeObject(this.combinator.addInclude('$Exception'));
     this.requestBody(ast, body, requestTryCatch);
     requestTryCatch.addCatch(tryCatch);
 
@@ -446,12 +413,12 @@ class ClientResolver extends BaseResolver {
     func.addBodyNode(
       new GrammerThrows(
         this.combinator.addInclude('$ExceptionUnretryable'), [
-          new GrammerValue('var', new GrammerVar('_lastRequest', this.combinator.addInclude('$Request'))),
-          new GrammerValue('var', new GrammerVar('_lastException', this.combinator.addInclude('$Exception')))
+          new GrammerValue('var', new GrammerVar('_lastRequest', new TypeObject(this.combinator.addInclude('$Request')))),
+          new GrammerValue('var', new GrammerVar('_lastException', new TypeObject(this.combinator.addInclude('$Request'))))
         ]
       )
     );
-    this.currThrows['$ExceptionUnretryable'] = this.combinator.addInclude('$ExceptionUnretryable');
+    this.currThrows['$ExceptionUnretryable'] = new TypeObject(this.combinator.addInclude('$ExceptionUnretryable'));
   }
 
   requestBody(ast, body, func) {
@@ -460,7 +427,7 @@ class ClientResolver extends BaseResolver {
         // TeaRequest _request = new TeaRequest()
         func.addBodyNode(
           new GrammerExpr(
-            new GrammerVar(this.config.request, this.combinator.addInclude('$Request')),
+            new GrammerVar(this.config.request, new TypeObject(this.combinator.addInclude('$Request'))),
             Symbol.assign(),
             new GrammerNewObject(this.combinator.addInclude('$Request'))
           )
@@ -489,7 +456,9 @@ class ClientResolver extends BaseResolver {
         }
 
         // response = Tea.doAction
-        const doActionBehavior = new BehaviorDoAction(new GrammerVar(this.config.response, this.combinator.addInclude('$Response')), doActionParams);
+        const doActionBehavior = new BehaviorDoAction(
+          new GrammerVar(this.config.response, new TypeObject(this.combinator.addInclude('$Response'))), doActionParams
+        );
 
         if (body.stmts) {
           body.stmts.stmts.forEach(stmt => {
@@ -500,9 +469,9 @@ class ClientResolver extends BaseResolver {
         // _lastRequest = request_;
         func.addBodyNode(
           new GrammerExpr(
-            new GrammerVar('_lastRequest', this.combinator.addInclude('$Request'), 'var'),
+            new GrammerVar('_lastRequest', new TypeObject(this.combinator.addInclude('$Request')), 'var'),
             Symbol.assign(),
-            new GrammerVar(this.config.request, this.combinator.addInclude('$Request'))
+            new GrammerVar(this.config.request, new TypeObject(this.combinator.addInclude('$Request')))
           )
         );
 
@@ -535,7 +504,7 @@ class ClientResolver extends BaseResolver {
     }
     if (object.type === 'variable') {
       if (object.needCast) {
-        let grammerVar = new GrammerVar(object.id.lexeme);
+        let grammerVar = new GrammerVar(object.id.lexeme, this.resolveTypeItem(object.inferred));
         valGrammer.type = 'behavior';
         grammerVar.belong = valGrammer.index;
         const behaviorToMap = new BehaviorToMap(grammerVar, object.inferred);
@@ -543,7 +512,7 @@ class ClientResolver extends BaseResolver {
         valGrammer.value = behaviorToMap;
       } else {
         valGrammer.type = 'var';
-        let grammerVar = new GrammerVar(object.id.lexeme);
+        let grammerVar = new GrammerVar(object.id.lexeme, this.resolveTypeItem(object.inferred));
         if (object.id.type === 'model') {
           grammerVar.varType = 'static_class';
           grammerVar.name = this.combinator.addModelInclude(object.id.lexeme);
@@ -790,11 +759,14 @@ class ClientResolver extends BaseResolver {
     } else if (stmt.type === 'declare') {
       let type = null;
       if (stmt.expectedType) {
-        type = stmt.expectedType.lexeme;
+        type = this.resolveTypeItem(stmt.expectedType);
       } else if (stmt.expr.inferred) {
-        type = stmt.expr.inferred.name;
+        type = this.resolveTypeItem(stmt.expr.inferred);
+      } else {
+        debug.stack(stmt);
       }
       let expectedType = stmt.expectedType ? stmt.expectedType : null;
+      assert.equal(true, type instanceof TypeItem);
       let variate = new GrammerVar(stmt.id.lexeme, type);
       let value = this.renderGrammerValue(null, stmt.expr, expectedType);
       node = new GrammerExpr(variate, Symbol.assign(), value);
@@ -842,7 +814,7 @@ class ClientResolver extends BaseResolver {
         node.expr = new BehaviorToModel(node.expr, stmt.expectedType.name);
       }
     } else if (stmt.type === 'throw') {
-      this.currThrows['$Exception'] = this.combinator.addInclude('$Exception');
+      this.currThrows['$Exception'] = new TypeObject(this.combinator.addInclude('$Exception'));
       node = new GrammerThrows(this.combinator.addInclude('$Exception'));
       if (Array.isArray(stmt.expr)) {
         stmt.expr.forEach(e => {
@@ -870,7 +842,7 @@ class ClientResolver extends BaseResolver {
       }
     } else if (stmt.type === 'for') {
       node = new GrammerLoop('foreach');
-      node.item = new GrammerVar(stmt.id.lexeme);
+      node.item = new GrammerVar(stmt.id.lexeme, this.resolveTypeItem(stmt.list.inferred.itemType));
       node.source = this.renderGrammerValue(null, stmt.list);
       if (stmt.stmts) {
         stmt.stmts.stmts.forEach(s => {
@@ -943,8 +915,8 @@ class ClientResolver extends BaseResolver {
       });
       if (stmt.catchId) {
         const exceptionGram = new GrammerException(
-          Exceptions.base(),
-          new GrammerVar(stmt.catchId.lexeme)
+          this.combinator.addInclude('$Exception'),
+          new GrammerVar(stmt.catchId.lexeme, new TypeObject(this.combinator.addInclude('$Exception')))
         );
         const catchGram = new GrammerCatch([], exceptionGram);
 
