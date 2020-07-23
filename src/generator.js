@@ -100,6 +100,8 @@ class Generator {
     const imports = ast.imports;
 
     let requirePackage = [];
+    let thirdPackageDaraMeta = {};
+    let thirdPackageScope = {};
     let thirdPackageNamespace = {};
     let thirdPackageModel = {};
     let thirdPackageClient = {};
@@ -126,8 +128,10 @@ class Generator {
           ? path.join(targetPath, 'Teafile')
           : path.join(targetPath, 'Darafile');
         const daraMeta = JSON.parse(fs.readFileSync(daraFilePath));
+        thirdPackageDaraMeta[aliasId] = daraMeta;
+        thirdPackageScope[aliasId] = daraMeta.scope;
 
-        // init package name,client name,modelDir name
+        // init package name, client name, model dir name
         let packageName, clientName, modelDir;
         if (daraMeta[this.lang]) {
           packageName = daraMeta[this.lang].package ? daraMeta[this.lang].package : daraMeta.name;
@@ -172,6 +176,8 @@ class Generator {
     }
     return {
       requirePackage,
+      thirdPackageDaraMeta,
+      thirdPackageScope,
       thirdPackageNamespace,
       thirdPackageClient,
       thirdPackageClientAlias,
