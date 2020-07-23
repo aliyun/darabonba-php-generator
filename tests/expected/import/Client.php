@@ -24,7 +24,7 @@ class Client {
     }
 
     /**
-     * @param Source $client
+     * @param SourceClient $client
      * @return void
      */
     public static function Sample($client){

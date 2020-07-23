@@ -5,9 +5,10 @@ namespace Tea\PHP\Tests;
 
 use AlibabaCloud\Tea\Request;
 use AlibabaCloud\Tea\Response;
-use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
 use AlibabaCloud\Tea\Tea;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Exception\TeaError;
 
 class Client {
 
@@ -28,7 +29,7 @@ class Client {
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      * @throws TeaUnableRetryError
      */
     public function helloRuntime(){
@@ -56,7 +57,7 @@ class Client {
                 $_response= Tea::send($_request, $_runtime);
                 return null;
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 if (!($e instanceof TeaError)) {
                     $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
                 }

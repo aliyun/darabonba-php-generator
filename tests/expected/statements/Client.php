@@ -64,7 +64,7 @@ class Client {
      * @return void
      */
     public static function helloForBreak(){
-        foreach($item as []){
+        foreach([] as $item){
             break;
         }
     }

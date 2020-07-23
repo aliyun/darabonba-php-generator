@@ -137,8 +137,9 @@ class BaseResolver {
       if (typeNode.idType === 'model') {
         return new TypeObject(this.combinator.addModelInclude(typeNode.lexeme));
       } else if (typeNode.idType === 'module') {
-        const name = sourceNode.vid ? sourceNode.vid.lexeme : typeNode.lexeme;
-        return new TypeObject(this.combinator.addInclude(name));
+        return new TypeObject(this.combinator.addInclude(typeNode.lexeme));
+      } else if (typeNode.idType === 'builtin_model') {
+        return new TypeObject(this.combinator.addInclude(typeNode.lexeme));
       }
       debug.stack(typeNode, sourceNode);
     } else if (typeNode.type) {

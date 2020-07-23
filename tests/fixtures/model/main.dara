@@ -16,4 +16,6 @@ model MyModel = {
   numberfield: integer,
   readable: readable,
   existModel: M,
+  request: $Request,
+  complexList: [ [ string ] ]
 };

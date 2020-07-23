@@ -3,6 +3,7 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
+use \Exception;
 use AlibabaCloud\Tea\Tea;
 
 class Client {
@@ -49,6 +50,6 @@ class Client {
      * @return void
      */
     public static function helloInterface(){
-        throw new \Exception('Un-implemented');
+        throw new Exception('Un-implemented');
     }
 }

@@ -194,7 +194,7 @@ class ClientResolver extends BaseResolver {
     }
     this.addAnnotations(func, ast);
     if (body === null) {
-      func.addBodyNode(new GrammerThrows('$Exception', [], 'Un-implemented'));
+      func.addBodyNode(new GrammerThrows(this.combinator.addInclude('$Exception'), [], 'Un-implemented'));
     }
 
     if (ast.isAsync) {
@@ -207,7 +207,7 @@ class ClientResolver extends BaseResolver {
 
     ast.params.params.forEach(p => {
       var param = new GrammerValue();
-      param.type = this.resolveTypeItem(p);
+      param.type = this.resolveTypeItem(p.paramType, p);
       param.key = p.paramName.lexeme;
       if (p.needValidate) {
         func.addBodyNode(new GrammerCall('method', [
@@ -814,8 +814,8 @@ class ClientResolver extends BaseResolver {
         node.expr = new BehaviorToModel(node.expr, stmt.expectedType.name);
       }
     } else if (stmt.type === 'throw') {
-      this.currThrows['$Exception'] = new TypeObject(this.combinator.addInclude('$Exception'));
-      node = new GrammerThrows(this.combinator.addInclude('$Exception'));
+      this.currThrows['$Error'] = new TypeObject(this.combinator.addInclude('$Error'));
+      node = new GrammerThrows(this.combinator.addInclude('$Error'));
       if (Array.isArray(stmt.expr)) {
         stmt.expr.forEach(e => {
           node.addParam(this.renderGrammerValue(null, e));
