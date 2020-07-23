@@ -13,14 +13,38 @@ const OPTION_UPDATE = 8;  // update if file already exist
 
 // file_name : OPTIONS
 const files = {
-  '.gitignore': OPTION_LOCAL,
-  '.php_cs.dist': OPTION_LOCAL,
-  'composer.json': OPTION_LOCAL | OPTION_RENDER | OPTION_SOURCE | OPTION_UPDATE,
-  'LICENSE': OPTION_SOURCE,
-  'README-CN.md': OPTION_SOURCE | OPTION_RENDER,
-  'README.md': OPTION_SOURCE | OPTION_RENDER,
-  'phpunit.xml': OPTION_SOURCE,
-  'autoload.php': OPTION_LOCAL | OPTION_RENDER
+  'gitignore': {
+    filename: '.gitignore',
+    mode: OPTION_LOCAL
+  },
+  'php_cs': {
+    filename: '.php_cs.dist',
+    mode: OPTION_LOCAL,
+  },
+  'composer': {
+    filename: 'composer.json',
+    mode: OPTION_LOCAL | OPTION_RENDER | OPTION_SOURCE | OPTION_UPDATE
+  },
+  'LICENSE': {
+    filename: 'LICENSE',
+    mode: OPTION_SOURCE
+  },
+  'readme_cn': {
+    filename: 'README-CN.md',
+    mode: OPTION_SOURCE | OPTION_RENDER
+  },
+  'readme': {
+    filename: 'README.md',
+    mode: OPTION_SOURCE | OPTION_RENDER,
+  },
+  'phpunit': {
+    filename: 'phpunit.xml',
+    mode: OPTION_SOURCE
+  },
+  'autoload': {
+    filename: 'autoload.php',
+    mode: OPTION_LOCAL | OPTION_RENDER
+  }
 };
 
 class PackageInfo extends BasePackageInfo {
@@ -43,14 +67,16 @@ class PackageInfo extends BasePackageInfo {
         fs.readFileSync(path.join(__dirname, './files/bootstrap.php.tmpl'), 'utf-8')
       );
     }
-    Object.keys(files).forEach(filename => {
+    Object.keys(files).forEach(key => {
+      const item = files[key];
+      const filename = item.filename;
+      const optional = item.mode;
       let content = '';
-      let optional = files[filename];
       if (optional & OPTION_UPDATE && fs.existsSync(path.join(outputDir, filename))) {
         content = fs.readFileSync(path.join(outputDir, filename), 'utf-8');
-      } else if (optional & OPTION_SOURCE && packageInfo.files && packageInfo.files[filename]) {
-        let filepath = path.isAbsolute(packageInfo.files[filename]) ?
-          packageInfo.files[filename] : path.join(config.pkgDir, packageInfo.files[filename]);
+      } else if (optional & OPTION_SOURCE && packageInfo.files && packageInfo.files[key]) {
+        let filepath = path.isAbsolute(packageInfo.files[key]) ?
+          packageInfo.files[key] : path.join(config.pkgDir, packageInfo.files[key]);
         if (!fs.existsSync(filepath)) {
           return;
         }
