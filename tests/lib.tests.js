@@ -16,7 +16,7 @@ const {
   _avoidKeywords,
   _modify,
   _symbol,
-  _underScoreCase
+  _toSnakeCase
 } = require('../src/lib/helper');
 
 describe('debug should be ok', function () {
@@ -218,8 +218,12 @@ describe('helper tests', function () {
     expect(_symbol('ASSIGN')).to.be.eql('=');
   });
 
-  it('_underScoreCase should be ok', function () {
-    expect(_underScoreCase('TestABC')).to.be.eql('test_abc');
-    expect(_underScoreCase(null)).to.be.eql('');
+  it('_toSnakeCase should be ok', function () {
+    expect(_toSnakeCase('TestABC')).to.be.eql('test_abc');
+    expect(_toSnakeCase(null)).to.be.eql('');
+    expect(_toSnakeCase('SLS')).to.be.eql('sls');
+    expect(_toSnakeCase('_runtime')).to.be.eql('_runtime');
+    expect(_toSnakeCase('TT123')).to.be.eql('tt123');
+    expect(_toSnakeCase('fooBar')).to.be.eql('foo_bar');
   });
 });

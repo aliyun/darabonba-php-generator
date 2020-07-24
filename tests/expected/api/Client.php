@@ -4,11 +4,10 @@
 namespace Tea\PHP\Tests;
 
 use AlibabaCloud\Tea\Request;
-use AlibabaCloud\Tea\Response;
-use \Exception;
 use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
+use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 
 class Client {
 
@@ -21,7 +20,7 @@ class Client {
         $_request->pathname = "/";
         $_request->headers = [
             "host" => "www.test.com"
-            ];
+        ];
         $_lastRequest = $_request;
         $_response= Tea::send($_request);
         return null;
@@ -29,6 +28,7 @@ class Client {
 
     /**
      * @return void
+     * @throws TeaError
      * @throws Exception
      * @throws TeaUnableRetryError
      */
@@ -52,7 +52,7 @@ class Client {
                 $_request->pathname = "/";
                 $_request->headers = [
                     "host" => "www.test.com"
-                    ];
+                ];
                 $_lastRequest = $_request;
                 $_response= Tea::send($_request, $_runtime);
                 return null;

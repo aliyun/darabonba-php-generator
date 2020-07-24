@@ -145,7 +145,7 @@ class GrammerValue extends Grammer {
     this.key = key;
     this.value = value;
     this.needCast = needCast;
-    this.keyType = '';
+    this.dataType = null;  // TypeItem
     this.isExpand = false;
   }
 }
@@ -310,9 +310,12 @@ class GrammerTryCatch extends Grammer {
 }
 
 class GrammerThrows extends Grammer {
-  constructor(exception = null, params = [], msg = '') {
+  constructor(exceptionType = null, params = [], msg = '') {
     super();
-    this.exception = exception;  // ExceptionEnum
+    if (exceptionType !== null) {
+      assert.equal(true, exceptionType instanceof TypeObject);
+    }
+    this.exception = exceptionType;  // TypeObject
     this.params = params;        // GrammerValue
     this.message = msg;
   }

@@ -4,9 +4,8 @@
 namespace Tea\PHP\Tests;
 
 use AlibabaCloud\Tea\Request;
-use AlibabaCloud\Tea\Response;
-use AlibabaCloud\Tea\Exception\TeaError;
 use AlibabaCloud\Tea\Tea;
+use AlibabaCloud\Tea\Exception\TeaError;
 
 class Client {
 
@@ -19,7 +18,7 @@ class Client {
         $_request->pathname = "/";
         $_request->headers = [
             "host" => "www.test.com"
-            ];
+        ];
         if (true) {
             $_request->headers["host"] = "www.test2.com";
         }

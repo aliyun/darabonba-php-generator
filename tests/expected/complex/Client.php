@@ -4,16 +4,16 @@
 namespace Tea\PHP\Tests;
 
 use Source\SourceClient;
-use AlibabaCloud\Tea\Request;
-use \Exception;
 use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Response;
-use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Request;
 use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
+use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 
 use Tea\PHP\Tests\Models\ComplexRequest;
 use Source\Models\RuntimeObject;
 use Source\Models\Config;
+use AlibabaCloud\Tea\Response;
 use Tea\PHP\Tests\Models\ComplexRequest\header;
 
 class Client extends SourceClient {
@@ -22,6 +22,7 @@ class Client extends SourceClient {
      * @param ComplexRequest $request
      * @param SourceClient $client
      * @return RuntimeObject
+     * @throws TeaError
      * @throws Exception
      * @throws TeaUnableRetryError
      */
@@ -29,7 +30,7 @@ class Client extends SourceClient {
         $request->validate();
         $_runtime = [
             "timeouted" => "retry"
-            ];
+        ];
         $_lastRequest = null;
         $_lastException = null;
         $_now = time();
@@ -47,7 +48,7 @@ class Client extends SourceClient {
                 $name = "complex";
                 $mapVal = [
                     "test" => "ok"
-                    ];
+                ];
                 $version = "/" . "2019-01-08" . "" . $this->_pathname . "";
                 $_request->protocol = $this->_protocol;
                 $_request->port = 80;
@@ -55,8 +56,7 @@ class Client extends SourceClient {
                 $_request->pathname = "/" . $this->_pathname . "";
                 $_request->query = SourceClient::query(Tea::merge([
                     "date" => "2019"
-                    ], $request->header,
-                    $mapVal));
+                ], $request->header, $mapVal));
                 $_request->body = SourceClient::body();
                 $_lastRequest = $_request;
                 $_response= Tea::send($_request, $_runtime);
@@ -71,7 +71,7 @@ class Client extends SourceClient {
                 $this->hello($request, [
                     "1",
                     "2"
-                    ]);
+                ]);
                 $this->hello(null, null);
                 return RuntimeObject::fromMap([]);
                 $this->Complex3(null);
@@ -110,7 +110,7 @@ class Client extends SourceClient {
             "date" => "2019",
             "version" => "2019-01-08",
             "protocol" => $_request->protocol
-            ]);
+        ]);
         $_request->body = SourceClient::body();
         $_lastRequest = $_request;
         $_response= Tea::send($_request);
@@ -130,7 +130,7 @@ class Client extends SourceClient {
         $_request->pathname = "/";
         $_request->query = SourceClient::query([
             "date" => "2019"
-            ]);
+        ]);
         $_request->body = SourceClient::body();
         $_request->headers["host"] = "hello";
         $_lastRequest = $_request;
@@ -139,7 +139,7 @@ class Client extends SourceClient {
         $req = new \Source\Models\Request([
             "accesskey" => $request->accessKey,
             "region" => $resp->statusMessage
-            ]);
+        ]);
         self::array0($request);
         $req->accesskey = "accesskey";
         $req->accesskey = $request->accessKey;
@@ -182,7 +182,7 @@ class Client extends SourceClient {
     public static function array1(){
         return [
             "1"
-            ];
+        ];
     }
 
     /**
@@ -213,7 +213,7 @@ class Client extends SourceClient {
                 "name" => "errorName",
                 "message" => "some error",
                 "code" => 400
-                ]);
+            ]);
         }
         catch (Exception $e) {
             if (!($e instanceof TeaError)) {
