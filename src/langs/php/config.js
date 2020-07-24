@@ -55,9 +55,6 @@ module.exports = {
     'ABSTRACT',
     'STATIC'
   ],
-  exceptionMap: {
-    'BASE': '\\Exception',
-  },
   model: {
     dir: 'Models',
     include: [],

@@ -43,7 +43,6 @@ const {
   _symbol,
   _modify,
   _deepClone,
-  _exception,
   _upperFirst,
   _isKeywords,
   _avoidKeywords,
@@ -263,6 +262,9 @@ class Combinator extends CombinatorBase {
     } else if (type instanceof TypeBytes || type instanceof TypeArray || type instanceof TypeMap) {
       return 'array';
     } else if (type instanceof TypeObject) {
+      if (type.objectName.indexOf('$') === 0) {
+        return this.addInclude(type.objectName);
+      }
       return type.objectName;
     } else if (type instanceof TypeStream) {
       return this.addInclude('$Stream');
@@ -784,97 +786,75 @@ class Combinator extends CombinatorBase {
     }
   }
 
-  grammerValue(emitter, gram, layer = 1) {
-    if (gram.key) {
-      emitter.emit(`"${gram.key}" => `);
+  grammerValue(emitter, gram) {
+    if (gram instanceof AnnotationItem) {
+      this.emitAnnotation(emitter, gram);
+      return;
     }
-    if (gram instanceof GrammerCall) {
-      this.grammerCall(emitter, gram);
-    } else if (gram.type === 'array' || gram.type === 'model_construct_params') {
-      if (gram.needCast) {
-        if (gram.value.length > 0) {
-          emitter.emit(`${this.addInclude('$Core')}::${this.config.tea.core.merge}(`);
-          let expandParams = gram.value.filter((item) => {
-            return item.isExpand !== true;
-          });
-          let notExpandParams = gram.value.filter((item) => {
-            return item.isExpand === true;
-          });
-          if (expandParams.length > 0) {
-            emitter.emitln('[');
-            for (let i = 0; i < expandParams.length; i++) {
-              emitter.emit('', this.level + layer);
-              let v = expandParams[i];
-              if (v instanceof AnnotationItem) {
-                this.emitAnnotation(emitter, v, 0);
-                continue;
-              }
-              this.grammerValue(emitter, v, layer + 1);
-              if (i < expandParams.length - 1) {
-                emitter.emitln(',');
-              } else {
-                emitter.emitln('');
-              }
-            }
-            emitter.emit(']', this.level + layer);
+    const emitMap = function (emitter, values) {
+      if (values.length > 0) {
+        emitter.emitln('[', this.levevl);
+        this.levelUp();
+        values.forEach((item, i) => {
+          if (item instanceof AnnotationItem) {
+            this.grammer(emitter, item);
+            return;
           }
-          if (notExpandParams.length > 0) {
-            if (expandParams.length > 0) {
-              emitter.emit(', ');
-            }
-            for (let i = 0; i < notExpandParams.length; i++) {
-              let v = notExpandParams[i];
-              if (v instanceof AnnotationItem) {
-                this.emitAnnotation(emitter, v, 0);
-                continue;
-              }
-              this.grammerValue(emitter, v, layer + 1);
-              if (i < notExpandParams.length - 1) {
-                emitter.emitln(',');
-                emitter.emit('', this.level + layer);
-              }
-            }
+          emitter.emit(`"${item.key}" => `, this.level);
+          this.grammerValue(emitter, item, false, false);
+          if (i < values.length - 1) {
+            emitter.emitln(',');
+          } else {
+            emitter.emitln();
           }
-          emitter.emit(')');
-        } else {
-          emitter.emit('[]');
-        }
+        });
+        this.levelDown();
+        emitter.emit(']', this.level);
       } else {
-        if (gram.value.length > 0) {
-          emitter.emitln('[');
-          let len = gram.value.length;
-          let i = 0;
-          for (i = 0; i < gram.value.length; i++) {
-            let item = gram.value[i];
-            emitter.emit('', this.level + layer);
-            if (item instanceof AnnotationItem) {
-              this.emitAnnotation(emitter, item, 0);
-              continue;
-            }
-            this.grammerValue(emitter, item, layer + 1);
-            if (i < len - 1) {
-              emitter.emitln(',');
-            } else {
-              emitter.emitln('');
-            }
-          }
-          emitter.emit(']', this.level + layer);
-        } else {
-          emitter.emit('[]');
+        emitter.emit('[]');
+      }
+    };
+    if (gram.type === 'map' || gram.type === 'model_construct_params') {
+      if (gram.needCast) {
+        let expandParams = gram.value.filter((item) => {
+          return item.isExpand !== true;
+        });
+        let notExpandParams = gram.value.filter((item) => {
+          return item.isExpand === true;
+        });
+        emitter.emit(`${this.addInclude('$Core')}::${this.config.tea.core.merge}(`);
+        if (expandParams.length) {
+          emitMap.call(this, emitter, expandParams);
+          emitter.emit(', ');
         }
+        for (let i = 0; i < notExpandParams.length; i++) {
+          let v = notExpandParams[i];
+          if (v instanceof AnnotationItem) {
+            this.emitAnnotation(emitter, v, 0);
+            continue;
+          }
+          this.levelUp();
+          this.grammerValue(emitter, v);
+          this.levelDown();
+          if (i < notExpandParams.length - 1) {
+            emitter.emit(', ');
+          }
+        }
+        emitter.emit(')');
+      } else {
+        emitMap.call(this, emitter, gram.value);
       }
     } else if (gram.type === 'string') {
       emitter.emit(`"${gram.value}"`);
-    } else if (gram.type === 'param') {
-      emitter.emit(`$${_convertStaticParam(gram.value)}`);
-    } else if (gram.type === 'call') {
-      this.grammerCall(emitter, gram.value);
-    } else if (gram.type === 'number') {
-      emitter.emit(gram.value);
     } else if (gram.type === 'null') {
       emitter.emit('null');
-    } else if (gram.type === 'behavior') {
-      this.grammer(emitter, gram.value);
+    } else if (gram.type === 'behavior' || gram.type === 'call'
+      || gram.type === 'var' || gram.type === 'instance') {
+      this.grammer(emitter, gram.value, false, false);
+    } else if (gram.type === 'number' || gram.type === 'bool') {
+      emitter.emit(gram.value);
+    } else if (gram.type === 'param') {
+      emitter.emit(`$${gram.value}`);
     } else if (gram.type === 'expr') {
       if (Array.isArray(gram.value)) {
         gram.value.forEach(gramItem => {
@@ -883,28 +863,31 @@ class Combinator extends CombinatorBase {
       } else {
         this.grammer(emitter, gram.value, false, false);
       }
-    } else if (gram.type === 'instance') {
-      this.grammerNewObject(emitter, gram.value);
-    } else if (gram.type === 'bool' || gram.type === 'boolean') {
-      emitter.emit(gram.value ? 'true' : 'false');
-    } else if (gram.type === 'var') {
-      this.grammerVar(emitter, gram.value);
-    } else if (gram.type === 'class') {
-      emitter.emit(`${gram.value.name}::class`);
+    } else if (gram.type === 'array') {
+      if (gram.value.length) {
+        emitter.emitln('[', this.levevl);
+        this.levelUp();
+        gram.value.forEach((item, i) => {
+          if (item instanceof AnnotationItem) {
+            this.grammer(emitter, item);
+            return;
+          }
+          emitter.emit('', this.level);
+          this.grammerValue(emitter, item, false, false);
+          if (i < gram.value.length - 1) {
+            emitter.emitln(',');
+          } else {
+            emitter.emitln();
+          }
+        });
+        this.levelDown();
+        emitter.emit(']', this.level);
+      } else {
+        emitter.emit('[]');
+      }
     } else if (gram.type === 'not') {
       emitter.emit(_symbol(Symbol.reverse()));
       this.grammerValue(emitter, gram.value);
-    } else if (gram.type === '') {
-      if (gram.varType) {
-        this.grammerVar(emitter, gram);
-      } else {
-        debug.stack('Unsupported GrammerValue type', gram);
-      }
-    } else if (Array.isArray(gram)) {
-      let grammerValue = new GrammerValue();
-      grammerValue.type = 'array';
-      grammerValue.value = gram;
-      this.grammerValue(emitter, grammerValue);
     } else {
       debug.stack('Unsupported GrammerValue type', gram);
     }
@@ -984,7 +967,7 @@ class Combinator extends CombinatorBase {
       this.grammerValue(emitter, gram.params[0]);
     } else {
       if (gram.params.length > 0) {
-        emitter.emit(`throw new ${_exception(gram.exception)}(`);
+        emitter.emit(`throw new ${this.emitType(gram.exception)}(`);
         if (gram.params.length === 1) {
           this.grammerValue(emitter, gram.params[0]);
         } else {
@@ -999,7 +982,7 @@ class Combinator extends CombinatorBase {
         emitter.emit(')');
       } else {
         let msg = gram.message ? `'${gram.message}'` : '';
-        emitter.emit(`throw new ${_exception(gram.exception)}(${msg})`);
+        emitter.emit(`throw new ${this.emitType(gram.exception)}(${msg})`);
       }
     }
   }
@@ -1036,7 +1019,7 @@ class Combinator extends CombinatorBase {
     let emitterVar = new Emitter();
     this.grammerVar(emitterVar, gram.exceptions.exceptionVar);
     let varName = emitterVar.output;
-    emitter.emit(`catch (${_exception(gram.exceptions.type)} `, this.level);
+    emitter.emit(`catch (${this.emitType(gram.exceptions.type)} `, this.level);
     emitter.emit(varName);
     emitter.emitln(') {');
     this.levelUp();

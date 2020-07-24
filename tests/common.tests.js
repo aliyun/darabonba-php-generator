@@ -21,6 +21,7 @@ const {
   GrammerCondition,
   NoteItem,
   ObjectItem,
+  TypeObject,
 } = require('../src/langs/common/items');
 
 const PackageInfo = require('../src/langs/common/package_info');
@@ -199,10 +200,10 @@ describe('combinator should be ok', function () {
     const combinator = new Combinator();
     const grammer = new GrammerCondition();
     expect(combinator.findThrows(grammer).length).to.be.eql(0);
-    grammer.addBodyNode(new GrammerThrows());
+    grammer.addBodyNode(new GrammerThrows(new TypeObject('exception')));
     expect(combinator.findThrows(grammer).length).to.be.eql(1);
     const childGrammer = new GrammerCondition();
-    childGrammer.addBodyNode(new GrammerThrows());
+    childGrammer.addBodyNode(new GrammerThrows(new TypeObject('exception')));
     grammer.addBodyNode(childGrammer);
     expect(combinator.findThrows(grammer).length).to.be.eql(2);
   });

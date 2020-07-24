@@ -3,12 +3,11 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
-use AlibabaCloud\Tea\Request;
-use \Exception;
 use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Response;
-use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Request;
 use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
+use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 
 /**
  * top annotation
@@ -23,6 +22,7 @@ class Client {
     /**
      * testAPI
      * @return void
+     * @throws TeaError
      * @throws Exception
      * @throws TeaUnableRetryError
      */

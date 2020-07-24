@@ -19,6 +19,10 @@ const { _deepClone } = require('../src/lib/helper');
 const lang = 'php';
 const Combinator = require(`../src/langs/${lang}/combinator.js`);
 const config = require(`../src/langs/${lang}/config.js`);
+Object.assign(config, {
+  scope: 'test',
+  name: 'main'
+});
 
 describe('client resolver should be ok', function () {
   beforeEach(function () {
@@ -198,14 +202,6 @@ describe('client resolver should be ok', function () {
       needCast: true
     });
     expect(grammerValue.type).to.be.eql('behavior');
-
-    grammerValue = code.renderGrammerValue(null, {
-      type: 'object',
-      fields: [
-        { expr: { type: 'object', fields: [{ expr: { type: 'null' } }] } }
-      ]
-    });
-    expect(grammerValue.type).to.be.eql('array');
 
     mm.restore();
   });

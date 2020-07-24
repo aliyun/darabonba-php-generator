@@ -89,14 +89,7 @@ function _symbol(str) {
   throw new Error(`Unsupported symbol : ${str}`);
 }
 
-function _exception(str) {
-  if (config.exceptionMap[str]) {
-    return config.exceptionMap[str];
-  }
-  return str;
-}
-
-function _underScoreCase(str) {
+function _toSnakeCase(str) {
   if (!str) {
     return '';
   }
@@ -117,6 +110,9 @@ function _underScoreCase(str) {
     res += '_' + tmp.toLowerCase();
   }
   res = res.replace(/-/g, '_');
+  if (str[0] !== '_' && res[0] === '_') {
+    res = res.substr(1);
+  }
   return res;
 }
 
@@ -179,7 +175,6 @@ module.exports = {
   _flatten,
   _unflatten,
   _camelCase,
-  _exception,
   _deepClone,
   _upperFirst,
   _lowerFirst,
@@ -188,6 +183,6 @@ module.exports = {
   _assignObject,
   _subModelName,
   _avoidKeywords,
-  _underScoreCase,
+  _toSnakeCase,
   _convertStaticParam,
 };

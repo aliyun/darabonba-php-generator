@@ -3,8 +3,8 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
-use \Exception;
 use AlibabaCloud\Tea\Tea;
+use \Exception;
 
 class Client {
 
@@ -23,7 +23,7 @@ class Client {
         return Tea::merge([
             "key" => "value",
             "key-1" => "value-1"
-            ], $m);
+        ], $m);
     }
 
     /**
@@ -33,8 +33,8 @@ class Client {
         return [
             [
                 "key" => "value"
-                ]
-            ];
+            ]
+        ];
     }
 
     /**

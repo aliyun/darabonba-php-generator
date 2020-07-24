@@ -4,12 +4,11 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
-use AlibabaCloud\Tea\Request;
-use \Exception;
 use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Response;
-use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Request;
 use AlibabaCloud\Tea\Exception\TeaError;
+use \Exception;
+use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 
 use Tea\PHP\Tests\Models\Test1;
 use Tea\PHP\Tests\Models\Test3;
@@ -33,13 +32,13 @@ class Client {
             // test declare back comment
             "test2" => "test2",
             // test2 declare back comment
-            ]);
+        ]);
         $array = [
             // array string comment
             "string",
             // array number comment
             300
-            ];
+        ];
     }
 
     /**
@@ -47,6 +46,7 @@ class Client {
      * testAPI comment one
      * testAPI comment two
      * @return void
+     * @throws TeaError
      * @throws Exception
      * @throws TeaUnableRetryError
      */
@@ -54,7 +54,7 @@ class Client {
         $_runtime = [
             // empty runtime comment
             // another runtime comment
-            ];
+        ];
         $_lastRequest = null;
         $_lastException = null;
         $_now = time();
@@ -75,7 +75,7 @@ class Client {
                     "test" => "test",
                     // test2 declare front comment
                     "test2" => "test2"
-                    ]);
+                ]);
                 // number declare comment
                 $num = 123;
                 // static function call comment
@@ -104,6 +104,7 @@ class Client {
     /**
      * testAPI2 comment
      * @return void
+     * @throws TeaError
      * @throws Exception
      * @throws TeaUnableRetryError
      */
@@ -113,7 +114,7 @@ class Client {
             "retry" => true,
             // runtime back comment one
             // runtime back comment two
-            ];
+        ];
         $_lastRequest = null;
         $_lastException = null;
         $_now = time();
@@ -131,7 +132,7 @@ class Client {
                 // new model instance comment
                 $modelInstance = new Test3([
                     // empty model
-                    ]);
+                ]);
                 // boolean declare comment
                 $bool = true;
                 if ($bool) {
@@ -167,7 +168,7 @@ class Client {
     public static function staticFunc(){
         $a = [
             // empty annotation comment
-            ];
+        ];
     }
 
     /**

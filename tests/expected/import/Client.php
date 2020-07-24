@@ -3,8 +3,8 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
-use AlibabaCloud\Tea\Exception\TeaError;
 use Source\SourceClient;
+use AlibabaCloud\Tea\Exception\TeaError;
 
 use Source\Models\RuntimeObject;
 use Source\Models\Request;
@@ -20,7 +20,7 @@ class Client {
         throw new TeaError([
             "code" => "SomeError",
             "messge" => "ErrorMessage"
-            ]);
+        ]);
     }
 
     /**
@@ -32,7 +32,7 @@ class Client {
         $request = new Request([
             "accesskey" => "accesskey",
             "region" => "region"
-            ]);
+        ]);
         $client->print_($runtime);
     }
 }
