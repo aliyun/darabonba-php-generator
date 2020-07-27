@@ -19,16 +19,6 @@ module.exports = {
     'return', 'static', 'switch', 'throw', 'trait',
     'try', 'unset', 'use', 'var', 'while', 'xor'
   ],
-  typeMap: {
-    'boolean': 'bool',
-    'number': 'integer',
-    'integer': 'integer',
-    'object': 'object',
-    'map': 'array',
-    'readable': 'Stream',
-    'bytes': 'array',
-    'long': 'integer'
-  },
   symbolMap: {
     'ASSIGN': '=',
     'EQ': '==',

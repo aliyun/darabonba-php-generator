@@ -55,6 +55,8 @@ class TypeBase extends TypeItem { }
 
 class TypeVoid extends TypeBase { }
 
+class TypeNull extends TypeBase { }
+
 class TypeGeneric extends TypeBase { }
 
 class TypeString extends TypeBase {
@@ -583,6 +585,7 @@ module.exports = {
   TypeBase,
   TypeItem,
   TypeVoid,
+  TypeNull,
   TypeMap,
 
   Counter,

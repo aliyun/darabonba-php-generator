@@ -14,7 +14,8 @@ const {
   TypeStream,
   TypeVoid,
   TypeNumber,
-  TypeBool
+  TypeBool,
+  TypeNull
 } = require('../langs/common/items');
 
 const { _isBasicType } = require('../lib/helper');
@@ -155,7 +156,7 @@ class BaseResolver {
       } else if (_isBasicType(typeNode.type)) {
         return this.resolveTypeItem(typeNode.type, typeNode);
       } else if (typeNode.type === 'basic') {
-        return this.resolveTypeItem(typeNode.name);
+        return this.resolveTypeItem(typeNode.name, sourceNode);
       } else if (typeNode.type === 'model') {
         let name = typeNode.name;
         if (typeNode.moduleName) {
@@ -216,6 +217,8 @@ class BaseResolver {
       return new TypeNumber();
     } else if (typeNode === 'boolean') {
       return new TypeBool();
+    } else if (typeNode === 'null') {
+      return new TypeNull();
     }
     debug.stack('Unsupported type node', { typeNode, sourceNode });
   }

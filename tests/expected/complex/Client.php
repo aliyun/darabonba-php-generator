@@ -12,9 +12,9 @@ use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 
 use Tea\PHP\Tests\Models\ComplexRequest;
 use Source\Models\RuntimeObject;
+use Tea\PHP\Tests\Models\ComplexRequest\header;
 use Source\Models\Config;
 use AlibabaCloud\Tea\Response;
-use Tea\PHP\Tests\Models\ComplexRequest\header;
 
 class Client extends SourceClient {
 
