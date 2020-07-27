@@ -35,8 +35,9 @@ const {
   TypeBool,
   TypeItem,
   TypeVoid,
-  TypeMap,
+  TypeNull,
   TypeBase,
+  TypeMap,
 } = require('../common/items');
 
 const {
@@ -280,6 +281,8 @@ class Combinator extends CombinatorBase {
       return 'bool';
     } else if (type instanceof TypeVoid) {
       return 'void';
+    } else if (type instanceof TypeNull) {
+      return 'null';
     }
     debug.stack(type);
   }

@@ -118,7 +118,8 @@ describe('client resolver should be ok', function () {
         accessKey: {
           id: '',
           value: { lexeme: '' }
-        }
+        },
+        inferred: { type: 'basic', name: 'string' }
       });
     }).to.be.throw('');
 
@@ -128,7 +129,8 @@ describe('client resolver should be ok', function () {
       accessKey: {
         id: 'test',
         value: { lexeme: 'test' }
-      }
+      },
+      inferred: { type: 'basic', name: 'string' }
     });
     expect(grammerValue.value.path.length).to.be.eql(2);
 
@@ -166,7 +168,8 @@ describe('client resolver should be ok', function () {
       left: {
         type: 'instance_call',
         id: { lexeme: '@test' }
-      }
+      },
+      inferred: { type: 'basic', name: 'string' }
     });
     expect(grammerValue.value.path.length).to.be.eql(1);
 
@@ -175,7 +178,8 @@ describe('client resolver should be ok', function () {
       left: {
         type: 'method_call',
         id: { type: 'module', lexeme: 'Util' }
-      }
+      },
+      inferred: { type: 'basic', name: 'string' }
     });
     expect(grammerValue.value.path.length).to.be.eql(2);
 
@@ -187,7 +191,12 @@ describe('client resolver should be ok', function () {
       aliasId: {
         lexeme: 'test'
       },
-      propertyPath: [{ lexeme: 'a' }, { lexeme: 'b' }]
+      propertyPath: [{ lexeme: 'a' }, { lexeme: 'b' }],
+      inferred: {
+        type: 'model',
+        name: 'ComplexRequest.header',
+        moduleName: undefined
+      }
     });
     expect(grammerValue.value.name).to.be.eql('test.a.b');
 
@@ -199,7 +208,8 @@ describe('client resolver should be ok', function () {
       },
       propertyPath: [{ lexeme: 'test' }],
       propertyPathTypes: [{ name: 'test' }],
-      needCast: true
+      needCast: true,
+      inferred: { type: 'basic', name: 'string' }
     });
     expect(grammerValue.type).to.be.eql('behavior');
 

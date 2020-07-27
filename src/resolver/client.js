@@ -501,7 +501,7 @@ class ClientResolver extends BaseResolver {
         valGrammer.value = behaviorToMap;
       } else {
         valGrammer.type = 'var';
-        let grammerVar; 
+        let grammerVar;
         if (object.id.type === 'model') {
           const name = this.combinator.addModelInclude(object.id.lexeme);
           const type = this.resolveTypeItem(object.inferred);
@@ -552,6 +552,7 @@ class ClientResolver extends BaseResolver {
         var name = object.propertyPath[i].lexeme;
 
         if (current.type === 'model') {
+          call.type = 'prop';
           call.addPath({ type: 'prop', name: name });
         } else {
           call.addPath({ type: 'map', name: name });
@@ -735,6 +736,12 @@ class ClientResolver extends BaseResolver {
     } else {
       debug.stack('unimpelemented : ' + object.type, object);
     }
+    if (object.inferred) {
+      valGrammer.dataType = this.resolveTypeItem(object.inferred);
+    }
+    if (!valGrammer.dataType) {
+      debug.stack('Invalid GrammerValue.dataType', valGrammer, object);
+    }
 
     return valGrammer;
   }
@@ -743,11 +750,11 @@ class ClientResolver extends BaseResolver {
     let node;
     let renderByGrammerValueTypes = [
       'construct_model',
-      'super',
+      'property_access',
       'map_access',
       'boolean',
+      'super',
       'not',
-      'property_access'
     ];
     if (renderByGrammerValueTypes.indexOf(stmt.type) > -1) {
       node = this.renderGrammerValue(null, stmt);

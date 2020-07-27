@@ -144,7 +144,7 @@ class BaseConbinator {
       return;
     }
 
-    let emitter = new Emitter();
+    let emitter = new Emitter(this.config);
     let method = null;
     if (gram instanceof Behavior) {
       method = gram.name;
@@ -183,7 +183,7 @@ class BaseConbinator {
   }
 
   emitGrammerValue(gram) {
-    let emitter = new Emitter();
+    let emitter = new Emitter(this.config);
     this.grammerValue(emitter, gram);
     return emitter.output;
   }
