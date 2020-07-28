@@ -1,5 +1,11 @@
 # ChangeLog
 
+## 1.1.1 2020-07-28
+
+- Supported generate `autoload.php` file.
+- Optimization of type-related code generation results.
+- Optimization of map data type code generation results.
+
 ## 1.1.0 2020-07-14
 
 - Supported emit test files.
