@@ -15,7 +15,8 @@ const {
   TypeVoid,
   TypeNumber,
   TypeBool,
-  TypeNull
+  TypeNull,
+  TypeDecimal
 } = require('../langs/common/items');
 
 const { _isBasicType } = require('../lib/helper');
@@ -219,6 +220,10 @@ class BaseResolver {
       return new TypeBool();
     } else if (typeNode === 'null') {
       return new TypeNull();
+    } else if (typeNode === 'float') {
+      return new TypeDecimal();
+    } else if (typeNode === 'long') {
+      return new TypeInteger(64);
     }
     debug.stack('Unsupported type node', { typeNode, sourceNode });
   }
