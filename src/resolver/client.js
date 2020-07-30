@@ -51,7 +51,7 @@ const {
 const {
   _isBasicType
 } = require('../lib/helper');
-const { assert } = require('chai');
+const assert = require('assert');
 
 const systemPackage = ['Util'];
 

@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.2 2020-07-30
+
+- Fixed the error of require wrong package.
+
 ## 1.1.1 2020-07-28
 
 - Supported generate `autoload.php` file.
