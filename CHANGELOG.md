@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.3 2020-07-30
+
+- `resolveTypeItem` supports float and long data types.
+
 ## 1.1.2 2020-07-30
 
 - Fixed the error of require wrong package.
