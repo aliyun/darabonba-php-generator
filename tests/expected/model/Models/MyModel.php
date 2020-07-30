@@ -31,6 +31,8 @@ class MyModel extends Model {
         Model::validateRequired('existModel', $this->existModel, true);
         Model::validateRequired('request', $this->request, true);
         Model::validateRequired('complexList', $this->complexList, true);
+        Model::validateRequired('floatType', $this->floatType, true);
+        Model::validateRequired('longType', $this->longType, true);
     }
     public function toMap() {
         $res = [];
@@ -90,6 +92,12 @@ class MyModel extends Model {
         }
         if (null !== $this->complexList) {
             $res['complexList'] = $this->complexList;
+        }
+        if (null !== $this->floatType) {
+            $res['floatType'] = $this->floatType;
+        }
+        if (null !== $this->longType) {
+            $res['longType'] = $this->longType;
         }
         return $res;
     }
@@ -161,6 +169,12 @@ class MyModel extends Model {
             if(!empty($map['complexList'])){
                 $model->complexList = $map['complexList'];
             }
+        }
+        if(isset($map['floatType'])){
+            $model->floatType = $map['floatType'];
+        }
+        if(isset($map['longType'])){
+            $model->longType = $map['longType'];
         }
         return $model;
     }
@@ -238,5 +252,15 @@ class MyModel extends Model {
      * @var array
      */
     public $complexList;
+
+    /**
+     * @var float
+     */
+    public $floatType;
+
+    /**
+     * @var int
+     */
+    public $longType;
 
 }

@@ -17,5 +17,7 @@ model MyModel = {
   readable: readable,
   existModel: M,
   request: $Request,
-  complexList: [ [ string ] ]
+  complexList: [ [ string ] ],
+  floatType: float,
+  longType: long
 };
