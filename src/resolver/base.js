@@ -209,7 +209,9 @@ class BaseResolver {
     } else if (typeNode === 'integer') {
       return new TypeInteger();
     } else if (typeNode === 'readable') {
-      return new TypeStream();
+      return new TypeStream(false);
+    } else if (typeNode === 'writable') {
+      return new TypeStream(true);
     } else if (typeNode === 'class') {
       return new TypeObject();
     } else if (typeNode === 'void') {
@@ -221,9 +223,19 @@ class BaseResolver {
     } else if (typeNode === 'null') {
       return new TypeNull();
     } else if (typeNode === 'float') {
-      return new TypeDecimal();
+      return new TypeDecimal(4);
     } else if (typeNode === 'long') {
       return new TypeInteger(64);
+    } else if (typeNode === 'ulong') {
+      return new TypeInteger(64, true);
+    } else if (typeNode === 'double') {
+      return new TypeDecimal(8);
+    } else if (typeNode.indexOf('int') === 0) {
+      let len = typeNode.substring(3);
+      return new TypeInteger(parseInt(len));
+    } else if (typeNode.indexOf('uint') === 0) {
+      let len = typeNode.substring(4, true);
+      return new TypeInteger(parseInt(len));
     }
     debug.stack('Unsupported type node', { typeNode, sourceNode });
   }

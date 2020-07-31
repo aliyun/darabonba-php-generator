@@ -70,16 +70,17 @@ class TypeNumber extends TypeBase {
 }
 
 class TypeInteger extends TypeNumber {
-  constructor(length = 16) {
+  constructor(length = 16, unsigned = false) {
     super();
     this.length = length;
+    this.unsigned = unsigned;
   }
 }
 
 class TypeDecimal extends TypeNumber {
-  constructor(decimalPlaces = 6) {
+  constructor(precision = 6) {
     super();
-    this.places = decimalPlaces;
+    this.precision = precision;
   }
 }
 
@@ -117,9 +118,9 @@ class TypeObject extends TypeItem {
 }
 
 class TypeStream extends TypeItem {
-  constructor(readable = null) {
+  constructor(writable = null) {
     super();
-    this.readable = readable;
+    this.writable = writable;
   }
 }
 
