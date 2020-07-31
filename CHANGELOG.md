@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.4 2020-07-31
+
+- Supported more data types.
+
 ## 1.1.3 2020-07-30
 
 - `resolveTypeItem` supports float and long data types.
