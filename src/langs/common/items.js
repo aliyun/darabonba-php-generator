@@ -66,20 +66,25 @@ class TypeString extends TypeBase {
 class TypeNumber extends TypeBase {
   constructor() {
     super();
+    // TypeNumber contains TypeInteger/TypeDecimal
   }
 }
 
 class TypeInteger extends TypeNumber {
-  constructor(length = 16) {
+  constructor(length = 32, unsigned = false) {
     super();
+    // int/uint long/ulong integer
     this.length = length;
+    this.unsigned = unsigned;
   }
 }
 
 class TypeDecimal extends TypeNumber {
-  constructor(decimalPlaces = 6) {
+  constructor(precision = 8) {
     super();
-    this.places = decimalPlaces;
+    // float  : precision = 4
+    // double : precision = 8
+    this.precision = precision;
   }
 }
 
@@ -95,7 +100,8 @@ class TypeArray extends TypeBase {
 
 class TypeBytes extends TypeArray {
   constructor() {
-    super(new TypeInteger(8));
+    super(new TypeInteger(8, true));
+    // bytes = uint8[]
   }
 }
 
@@ -117,9 +123,9 @@ class TypeObject extends TypeItem {
 }
 
 class TypeStream extends TypeItem {
-  constructor(readable = null) {
+  constructor(writable = null) {
     super();
-    this.readable = readable;
+    this.writable = writable;
   }
 }
 

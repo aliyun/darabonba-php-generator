@@ -26,13 +26,25 @@ class MyModel extends Model {
         Model::validateRequired('subarray', $this->subarray, true);
         Model::validateRequired('maparray', $this->maparray, true);
         Model::validateRequired('object', $this->object, true);
-        Model::validateRequired('numberfield', $this->numberfield, true);
         Model::validateRequired('readable', $this->readable, true);
+        Model::validateRequired('writable', $this->writable, true);
         Model::validateRequired('existModel', $this->existModel, true);
         Model::validateRequired('request', $this->request, true);
         Model::validateRequired('complexList', $this->complexList, true);
-        Model::validateRequired('floatType', $this->floatType, true);
-        Model::validateRequired('longType', $this->longType, true);
+        Model::validateRequired('numberfield', $this->numberfield, true);
+        Model::validateRequired('integerField', $this->integerField, true);
+        Model::validateRequired('floatField', $this->floatField, true);
+        Model::validateRequired('doubleField', $this->doubleField, true);
+        Model::validateRequired('longField', $this->longField, true);
+        Model::validateRequired('ulongField', $this->ulongField, true);
+        Model::validateRequired('int8Field', $this->int8Field, true);
+        Model::validateRequired('int16Field', $this->int16Field, true);
+        Model::validateRequired('int32Field', $this->int32Field, true);
+        Model::validateRequired('int64Field', $this->int64Field, true);
+        Model::validateRequired('uint8Field', $this->uint8Field, true);
+        Model::validateRequired('uint16Field', $this->uint16Field, true);
+        Model::validateRequired('uint32Field', $this->uint32Field, true);
+        Model::validateRequired('uint64Field', $this->uint64Field, true);
     }
     public function toMap() {
         $res = [];
@@ -78,11 +90,11 @@ class MyModel extends Model {
         if (null !== $this->object) {
             $res['object'] = $this->object;
         }
-        if (null !== $this->numberfield) {
-            $res['numberfield'] = $this->numberfield;
-        }
         if (null !== $this->readable) {
             $res['readable'] = $this->readable;
+        }
+        if (null !== $this->writable) {
+            $res['writable'] = $this->writable;
         }
         if (null !== $this->existModel) {
             $res['existModel'] = null !== $this->existModel ? $this->existModel->toMap() : null;
@@ -93,11 +105,47 @@ class MyModel extends Model {
         if (null !== $this->complexList) {
             $res['complexList'] = $this->complexList;
         }
-        if (null !== $this->floatType) {
-            $res['floatType'] = $this->floatType;
+        if (null !== $this->numberfield) {
+            $res['numberfield'] = $this->numberfield;
         }
-        if (null !== $this->longType) {
-            $res['longType'] = $this->longType;
+        if (null !== $this->integerField) {
+            $res['integerField'] = $this->integerField;
+        }
+        if (null !== $this->floatField) {
+            $res['floatField'] = $this->floatField;
+        }
+        if (null !== $this->doubleField) {
+            $res['doubleField'] = $this->doubleField;
+        }
+        if (null !== $this->longField) {
+            $res['longField'] = $this->longField;
+        }
+        if (null !== $this->ulongField) {
+            $res['ulongField'] = $this->ulongField;
+        }
+        if (null !== $this->int8Field) {
+            $res['int8Field'] = $this->int8Field;
+        }
+        if (null !== $this->int16Field) {
+            $res['int16Field'] = $this->int16Field;
+        }
+        if (null !== $this->int32Field) {
+            $res['int32Field'] = $this->int32Field;
+        }
+        if (null !== $this->int64Field) {
+            $res['int64Field'] = $this->int64Field;
+        }
+        if (null !== $this->uint8Field) {
+            $res['uint8Field'] = $this->uint8Field;
+        }
+        if (null !== $this->uint16Field) {
+            $res['uint16Field'] = $this->uint16Field;
+        }
+        if (null !== $this->uint32Field) {
+            $res['uint32Field'] = $this->uint32Field;
+        }
+        if (null !== $this->uint64Field) {
+            $res['uint64Field'] = $this->uint64Field;
         }
         return $res;
     }
@@ -153,11 +201,11 @@ class MyModel extends Model {
         if(isset($map['object'])){
             $model->object = $map['object'];
         }
-        if(isset($map['numberfield'])){
-            $model->numberfield = $map['numberfield'];
-        }
         if(isset($map['readable'])){
             $model->readable = $map['readable'];
+        }
+        if(isset($map['writable'])){
+            $model->writable = $map['writable'];
         }
         if(isset($map['existModel'])){
             $model->existModel = M::fromMap($map['existModel']);
@@ -170,11 +218,47 @@ class MyModel extends Model {
                 $model->complexList = $map['complexList'];
             }
         }
-        if(isset($map['floatType'])){
-            $model->floatType = $map['floatType'];
+        if(isset($map['numberfield'])){
+            $model->numberfield = $map['numberfield'];
         }
-        if(isset($map['longType'])){
-            $model->longType = $map['longType'];
+        if(isset($map['integerField'])){
+            $model->integerField = $map['integerField'];
+        }
+        if(isset($map['floatField'])){
+            $model->floatField = $map['floatField'];
+        }
+        if(isset($map['doubleField'])){
+            $model->doubleField = $map['doubleField'];
+        }
+        if(isset($map['longField'])){
+            $model->longField = $map['longField'];
+        }
+        if(isset($map['ulongField'])){
+            $model->ulongField = $map['ulongField'];
+        }
+        if(isset($map['int8Field'])){
+            $model->int8Field = $map['int8Field'];
+        }
+        if(isset($map['int16Field'])){
+            $model->int16Field = $map['int16Field'];
+        }
+        if(isset($map['int32Field'])){
+            $model->int32Field = $map['int32Field'];
+        }
+        if(isset($map['int64Field'])){
+            $model->int64Field = $map['int64Field'];
+        }
+        if(isset($map['uint8Field'])){
+            $model->uint8Field = $map['uint8Field'];
+        }
+        if(isset($map['uint16Field'])){
+            $model->uint16Field = $map['uint16Field'];
+        }
+        if(isset($map['uint32Field'])){
+            $model->uint32Field = $map['uint32Field'];
+        }
+        if(isset($map['uint64Field'])){
+            $model->uint64Field = $map['uint64Field'];
         }
         return $model;
     }
@@ -229,14 +313,14 @@ class MyModel extends Model {
     public $object;
 
     /**
-     * @var int
+     * @var Stream
      */
-    public $numberfield;
+    public $readable;
 
     /**
      * @var Stream
      */
-    public $readable;
+    public $writable;
 
     /**
      * @var M
@@ -254,13 +338,73 @@ class MyModel extends Model {
     public $complexList;
 
     /**
-     * @var float
+     * @var int
      */
-    public $floatType;
+    public $numberfield;
 
     /**
      * @var int
      */
-    public $longType;
+    public $integerField;
+
+    /**
+     * @var float
+     */
+    public $floatField;
+
+    /**
+     * @var float
+     */
+    public $doubleField;
+
+    /**
+     * @var int
+     */
+    public $longField;
+
+    /**
+     * @var int
+     */
+    public $ulongField;
+
+    /**
+     * @var int
+     */
+    public $int8Field;
+
+    /**
+     * @var int
+     */
+    public $int16Field;
+
+    /**
+     * @var int
+     */
+    public $int32Field;
+
+    /**
+     * @var int
+     */
+    public $int64Field;
+
+    /**
+     * @var int
+     */
+    public $uint8Field;
+
+    /**
+     * @var int
+     */
+    public $uint16Field;
+
+    /**
+     * @var int
+     */
+    public $uint32Field;
+
+    /**
+     * @var int
+     */
+    public $uint64Field;
 
 }
