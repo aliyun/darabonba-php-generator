@@ -728,10 +728,49 @@ class ClientResolver extends BaseResolver {
       } else {
         debug.stack(object);
       }
-      let call = new GrammerCall('key', [
-        { type: 'object', name: object.id.lexeme },
-        { type: 'map', name: accessKey }
-      ]);
+      let current = object.id.inferred;
+      let call = new GrammerCall('key');
+      call.addPath({ type: 'object', name: object.id.lexeme });
+      if (object.propertyPathTypes) {
+        for (let i = 0; i < object.propertyPath.length; i++) {
+          if (current.type === 'model') {
+            call.type = 'prop';
+            call.addPath({ type: 'prop', name: object.propertyPath[i].lexeme });
+          } else if (current.type === 'array') {
+            call.addPath({ type: 'list', name: object.propertyPath[i].lexeme });
+          } else {
+            call.addPath({ type: 'map', name: object.propertyPath[i].lexeme });
+          }
+          current = object.propertyPathTypes[i];
+        }
+      }
+      call.addPath({ type: 'map', name: accessKey });
+      valGrammer.value = call;
+    } else if (object.type === 'array_access') {
+      valGrammer.type = 'call';
+      let accessKey;
+      if (object.accessKey.type === 'number') {
+        accessKey = object.accessKey.value.value;
+      } else {
+        debug.stack(object);
+      }
+      let current = object.id.inferred;
+      let call = new GrammerCall('key');
+      call.addPath({ type: 'object', name: object.id.lexeme });
+      if (object.propertyPathTypes) {
+        for (let i = 0; i < object.propertyPath.length; i++) {
+          if (current.type === 'model') {
+            call.type = 'prop';
+            call.addPath({ type: 'prop', name: object.propertyPath[i].lexeme });
+          } else if (current.type === 'array') {
+            call.addPath({ type: 'list', name: object.propertyPath[i].lexeme });
+          } else {
+            call.addPath({ type: 'map', name: object.propertyPath[i].lexeme });
+          }
+          current = object.propertyPathTypes[i];
+        }
+      }
+      call.addPath({ type: 'list', name: accessKey });
       valGrammer.value = call;
     } else {
       debug.stack('unimpelemented : ' + object.type, object);
