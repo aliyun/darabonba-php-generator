@@ -9,6 +9,7 @@ static async function asyncFunc(): void;
 
 type @protocol = string
 type @pathname = string
+type @API = map[string]string
 
 init(config: Config);
 model Config = {}
@@ -23,4 +24,9 @@ async function printAsync(runtime: object, str: string): void {
 model Request = {
   accesskey?: string(name='accesskey', description='accesskey'),
   region?: string(name='region', description='region'),
+  configs: {
+    key: string,
+    value: [ string ],
+    extra: map[string] string
+  },
 }
