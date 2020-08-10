@@ -726,7 +726,7 @@ class Combinator extends CombinatorBase {
       pre = `parent::__construct(${params})`;
     } else {
       gram.path.forEach((path, i) => {
-        let pathName = path.name.replace('@', '_');
+        let pathName = typeof path.name === 'string' ? path.name.replace('@', '_') : path.name;
         if (path.type === 'parent') {
           if (gram.path[i + 1] && gram.path[i + 1].type.indexOf('static') > -1) {
             pre += 'self';
