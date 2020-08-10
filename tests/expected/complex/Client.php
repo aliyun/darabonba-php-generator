@@ -10,13 +10,19 @@ use AlibabaCloud\Tea\Exception\TeaError;
 use \Exception;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
 
+use Source\Models\Config;
 use Tea\PHP\Tests\Models\ComplexRequest;
 use Source\Models\RuntimeObject;
 use Tea\PHP\Tests\Models\ComplexRequest\header;
-use Source\Models\Config;
 use AlibabaCloud\Tea\Response;
 
 class Client extends SourceClient {
+    protected $_configs;
+
+    public function __construct($config){
+        parent::__construct($config);
+        $_configs[0] = $config;
+    }
 
     /**
      * @param ComplexRequest $request
@@ -50,13 +56,16 @@ class Client extends SourceClient {
                     "test" => "ok"
                 ];
                 $version = "/" . "2019-01-08" . "" . $this->_pathname . "";
+                $mapAccess = $_API["version"];
                 $_request->protocol = $this->_protocol;
                 $_request->port = 80;
                 $_request->method = "GET";
                 $_request->pathname = "/" . $this->_pathname . "";
                 $_request->query = SourceClient::query(Tea::merge([
-                    "date" => "2019"
-                ], $request->header, $mapVal));
+                    "date" => "2019",
+                    "access" => $mapAccess,
+                    "test" => $mapVal["test"]
+                ], $request->header));
                 $_request->body = SourceClient::body();
                 $_lastRequest = $_request;
                 $_response= Tea::send($_request, $_runtime);
@@ -188,45 +197,163 @@ class Client extends SourceClient {
     /**
      * @return string
      */
+    public static function arrayAccess(){
+        $configs = [
+            "a",
+            "b",
+            "c"
+        ];
+        $config = $configs[0];
+        return $config;
+    }
+
+    /**
+     * @return string
+     */
+    public static function arrayAccess2(){
+        $data = [
+            "configs" => [
+                "a",
+                "b",
+                "c"
+            ]
+        ];
+        $config = $data["configs"][0];
+        return $config;
+    }
+
+    /**
+     * @param ComplexRequest $request
+     * @return string
+     */
+    public static function arrayAccess3($request){
+        $configVal = $request->configs->value[0];
+        return $configVal;
+    }
+
+    /**
+     * @param string $config
+     * @return array
+     */
+    public static function arrayAssign($config){
+        $configs = [
+            "a",
+            "b",
+            "c"
+        ];
+        $configs[3] = $config;
+        return $configs;
+    }
+
+    /**
+     * @param string $config
+     * @return array
+     */
+    public static function arrayAssign2($config){
+        $data = [
+            "configs" => [
+                "a",
+                "b",
+                "c"
+            ]
+        ];
+        $data["configs"][3] = $config;
+        return $data["configs"];
+    }
+
+    /**
+     * @param ComplexRequest $request
+     * @param string $config
+     * @return void
+     */
+    public static function arrayAssign3($request, $config){
+        $request->configs->value[0] = $config;
+    }
+
+    /**
+     * @param ComplexRequest $request
+     * @return string
+     */
+    public static function mapAccess($request){
+        $configInfo = $request->configs->extra["name"];
+        return $configInfo;
+    }
+
+    /**
+     * @param \Source\Models\Request $request
+     * @return string
+     */
+    public static function mapAccess2($request){
+        $configInfo = $request->configs->extra["name"];
+        return $configInfo;
+    }
+
+    /**
+     * @return string
+     */
+    public static function mapAccess3(){
+        $data = [
+            "configs" => [
+                "value" => "string"
+            ]
+        ];
+        return $data["configs"]["value"];
+    }
+
+    /**
+     * @param ComplexRequest $request
+     * @param string $name
+     * @return void
+     */
+    public static function mapAssign($request, $name){
+        $request->configs->extra["name"] = $name;
+    }
+
+    /**
+     * @return string
+     */
     public function TemplateString(){
         return "/" . $this->_protocol . "";
     }
 
     /**
-     * @param TeaError $e
      * @return void
-     */
-    public function isError($e){
-    }
-
-    /**
-     * @return void
-     * @throws TeaError
      */
     public function emptyModel(){
         new ComplexRequest();
         new header();
-        $status = "";
+    }
+
+    /**
+     * @return void
+     */
+    public function tryCatch(){
         try {
-            $status = "failed";
-            throw new TeaError([
-                "name" => "errorName",
-                "message" => "some error",
-                "code" => 400
-            ]);
+            $str = $this->TemplateString();
+        }
+        catch (Exception $err) {
+            if (!($err instanceof TeaError)) {
+                $err = new TeaError([], $err->getMessage(), $err->getCode(), $err);
+            }
+            $error = $err;
+        }
+        finally {
+            $final = "ok";
+        }
+        try {
+            $strNoFinal = $this->TemplateString();
         }
         catch (Exception $e) {
             if (!($e instanceof TeaError)) {
                 $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
             }
-            $e->name;
-            $e->message;
-            $e->code;
-            $this->isError($e);
-            $status = "catch exception";
+            $errorNoFinal = $e;
+        }
+        try {
+            $strNoCatch = $this->TemplateString();
         }
         finally {
-            $status = "ok";
+            $finalNoCatch = "ok";
         }
     }
 }

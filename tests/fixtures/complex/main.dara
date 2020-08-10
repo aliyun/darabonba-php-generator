@@ -4,6 +4,13 @@ extends Source;
 
 const version = '2019-01-08';
 
+type @configs = [ Source.Config ];
+
+init(config: Source.Config){
+  super(config);
+  @configs[0] = config;
+}
+
 model ComplexRequest = {
   accessKey: string,
   body: readable(name='Body', example='Body', description='Body'),
@@ -12,6 +19,11 @@ model ComplexRequest = {
     content: string(name='Content', example='Content', signed='true', description='Body')
   }(description='header', name='header'),
   Num: number,
+  configs: {
+    key: string,
+    value: [ string ],
+    extra: map[string] string
+  },
   part?: [
     {
       partNumber?: string(description='PartNumber', name='PartNumber')
@@ -29,14 +41,16 @@ api complex1(request: ComplexRequest, client: Source): Source.RuntimeObject {
   var name = 'complex';
   var mapVal = {test="ok"};
   var version = `/${__module.version}${@pathname}`;
+  var mapAccess = @API[version];
   __request.protocol = @protocol;
   __request.port = 80;
   __request.method = 'GET';
   __request.pathname = `/${@pathname}`;
   __request.query = Source.query({
     date = '2019',
+    access = mapAccess,
+    test = mapVal['test'],
     ...request.header,
-    ...mapVal
   });
   __request.body = Source.body();
 } returns {
@@ -108,32 +122,93 @@ static function array1(): [ string ] {
   return ["1"];
 }
 
-async function TemplateString(): string {
-  return `/${@protocol}`;
+static function arrayAccess(): string {
+  var configs = ['a', 'b', 'c'];
+  var config = configs[0];
+  return config;
 }
 
-async function isError(e: $Error): void {
-  
+static function arrayAccess2(): string {
+  var data = {
+    configs = ['a', 'b', 'c']
+  };
+  var config = data.configs[0];
+  return config;
+}
+
+static function arrayAccess3(request: ComplexRequest): string {
+  var configVal = request.configs.value[0];
+  return configVal;
+}
+
+static function arrayAssign(config: string): [ string ] {
+  var configs = ['a', 'b', 'c'];
+  configs[3] = config;
+  return configs;
+}
+
+static function arrayAssign2(config: string): [ string ] {
+  var data = {
+    configs = ['a', 'b', 'c']
+  };
+  data.configs[3] = config;
+  return data.configs;
+}
+
+static function arrayAssign3(request: ComplexRequest, config: string): void {
+  request.configs.value[0] = config;
+}
+
+static function mapAccess(request: ComplexRequest): string {
+   var configInfo = request.configs.extra['name'];
+  return configInfo;
+}
+
+static function mapAccess2(request: Source.Request): string {
+   var configInfo = request.configs.extra['name'];
+  return configInfo;
+}
+
+static function mapAccess3(): string {
+  var data = {
+    configs  = {
+      value = 'string'
+    } 
+  };
+  return data.configs['value'];
+}
+
+static function mapAssign(request: ComplexRequest, name: string): void {
+  request.configs.extra['name'] = name;
+}
+
+async function TemplateString(): string {
+  return `/${@protocol}`;
 }
 
 async function emptyModel(): void {
   new ComplexRequest;
   new ComplexRequest.header;
-  var status = '';
+}
+
+async function tryCatch(): void {
   try {
-    status = 'failed';
-    throw {
-      name = 'errorName',
-      message = 'some error',
-      code = 400
-    }
-  } catch(e) {
-    e.name;
-    e.message;
-    e.code;
-    isError(e);
-    status = 'catch exception';
+    var str = TemplateString();
+  } catch(err) {
+    var error = err;
   } finally {
-    status = 'ok';
+    var final = 'ok';
+  }
+
+  try {
+    var strNoFinal = TemplateString();
+  } catch(e) {
+    var errorNoFinal = e;
+  } 
+
+  try {
+    var strNoCatch = TemplateString();
+  } finally {
+    var finalNoCatch = 'ok';
   }
 }

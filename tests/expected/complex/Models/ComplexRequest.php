@@ -7,6 +7,7 @@ use AlibabaCloud\Tea\Model;
 use GuzzleHttp\Psr7\Stream;
 
 use Tea\PHP\Tests\Models\ComplexRequest\header;
+use Tea\PHP\Tests\Models\ComplexRequest\configs;
 use Tea\PHP\Tests\Models\ComplexRequest\part;
 
 class ComplexRequest extends Model {
@@ -22,6 +23,7 @@ class ComplexRequest extends Model {
         Model::validateRequired('strs', $this->strs, true);
         Model::validateRequired('header', $this->header, true);
         Model::validateRequired('Num', $this->Num, true);
+        Model::validateRequired('configs', $this->configs, true);
     }
     public function toMap() {
         $res = [];
@@ -39,6 +41,9 @@ class ComplexRequest extends Model {
         }
         if (null !== $this->Num) {
             $res['Num'] = $this->Num;
+        }
+        if (null !== $this->configs) {
+            $res['configs'] = null !== $this->configs ? $this->configs->toMap() : null;
         }
         if (null !== $this->part) {
             $res['Part'] = [];
@@ -73,6 +78,9 @@ class ComplexRequest extends Model {
         }
         if(isset($map['Num'])){
             $model->Num = $map['Num'];
+        }
+        if(isset($map['configs'])){
+            $model->configs = configs::fromMap($map['configs']);
         }
         if(isset($map['Part'])){
             if(!empty($map['Part'])){
@@ -114,6 +122,11 @@ class ComplexRequest extends Model {
      * @var int
      */
     public $Num;
+
+    /**
+     * @var configs
+     */
+    public $configs;
 
     /**
      * @description Part
