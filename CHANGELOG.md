@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.5 2020-08-10
+
+- Fixed the emit result of `map_access` AST node.
+- Supported `array_access` AST node
+
 ## 1.1.4 2020-07-31
 
 - Supported more data types.
