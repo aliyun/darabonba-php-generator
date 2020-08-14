@@ -9,6 +9,7 @@ model MyModel = {
   submodel: {
     stringfield: string,
   },
+  submodelMap: map[string]MyModel.submodel,
   subarraymodel: [ {} ],
   subarray: [ M ],
   maparray: [ map[string]any ],

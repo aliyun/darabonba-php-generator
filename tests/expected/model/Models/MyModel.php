@@ -22,6 +22,7 @@ class MyModel extends Model {
         Model::validateRequired('mapfield', $this->mapfield, true);
         Model::validateRequired('name', $this->name, true);
         Model::validateRequired('submodel', $this->submodel, true);
+        Model::validateRequired('submodelMap', $this->submodelMap, true);
         Model::validateRequired('subarraymodel', $this->subarraymodel, true);
         Model::validateRequired('subarray', $this->subarray, true);
         Model::validateRequired('maparray', $this->maparray, true);
@@ -65,6 +66,14 @@ class MyModel extends Model {
         }
         if (null !== $this->submodel) {
             $res['submodel'] = null !== $this->submodel ? $this->submodel->toMap() : null;
+        }
+        if (null !== $this->submodelMap) {
+            $res['submodelMap'] = [];
+            if(null !== $this->submodelMap && is_array($this->submodelMap)){
+                foreach($this->submodelMap as $key => $val){
+                    $res['submodelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                }
+            }
         }
         if (null !== $this->subarraymodel) {
             $res['subarraymodel'] = [];
@@ -174,6 +183,9 @@ class MyModel extends Model {
         }
         if(isset($map['submodel'])){
             $model->submodel = submodel::fromMap($map['submodel']);
+        }
+        if(isset($map['submodelMap'])){
+            $model->submodelMap = $map['submodelMap'];
         }
         if(isset($map['subarraymodel'])){
             if(!empty($map['subarraymodel'])){
@@ -291,6 +303,11 @@ class MyModel extends Model {
      * @var submodel
      */
     public $submodel;
+
+    /**
+     * @var array
+     */
+    public $submodelMap;
 
     /**
      * @var array
