@@ -10,6 +10,7 @@ model MyModel = {
     stringfield: string,
   },
   submodelMap: map[string]MyModel.submodel,
+  mapModel: map[string]M,
   subarraymodel: [ {} ],
   subarray: [ M ],
   maparray: [ map[string]any ],

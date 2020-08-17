@@ -7,8 +7,8 @@ use AlibabaCloud\Tea\Model;
 use GuzzleHttp\Psr7\Stream;
 
 use Tea\PHP\Tests\Models\MyModel\submodel;
-use Tea\PHP\Tests\Models\MyModel\subarraymodel;
 use Tea\PHP\Tests\Models\M;
+use Tea\PHP\Tests\Models\MyModel\subarraymodel;
 use AlibabaCloud\Tea\Request;
 
 class MyModel extends Model {
@@ -23,6 +23,7 @@ class MyModel extends Model {
         Model::validateRequired('name', $this->name, true);
         Model::validateRequired('submodel', $this->submodel, true);
         Model::validateRequired('submodelMap', $this->submodelMap, true);
+        Model::validateRequired('mapModel', $this->mapModel, true);
         Model::validateRequired('subarraymodel', $this->subarraymodel, true);
         Model::validateRequired('subarray', $this->subarray, true);
         Model::validateRequired('maparray', $this->maparray, true);
@@ -72,6 +73,14 @@ class MyModel extends Model {
             if(null !== $this->submodelMap && is_array($this->submodelMap)){
                 foreach($this->submodelMap as $key => $val){
                     $res['submodelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                }
+            }
+        }
+        if (null !== $this->mapModel) {
+            $res['mapModel'] = [];
+            if(null !== $this->mapModel && is_array($this->mapModel)){
+                foreach($this->mapModel as $key => $val){
+                    $res['mapModel'][$kkey] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -186,6 +195,9 @@ class MyModel extends Model {
         }
         if(isset($map['submodelMap'])){
             $model->submodelMap = $map['submodelMap'];
+        }
+        if(isset($map['mapModel'])){
+            $model->mapModel = $map['mapModel'];
         }
         if(isset($map['subarraymodel'])){
             if(!empty($map['subarraymodel'])){
@@ -308,6 +320,11 @@ class MyModel extends Model {
      * @var array
      */
     public $submodelMap;
+
+    /**
+     * @var array
+     */
+    public $mapModel;
 
     /**
      * @var array
