@@ -243,6 +243,9 @@ class BaseResolver {
       let len = typeNode.substring(4);
       return new TypeInteger(parseInt(len), true);
     }
+    if (typeof typeNode === 'string' && typeNode.length > 0) {
+      return new TypeObject(this.combinator.addModelInclude(typeNode));
+    }
     debug.stack('Unsupported type node', { typeNode, sourceNode });
   }
 }
