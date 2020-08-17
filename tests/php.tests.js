@@ -27,12 +27,12 @@ function check(moduleName, expectedFiles = []) {
   const config = {
     outputDir: moduleOutputDir,
     pkgDir: path.join(fixturesDir, moduleName),
-    ...pkgInfo,
     php: {
       package: 'Tea.PHP.Tests',
       clientName: 'Client',
       modelDirName: 'Models'
-    }
+    },
+    ...pkgInfo,
   };
   const generator = new Generator(config, lang);
 
@@ -134,6 +134,14 @@ describe('PHP Generator', function () {
   it('alias should ok', function () {
     check('alias', [
       'Client.php'
+    ]);
+  });
+
+  it('package should ok', function () {
+    check('package', [
+      'autoload.php',
+      'composer.json',
+      'src/Client.php'
     ]);
   });
 });
