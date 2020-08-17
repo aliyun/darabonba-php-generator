@@ -1,0 +1,14 @@
+{
+    "scope": "darabonba",
+    "name": "package",
+    "version": "0.0.1",
+    "main": "./main.dara",
+    "php": {
+        "package": "Darabonba.Package",
+        "packageInfo": {
+            "name": "darabonba/package",
+            "desc": "Darabonba Package Test",
+            "github": ""
+        }
+    }
+}

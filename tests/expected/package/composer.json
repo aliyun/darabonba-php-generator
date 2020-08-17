@@ -1,0 +1,24 @@
+{
+  "name": "darabonba/package",
+  "description": "Darabonba Package Test",
+  "type": "library",
+  "license": "Apache-2.0",
+  "authors": [],
+  "require": {
+    "php": ">5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Darabonba\\Package\\": "src"
+    }
+  },
+  "scripts": {
+    "fixer": "php-cs-fixer fix ./"
+  },
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist",
+    "optimize-autoloader": true
+  },
+  "prefer-stable": true
+}
