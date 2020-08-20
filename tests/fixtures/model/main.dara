@@ -1,4 +1,8 @@
-model M = {};
+import Source;
+
+model M = {
+  subM: {}
+};
 
 model MyModel = {
   stringfield: string,
@@ -14,6 +18,10 @@ model MyModel = {
   subarraymodel: [ {} ],
   subarray: [ M ],
   maparray: [ map[string]any ],
+  moduleModelMap: map[string]Source.Request,
+  subModelMap: map[string]M.subM,
+  modelMap: map[string]M,
+  moduleMap: map[string]Source,
   object: object,
   readable: readable,
   writable: writable,

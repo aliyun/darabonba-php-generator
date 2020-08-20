@@ -40,6 +40,10 @@ static async function print(reqeust: $Request, reqs: [ ComplexRequest ], respons
 api complex1(request: ComplexRequest, client: Source): Source.RuntimeObject {
   var name = 'complex';
   var mapVal = {test="ok"};
+  var moduleModelMapVal: map[string] Source.RuntimeObject = {};
+  var moduleMapVal: map[string] Source = {};
+  var modelMapVal: map[string] ComplexRequest = {};
+  var subModelMapVal: map[string] ComplexRequest.header = {};
   var version = `/${__module.version}${@pathname}`;
   var mapAccess = @API[version];
   __request.protocol = @protocol;

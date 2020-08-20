@@ -1,0 +1,27 @@
+model RuntimeObject = {}
+
+static function array(request: object, str: string): [ any ];
+
+static function query(q: object): map[string]string;
+static function body(): readable;
+static function parse(c: class): void;
+static async function asyncFunc(): void;
+
+type @protocol = string
+type @pathname = string
+type @API = map[string]string
+
+init(config: Config);
+model Config = {}
+function print(runtime: object, str: string): void {
+  return;
+}
+
+async function printAsync(runtime: object, str: string): void {
+  return;
+}
+
+model Request = {
+  accesskey?: string(name='accesskey', description='accesskey'),
+  region?: string(name='region', description='region'),
+}

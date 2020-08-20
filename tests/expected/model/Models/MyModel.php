@@ -4,12 +4,14 @@
 namespace Tea\PHP\Tests\Models;
 
 use AlibabaCloud\Tea\Model;
+use import\Client as importClient;
 use GuzzleHttp\Psr7\Stream;
 
 use Tea\PHP\Tests\Models\MyModel\submodel;
 use Tea\PHP\Tests\Models\M;
 use Tea\PHP\Tests\Models\MyModel\subarraymodel;
-use AlibabaCloud\Tea\Request;
+use import\Models\Request;
+use Tea\PHP\Tests\Models\M\subM;
 
 class MyModel extends Model {
     protected $_name = [
@@ -27,6 +29,10 @@ class MyModel extends Model {
         Model::validateRequired('subarraymodel', $this->subarraymodel, true);
         Model::validateRequired('subarray', $this->subarray, true);
         Model::validateRequired('maparray', $this->maparray, true);
+        Model::validateRequired('moduleModelMap', $this->moduleModelMap, true);
+        Model::validateRequired('subModelMap', $this->subModelMap, true);
+        Model::validateRequired('modelMap', $this->modelMap, true);
+        Model::validateRequired('moduleMap', $this->moduleMap, true);
         Model::validateRequired('object', $this->object, true);
         Model::validateRequired('readable', $this->readable, true);
         Model::validateRequired('writable', $this->writable, true);
@@ -104,6 +110,38 @@ class MyModel extends Model {
         }
         if (null !== $this->maparray) {
             $res['maparray'] = $this->maparray;
+        }
+        if (null !== $this->moduleModelMap) {
+            $res['moduleModelMap'] = [];
+            if(null !== $this->moduleModelMap && is_array($this->moduleModelMap)){
+                foreach($this->moduleModelMap as $key => $val){
+                    $res['moduleModelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                }
+            }
+        }
+        if (null !== $this->subModelMap) {
+            $res['subModelMap'] = [];
+            if(null !== $this->subModelMap && is_array($this->subModelMap)){
+                foreach($this->subModelMap as $key => $val){
+                    $res['subModelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                }
+            }
+        }
+        if (null !== $this->modelMap) {
+            $res['modelMap'] = [];
+            if(null !== $this->modelMap && is_array($this->modelMap)){
+                foreach($this->modelMap as $key => $val){
+                    $res['modelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                }
+            }
+        }
+        if (null !== $this->moduleMap) {
+            $res['moduleMap'] = [];
+            if(null !== $this->moduleMap && is_array($this->moduleMap)){
+                foreach($this->moduleMap as $key => $val){
+                    $res['moduleMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                }
+            }
         }
         if (null !== $this->object) {
             $res['object'] = $this->object;
@@ -222,6 +260,18 @@ class MyModel extends Model {
                 $model->maparray = $map['maparray'];
             }
         }
+        if(isset($map['moduleModelMap'])){
+            $model->moduleModelMap = $map['moduleModelMap'];
+        }
+        if(isset($map['subModelMap'])){
+            $model->subModelMap = $map['subModelMap'];
+        }
+        if(isset($map['modelMap'])){
+            $model->modelMap = $map['modelMap'];
+        }
+        if(isset($map['moduleMap'])){
+            $model->moduleMap = $map['moduleMap'];
+        }
         if(isset($map['object'])){
             $model->object = $map['object'];
         }
@@ -235,7 +285,7 @@ class MyModel extends Model {
             $model->existModel = M::fromMap($map['existModel']);
         }
         if(isset($map['request'])){
-            $model->request = Request::fromMap($map['request']);
+            $model->request = \AlibabaCloud\Tea\Request::fromMap($map['request']);
         }
         if(isset($map['complexList'])){
             if(!empty($map['complexList'])){
@@ -344,6 +394,26 @@ class MyModel extends Model {
     /**
      * @var array
      */
+    public $moduleModelMap;
+
+    /**
+     * @var array
+     */
+    public $subModelMap;
+
+    /**
+     * @var array
+     */
+    public $modelMap;
+
+    /**
+     * @var array
+     */
+    public $moduleMap;
+
+    /**
+     * @var array
+     */
     public $object;
 
     /**
@@ -362,7 +432,7 @@ class MyModel extends Model {
     public $existModel;
 
     /**
-     * @var Request
+     * @var \AlibabaCloud\Tea\Request
      */
     public $request;
 

@@ -180,7 +180,8 @@ class BaseResolver {
           tmp.push(item.lexeme);
         });
         return new TypeObject(this.combinator.addModelInclude(tmp.join('.')));
-      } else if (typeNode.type === 'subModel_or_moduleModel') {
+      } else if (typeNode.type === 'subModel' || typeNode.type === 'subModel_or_moduleModel') {
+        // subModel_or_moduleModel is retained for compatibility with older parser.
         let tmp = [];
         typeNode.path.forEach(item => {
           tmp.push(item.lexeme);
