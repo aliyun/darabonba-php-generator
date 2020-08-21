@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.6 2020-08-21
+
+- Improve the emit result of autoload script.
+- Fix the error when map has model type item.
+
 ## 1.1.5 2020-08-10
 
 - Fixed the emit result of `map_access` AST node.
