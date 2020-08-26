@@ -254,13 +254,23 @@ class Combinator extends CombinatorBase {
     return outputParts;
   }
 
-  emitType(type) {
+  emitType(type, onComment = false) {
     if (!(type instanceof TypeItem)) {
       debug.stack('Inavalid type', type);
     }
     if (type instanceof TypeString) {
       return 'string';
     } else if (type instanceof TypeBytes || type instanceof TypeArray || type instanceof TypeMap) {
+      if (onComment) {
+        if (type instanceof TypeBytes) {
+          return 'int[]';
+        } else if (type instanceof TypeMap) {
+          let subType = this.emitType(type.valType, onComment);
+          return `${subType}[]`;
+        }
+        let itemType = this.emitType(type.itemType, onComment);
+        return `${itemType}[]`;
+      }
       return 'array';
     } else if (type instanceof TypeObject) {
       if (type.objectName.indexOf('$') === 0) {
@@ -270,6 +280,9 @@ class Combinator extends CombinatorBase {
     } else if (type instanceof TypeStream) {
       return this.addInclude('$Stream');
     } else if (type instanceof TypeGeneric) {
+      if (onComment) {
+        return 'mixed';
+      }
       return 'any';
     } else if (type instanceof TypeDecimal) {
       return 'float';
@@ -417,7 +430,7 @@ class Combinator extends CombinatorBase {
           this.levelUp();
           emitter.emitln(`foreach($this->${prop.name} as $key => $val){`, this.level);
           this.levelUp();
-          emitter.emitln(`$res['${name}'][$kkey] = null !== $val ? $val->toMap() : $val;`, this.level);
+          emitter.emitln(`$res['${name}'][$key] = null !== $val ? $val->toMap() : $val;`, this.level);
           this.levelDown();
           emitter.emitln('}', this.level);
           this.levelDown();
@@ -622,7 +635,7 @@ class Combinator extends CombinatorBase {
       });
     }
     func.params.forEach(p => {
-      let t = this.emitType(p.type);
+      let t = this.emitType(p.type, true);
       const desc = paramDesc[p.key] ? ' ' + paramDesc[p.key] : '';
       if (t === 'any') {
         t = 'mixed';
@@ -672,7 +685,7 @@ class Combinator extends CombinatorBase {
           annotation.content.push('@deprecated');
         }
       });
-      annotation.content.push(`@var ${this.emitType(prop.type)}`);
+      annotation.content.push(`@var ${this.emitType(prop.type, true)}`);
       this.emitAnnotation(emitter, annotation);
     }
     emitter.emitln(`${_modify(prop.modify)} $${_name(prop.name)};`, this.level).emitln();

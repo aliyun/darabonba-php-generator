@@ -106,8 +106,8 @@ class Client extends SourceClient {
 
     /**
      * @param ComplexRequest $request
-     * @param array $str
-     * @param array $val
+     * @param string[] $str
+     * @param string[] $val
      * @return array
      */
     public function Complex2($request, $str, $val){
@@ -164,8 +164,8 @@ class Client extends SourceClient {
     }
 
     /**
-     * @param array $request
-     * @param array $strs
+     * @param mixed[] $request
+     * @param string[] $strs
      * @return array
      */
     public function hello($request, $strs){
@@ -174,16 +174,16 @@ class Client extends SourceClient {
 
     /**
      * @param Request $reqeust
-     * @param array $reqs
+     * @param ComplexRequest[] $reqs
      * @param Response $response
-     * @param array $val
+     * @param string[] $val
      * @return \Source\Models\Request
      */
     public static function print_($reqeust, $reqs, $response, $val){
     }
 
     /**
-     * @param array $req
+     * @param mixed[] $req
      * @return array
      */
     public static function array0($req){
