@@ -108,7 +108,7 @@ class ComplexRequest extends Model {
     /**
      * @example Strs
      * @description Strs
-     * @var array
+     * @var string[]
      */
     public $strs;
 
@@ -130,7 +130,7 @@ class ComplexRequest extends Model {
 
     /**
      * @description Part
-     * @var array
+     * @var part[]
      */
     public $part;
 

@@ -49,12 +49,12 @@ class configs extends Model {
     public $key;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $value;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $extra;
 

@@ -78,7 +78,7 @@ class MyModel extends Model {
             $res['submodelMap'] = [];
             if(null !== $this->submodelMap && is_array($this->submodelMap)){
                 foreach($this->submodelMap as $key => $val){
-                    $res['submodelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                    $res['submodelMap'][$key] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -86,7 +86,7 @@ class MyModel extends Model {
             $res['mapModel'] = [];
             if(null !== $this->mapModel && is_array($this->mapModel)){
                 foreach($this->mapModel as $key => $val){
-                    $res['mapModel'][$kkey] = null !== $val ? $val->toMap() : $val;
+                    $res['mapModel'][$key] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -115,7 +115,7 @@ class MyModel extends Model {
             $res['moduleModelMap'] = [];
             if(null !== $this->moduleModelMap && is_array($this->moduleModelMap)){
                 foreach($this->moduleModelMap as $key => $val){
-                    $res['moduleModelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                    $res['moduleModelMap'][$key] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -123,7 +123,7 @@ class MyModel extends Model {
             $res['subModelMap'] = [];
             if(null !== $this->subModelMap && is_array($this->subModelMap)){
                 foreach($this->subModelMap as $key => $val){
-                    $res['subModelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                    $res['subModelMap'][$key] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -131,7 +131,7 @@ class MyModel extends Model {
             $res['modelMap'] = [];
             if(null !== $this->modelMap && is_array($this->modelMap)){
                 foreach($this->modelMap as $key => $val){
-                    $res['modelMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                    $res['modelMap'][$key] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -139,7 +139,7 @@ class MyModel extends Model {
             $res['moduleMap'] = [];
             if(null !== $this->moduleMap && is_array($this->moduleMap)){
                 foreach($this->moduleMap as $key => $val){
-                    $res['moduleMap'][$kkey] = null !== $val ? $val->toMap() : $val;
+                    $res['moduleMap'][$key] = null !== $val ? $val->toMap() : $val;
                 }
             }
         }
@@ -342,17 +342,17 @@ class MyModel extends Model {
     public $stringfield;
 
     /**
-     * @var array
+     * @var int[]
      */
     public $bytesfield;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $stringarrayfield;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $mapfield;
 
@@ -367,52 +367,52 @@ class MyModel extends Model {
     public $submodel;
 
     /**
-     * @var array
+     * @var submodel[]
      */
     public $submodelMap;
 
     /**
-     * @var array
+     * @var M[]
      */
     public $mapModel;
 
     /**
-     * @var array
+     * @var subarraymodel[]
      */
     public $subarraymodel;
 
     /**
-     * @var array
+     * @var M[]
      */
     public $subarray;
 
     /**
-     * @var array
+     * @var mixed[][]
      */
     public $maparray;
 
     /**
-     * @var array
+     * @var Request[]
      */
     public $moduleModelMap;
 
     /**
-     * @var array
+     * @var subM[]
      */
     public $subModelMap;
 
     /**
-     * @var array
+     * @var M[]
      */
     public $modelMap;
 
     /**
-     * @var array
+     * @var importClient[]
      */
     public $moduleMap;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     public $object;
 
@@ -437,7 +437,7 @@ class MyModel extends Model {
     public $request;
 
     /**
-     * @var array
+     * @var string[][]
      */
     public $complexList;
 
