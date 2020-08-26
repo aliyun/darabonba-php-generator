@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.7 2020-08-26
+
+- Improve the emit result of type on code comment.
+- Fix the wrong emit result in `toMap` method.
+
 ## 1.1.6 2020-08-21
 
 - Improve the emit result of autoload script.
