@@ -187,6 +187,10 @@ class Client extends SourceClient {
      * @return array
      */
     public static function array0($req){
+        $temp = new Config([]);
+        $anyArr = [
+            $temp
+        ];
         return [];
     }
 

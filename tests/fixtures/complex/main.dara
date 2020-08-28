@@ -119,6 +119,8 @@ api Complex3(request: ComplexRequest): ComplexRequest {
 }
 
 static function array0(req: object): [ any ] {
+  var temp = new Source.Config{};
+  var anyArr : [Source.Config] = [temp];
   return [];
 }
 
