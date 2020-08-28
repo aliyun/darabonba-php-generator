@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.8 2020-08-28
+
+- Fix the error when the type of `expectedType` is array.
+- Fix the error of `undefined class` when the file name is a keyword.
+
 ## 1.1.7 2020-08-26
 
 - Improve the emit result of type on code comment.
