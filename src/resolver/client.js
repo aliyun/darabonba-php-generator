@@ -538,7 +538,7 @@ class ClientResolver extends BaseResolver {
       });
       valGrammer.type = 'map';
       valGrammer.dataType = this.resolveTypeItem(object.inferred);
-      valGrammer.expected = expectedType ? expectedType.valueType.lexeme : null;
+      valGrammer.expected = expectedType ? this.resolveTypeItem(expectedType) : null;
     } else if (object.type === 'string') {
       valGrammer.type = 'string';
       valGrammer.value = object.value.string;
@@ -707,7 +707,7 @@ class ClientResolver extends BaseResolver {
         this.findComments(valGrammer, object, 'between');
       }
       valGrammer.type = 'array';
-      valGrammer.expected = expectedType ? expectedType.valueType.lexeme : null;
+      valGrammer.expected = expectedType ? this.resolveTypeItem(expectedType) : null;
     } else if (object.type === 'property') {
       object.type = 'property_access';
       this.renderGrammerValue(valGrammer, object);
