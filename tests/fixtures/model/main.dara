@@ -4,6 +4,8 @@ model M = {
   subM: {}
 };
 
+model Class = {};
+
 model MyModel = {
   stringfield: string,
   bytesfield: bytes,
