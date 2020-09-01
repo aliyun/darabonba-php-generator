@@ -242,7 +242,7 @@ class Combinator extends CombinatorBase {
     /***************************** combine output ******************************/
     if (output) {
       const config = _deepClone(this.config);
-      config.filename = object.name;
+      config.filename = _avoidKeywords(object.name);
       config.layer = layer.split('.').map(m => {
         return _avoidKeywords(m);
       }).join('.');
