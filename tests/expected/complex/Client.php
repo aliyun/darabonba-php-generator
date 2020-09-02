@@ -80,9 +80,9 @@ class Client extends SourceClient {
                 else if (true || false) {
                     return new RuntimeObject([]);
                 }
-                $client->print_($request, "1");
-                $client->printAsync($request, "1");
-                $this->hello($request, [
+                $client->print_($request->toMap(), "1");
+                $client->printAsync($request->toMap(), "1");
+                $this->hello($request->toMap(), [
                     "1",
                     "2"
                 ]);
@@ -154,11 +154,11 @@ class Client extends SourceClient {
             "accesskey" => $request->accessKey,
             "region" => $resp->statusMessage
         ]);
-        self::array0($request);
+        self::array0($request->toMap());
         $req->accesskey = "accesskey";
         $req->accesskey = $request->accessKey;
         SourceClient::parse(ComplexRequest::class);
-        SourceClient::array_($request, "1");
+        SourceClient::array_($request->toMap(), "1");
         SourceClient::asyncFunc();
         return ComplexRequest::fromMap(Tea::merge($_request->query));
     }

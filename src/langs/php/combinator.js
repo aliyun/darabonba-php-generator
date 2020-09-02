@@ -12,6 +12,8 @@ const {
 } = require('../common/enum');
 
 const {
+  BehaviorToMap,
+
   AnnotationItem,
   ConstructItem,
   ObjectItem,
@@ -730,7 +732,11 @@ class Combinator extends CombinatorBase {
       let tmp = [];
       gram.params.forEach(p => {
         let emit = new Emitter();
-        this.grammer(emit, p, false, false);
+        if (p.value instanceof BehaviorToMap && gram.type === 'sys_func' && gram.path[1].name === 'isUnset') {
+          this.grammer(emit, p.value.grammer, false, false);
+        } else {
+          this.grammer(emit, p, false, false);
+        }
         tmp.push(emit.output);
       });
       params = tmp.join(', ');
@@ -1125,9 +1131,22 @@ class Combinator extends CombinatorBase {
   behaviorToMap(emitter, behavior) {
     const grammer = behavior.grammer;
     if (grammer instanceof GrammerCall) {
+      grammer.path.push({
+        type: 'call',
+        name: 'toMap'
+      });
       this.grammerCall(emitter, grammer);
     } else if (grammer instanceof GrammerVar) {
-      this.grammerVar(emitter, grammer);
+      const grammerCall = new GrammerCall('method');
+      grammerCall.path.push({
+        type: 'object',
+        name: grammer.name
+      });
+      grammerCall.path.push({
+        type: 'call',
+        name: 'toMap'
+      });
+      this.grammerCall(emitter, grammerCall);
     } else {
       debug.stack(grammer);
     }
