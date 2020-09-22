@@ -59,13 +59,13 @@ function _avoidKeywords(str) {
   return str;
 }
 
-function _convertStaticParam(param) {
+function _convertStaticParam(param, _avoidKeyword = true) {
   if (param === '__response') {
     param = config.response;
   } else if (param === '__request') {
     param = config.request;
   }
-  return param;
+  return _avoidKeyword ? _avoidKeywords(param) : param;
 }
 
 function _isKeywords(str) {
