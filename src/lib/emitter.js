@@ -51,7 +51,7 @@ class Emitter {
   }
 
   currRow() {
-    let pos = this.output.length;
+    let pos = this.output.length - 1;
     while (pos > 0) {
       pos--;
       let s = this.output[pos];
@@ -59,7 +59,7 @@ class Emitter {
         break;
       }
     }
-    return this.output.substring(pos);
+    return this.output.substring(pos).replace(/[\t\n\r\f]/g, '');
   }
 
   savePath() {

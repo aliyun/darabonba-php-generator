@@ -124,6 +124,16 @@ describe('emitter should be ok', function () {
     expect(emitter.output).to.be.eql('full str');
   });
 
+  it('currRow should be ok', function () {
+    const emitter = new Emitter();
+    emitter.emit('row one');
+    expect(emitter.currRow()).to.be.eql('row one');
+    emitter.emitln();
+    expect(emitter.currRow()).to.be.eql('row one');
+    emitter.emit('row two');
+    expect(emitter.currRow()).to.be.eql('row two');
+  });
+
   it('savePath should be ok', function () {
     const emitter = new Emitter({
       dir: '/tmp/',
