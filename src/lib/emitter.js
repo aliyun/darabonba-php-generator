@@ -50,6 +50,18 @@ class Emitter {
     return this;
   }
 
+  currRow() {
+    let pos = this.output.length;
+    while (pos > 0) {
+      pos--;
+      let s = this.output[pos];
+      if (s === this.eol) {
+        break;
+      }
+    }
+    return this.output.substring(pos);
+  }
+
   savePath() {
     return path.join(
       this.config.dir,
