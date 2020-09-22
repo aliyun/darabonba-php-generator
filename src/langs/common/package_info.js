@@ -18,8 +18,12 @@ class BasePackageInfo {
   }
 
   renderAuto(templatePath, targetPath, params) {
-    let content = fs.readFileSync(templatePath).toString();
-    content = this.render(content, params);
+    let content = fs.readFileSync(templatePath, 'utf-8');
+    this.renderContent(content, targetPath, params);
+  }
+
+  renderContent(templateContent, targetPath, params) {
+    let content = this.render(templateContent, params);
     if (!fs.existsSync(path.dirname(targetPath))) {
       fs.mkdirSync(path.dirname(targetPath), {
         recursive: true
