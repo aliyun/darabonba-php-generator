@@ -32,7 +32,7 @@ class BaseConbinator {
     this.imports = imports;
 
     this.requirePackage = imports.requirePackage;
-    this.thirdPackageDarameta = imports.thirdPackageDarameta;
+    this.thirdPackageDaraMeta = imports.thirdPackageDaraMeta;
     this.thirdPackageScope = imports.thirdPackageScope;
     this.thirdPackageNamespace = imports.thirdPackageNamespace;
     this.thirdPackageClient = imports.thirdPackageClient;
