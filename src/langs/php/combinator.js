@@ -336,7 +336,7 @@ class Combinator extends CombinatorBase {
       this.emitValidate(emitter, notes);
       let props = object.body.filter(node => node instanceof PropItem);
       this.emitToMap(emitter, props, notes);
-      this.emitFromMap(emitter, object.name, props, notes);
+      this.emitFromMap(emitter, className, props, notes);
     }
 
     // emit body nodes : PropItem | FuncItem | ConstructItem | AnnotationItem
@@ -802,7 +802,7 @@ class Combinator extends CombinatorBase {
       emitter.emit(`${_convertStaticParam(name)}::class`);
     } else if (gram.varType === 'var' || gram.varType === 'const') {
       const name = gram.name ? gram.name : gram.key;
-      emitter.emit(`$${_convertStaticParam(name)}`);
+      emitter.emit(`$${_convertStaticParam(name, false)}`);
     } else {
       debug.stack(gram);
     }
@@ -1154,6 +1154,22 @@ class Combinator extends CombinatorBase {
 
   grammerSymbol(emitter, gram) {
     emitter.emit(_symbol(gram));
+  }
+
+  behaviorTamplateString(emitter, behavior) {
+    let tmp = [];
+    behavior.items.forEach(item => {
+      let emit = new Emitter(this.config);
+      if (item.dataType instanceof TypeString) {
+        this.grammer(emit, item, false, false);
+      } else {
+        emit.emit('strval(');
+        this.grammer(emit, item, false, false);
+        emit.emit(')');
+      }
+      tmp.push(emit.output);
+    });
+    emitter.emit(tmp.join(' . '));
   }
 }
 
