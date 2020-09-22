@@ -87,8 +87,8 @@ class Client extends SourceClient {
                     "2"
                 ]);
                 $this->hello(null, null);
-                return RuntimeObject::fromMap([]);
                 $this->Complex3(null);
+                return RuntimeObject::fromMap([]);
             }
             catch (Exception $e) {
                 if (!($e instanceof TeaError)) {
@@ -180,6 +180,7 @@ class Client extends SourceClient {
      * @return \Source\Models\Request
      */
     public static function print_($reqeust, $reqs, $response, $val){
+        return Request::fromMap([]);
     }
 
     /**
