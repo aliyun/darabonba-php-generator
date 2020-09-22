@@ -35,7 +35,9 @@ async function hello(request: object, strs: [ string ]): [ string ] {
   return array1();
 }
 
-static async function print(reqeust: $Request, reqs: [ ComplexRequest ], response: $Response, val: map[string]string): Source.Request {}
+static async function print(reqeust: $Request, reqs: [ ComplexRequest ], response: $Response, val: map[string]string): Source.Request {
+  return {};
+}
 
 api complex1(request: ComplexRequest, client: Source): Source.RuntimeObject {
   var name = 'complex';
@@ -67,8 +69,8 @@ api complex1(request: ComplexRequest, client: Source): Source.RuntimeObject {
   client.printAsync(request, '1');
   hello(request, ["1","2"]);
   hello(null, null);
-  return {};
   Complex3(null);
+  return {};
 } runtime {
   timeouted = 'retry'
 } 
