@@ -71,7 +71,7 @@ class TypeNumber extends TypeBase {
 }
 
 class TypeInteger extends TypeNumber {
-  constructor(length = 32, unsigned = false) {
+  constructor(length = 16, unsigned = false) {
     super();
     // int/uint long/ulong integer
     this.length = length;
@@ -93,7 +93,7 @@ class TypeBool extends TypeBase { }
 class TypeArray extends TypeBase {
   constructor(itemType = null) {
     super();
-    assert.equal(true, itemType instanceof TypeItem);
+    assert.strictEqual(true, itemType instanceof TypeItem);
     this.itemType = itemType; // TypeItem
   }
 }
@@ -108,8 +108,8 @@ class TypeBytes extends TypeArray {
 class TypeMap extends TypeBase {
   constructor(keyType, valType) {
     super();
-    assert.equal(true, keyType instanceof TypeItem);
-    assert.equal(true, valType instanceof TypeItem);
+    assert.strictEqual(true, keyType instanceof TypeItem);
+    assert.strictEqual(true, valType instanceof TypeItem);
     this.keyType = keyType;
     this.valType = valType;
   }
@@ -149,12 +149,20 @@ class Grammer extends Item {
 class GrammerValue extends Grammer {
   constructor(type, value, key = '', needCast = false) {
     super();
+    if (key instanceof TypeItem) {
+      this.dataType = key;
+    } else {
+      this.key = key;
+      this.dataType = null;  // TypeItem
+    }
     this.type = type;    // map | array | string | number | call | null | behavior | param | expr | merge | var | class
-    this.key = key;
     this.value = value;
     this.needCast = needCast;
-    this.dataType = null;  // TypeItem
     this.isExpand = false;
+  }
+  setType(type) {
+    assert.strictEqual(true, type instanceof TypeItem);
+    this.type = type;
   }
 }
 
@@ -178,7 +186,7 @@ class GrammerVar extends Grammer {
     this.type = dataType;      // TypeItem
     this.varType = varType;    // static_class 静态类名 || var 可变 || const 不可变
     this.eol = false;
-    assert.equal(true, this.type instanceof TypeItem);
+    assert.strictEqual(true, this.type instanceof TypeItem);
   }
 }
 
@@ -207,7 +215,7 @@ class GrammerCall extends Grammer {
     }
     this.returnType = returnType;  // TypeItem
     this.hasThrow = hasThrow;
-    assert.equal(true, this.returnType instanceof TypeItem);
+    assert.strictEqual(true, this.returnType instanceof TypeItem);
   }
 
   addPath(path) {
@@ -241,18 +249,18 @@ class GrammerCondition extends Grammer {
   }
 
   addElse(elseItem) {
-    assert.equal(true, elseItem instanceof GrammerCondition);
+    assert.strictEqual(true, elseItem instanceof GrammerCondition);
     this.elseItem.push(elseItem);
   }
 
   addBodyNode(node) {
-    assert.equal(true, node instanceof Grammer || node instanceof AnnotationItem);
+    assert.strictEqual(true, node instanceof Grammer || node instanceof AnnotationItem);
     this.body.push(node);
     return this;
   }
 
   addCondition(condition) {
-    assert.equal(true,
+    assert.strictEqual(true,
       condition instanceof GrammerExpr ||
       condition instanceof GrammerValue ||
       condition instanceof GrammerCall
@@ -302,17 +310,17 @@ class GrammerTryCatch extends Grammer {
   }
 
   addBodyNode(node) {
-    assert.equal(true, node instanceof Grammer || node instanceof AnnotationItem);
+    assert.strictEqual(true, node instanceof Grammer || node instanceof AnnotationItem);
     this.body.push(node);
   }
 
   addCatch(node) {
-    assert.equal(true, node instanceof GrammerCatch);
+    assert.strictEqual(true, node instanceof GrammerCatch);
     this.catchBody.push(node);
   }
 
   setFinally(node) {
-    assert.equal(true, node instanceof GrammerFinally);
+    assert.strictEqual(true, node instanceof GrammerFinally);
     this.finallyBody = node;
   }
 }
@@ -321,7 +329,7 @@ class GrammerThrows extends Grammer {
   constructor(exceptionType = null, params = [], msg = '') {
     super();
     if (exceptionType !== null) {
-      assert.equal(true, exceptionType instanceof TypeObject);
+      assert.strictEqual(true, exceptionType instanceof TypeObject);
     }
     this.exception = exceptionType;  // TypeObject
     this.params = params;        // GrammerValue
@@ -329,7 +337,7 @@ class GrammerThrows extends Grammer {
   }
 
   addParam(param) {
-    assert.equal(true, param instanceof GrammerValue);
+    assert.strictEqual(true, param instanceof GrammerValue);
     this.params.push(param);
   }
 }
@@ -356,7 +364,7 @@ class GrammerLoop extends Grammer {
   }
 
   addBodyNode(node) {
-    assert.equal(true, node instanceof Grammer);
+    assert.strictEqual(true, node instanceof Grammer);
     this.body.push(node);
   }
 }
@@ -441,13 +449,13 @@ class FuncItem extends Item {
   }
 
   addBodyNode(node) {
-    assert.equal(true, node instanceof Grammer);
+    assert.strictEqual(true, node instanceof Grammer);
     this.body.push(node);
     return this;
   }
 
   addAnnotation(node) {
-    assert.equal(true, node instanceof AnnotationItem);
+    assert.strictEqual(true, node instanceof AnnotationItem);
     this.annotations.push(node);
   }
 }
@@ -462,17 +470,17 @@ class ConstructItem extends Item {
   }
 
   addParamNode(node) {
-    assert.equal(true, node instanceof Grammer);
+    assert.strictEqual(true, node instanceof Grammer);
     this.params.push(node);
   }
 
   addBodyNode(node) {
-    assert.equal(true, node instanceof Grammer);
+    assert.strictEqual(true, node instanceof Grammer);
     this.body.push(node);
   }
 
   addAnnotation(node) {
-    assert.equal(true, node instanceof AnnotationItem);
+    assert.strictEqual(true, node instanceof AnnotationItem);
     this.annotations.push(node);
   }
 }
@@ -480,7 +488,7 @@ class ConstructItem extends Item {
 class ObjectItem extends Item {
   constructor(type) {
     super();
-    assert.equal(true, type === 'client' || type === 'model' || type === 'test');
+    assert.strictEqual(true, type === 'client' || type === 'model' || type === 'test');
     this.type = type;            // client | model
     this.modify = [];            // Modify
     this.name = '';              // object name
@@ -531,7 +539,7 @@ class BehaviorSetMapItem extends Behavior {
   constructor(call = null, key = '', value = null) {
     super();
     this.name = 'behaviorSetMapItem';
-    assert.equal(true, call instanceof GrammerCall);
+    assert.strictEqual(true, call instanceof GrammerCall);
     this.call = call;
     this.key = key;
     this.value = value;
@@ -573,6 +581,18 @@ class BehaviorToMap extends Behavior {
     this.name = 'behaviorToMap';
     this.grammer = grammer;
     this.inferred = inferred;
+  }
+}
+
+class BehaviorTamplateString extends Behavior {
+  constructor(items = []) {
+    super();
+    this.name = 'behaviorTamplateString';
+    this.items = items;
+  }
+
+  addItem(item) {
+    this.items.push(item);
   }
 }
 
@@ -628,5 +648,6 @@ module.exports = {
   BehaviorTimeNow,
   BehaviorToModel,
   BehaviorDoAction,
-  BehaviorSetMapItem
+  BehaviorSetMapItem,
+  BehaviorTamplateString
 };
