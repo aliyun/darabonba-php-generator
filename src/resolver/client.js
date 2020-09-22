@@ -41,6 +41,8 @@ const {
   TypeString,
   TypeItem,
   TypeArray,
+  TypeNull,
+  BehaviorTamplateString,
 } = require('../langs/common/items');
 
 const {
@@ -56,6 +58,13 @@ const assert = require('assert');
 const systemPackage = ['Util'];
 
 const int16 = new TypeInteger(16);
+const genericType = new TypeGeneric();
+const runtimeType = new TypeMap(new TypeString(), genericType);
+const errorType = new TypeObject('$Error');
+const exceptionType = new TypeObject('$Exception');
+const requestType = new TypeObject('$Request');
+const nullType = new TypeNull();
+const unretryableType = new TypeObject('$ExceptionUnretryable');
 
 class ClientResolver extends BaseResolver {
   constructor(astNode, combinator, globalAst) {
@@ -182,7 +191,7 @@ class ClientResolver extends BaseResolver {
     }
     this.addAnnotations(func, ast);
     if (body === null) {
-      func.addBodyNode(new GrammerThrows(new TypeObject('$Exception'), [], 'Un-implemented'));
+      func.addBodyNode(new GrammerThrows(exceptionType, [], 'Un-implemented'));
     }
 
     if (ast.isAsync) {
@@ -268,35 +277,35 @@ class ClientResolver extends BaseResolver {
 
     // _runtime = {}
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar(this.config.runtime, new TypeMap(new TypeString(), new TypeGeneric())), Symbol.assign(), val
+      new GrammerVar(this.config.runtime, runtimeType), Symbol.assign(), val
     ));
 
     // _lastRequest = null;
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar('_lastRequest', new TypeObject('$Request'), 'var'),
+      new GrammerVar('_lastRequest', requestType, 'var'),
       Symbol.assign(),
-      new GrammerValue('null')
+      new GrammerValue('null', null, nullType)
     ));
 
     // _lastException = null;
     func.addBodyNode(new GrammerExpr(
-      new GrammerVar('_lastException', new TypeObject('$Exception'), 'var'),
+      new GrammerVar('_lastException', exceptionType, 'var'),
       Symbol.assign(),
-      new GrammerValue('null')
+      new GrammerValue('null', null, nullType)
     ));
 
     // _now = Date.now();
     func.addBodyNode(new GrammerExpr(
       new GrammerVar('_now', int16),
       Symbol.assign(),
-      new GrammerValue('behavior', new BehaviorTimeNow())
+      new GrammerValue('behavior', new BehaviorTimeNow(), int16)
     ));
 
     // let _retryTimes = 0;
     func.addBodyNode(new GrammerExpr(
       new GrammerVar('_retryTimes', int16, 'var'),
       Symbol.assign(),
-      new GrammerValue('number', 0)
+      new GrammerValue('number', 0, int16)
     ));
 
     let whileOperation = new GrammerCondition('while');
@@ -308,9 +317,9 @@ class ClientResolver extends BaseResolver {
         new GrammerValue('call', new GrammerCall('key', [
           { type: 'object', name: this.config.runtime },
           { type: 'map', name: 'retry' }
-        ], [], new TypeGeneric())),
-        new GrammerValue('param', '_retryTimes'),
-        new GrammerValue('param', '_now'),
+        ], [], genericType)),
+        new GrammerValue('param', '_retryTimes', int16),
+        new GrammerValue('param', '_now', int16),
       ], new TypeBool())
     );
 
@@ -319,7 +328,7 @@ class ClientResolver extends BaseResolver {
       new GrammerExpr(
         new GrammerVar('_retryTimes', int16),
         Symbol.greater(),
-        new GrammerValue('number', 0)
+        new GrammerValue('number', 0, int16)
       )
     );
     retryTimesIf.addBodyNode(
@@ -333,18 +342,20 @@ class ClientResolver extends BaseResolver {
           new GrammerValue('call', new GrammerCall('key', [
             { type: 'object', name: this.config.runtime },
             { type: 'map', name: 'backoff' }
-          ])),
-          new GrammerValue('param', '_retryTimes'),
+          ]), genericType),
+          new GrammerValue('param', '_retryTimes', int16),
         ])
       )
     );
 
     let backoffTimeIf = new GrammerCondition('if');
+    let backoffTimeValue = new GrammerValue('number', 0, int16);
+    backoffTimeValue.dataType = int16;
     backoffTimeIf.addCondition(
       new GrammerExpr(
         new GrammerVar('_backoffTime', int16),
         Symbol.greater(),
-        new GrammerValue('number', 0)
+        backoffTimeValue
       )
     );
     backoffTimeIf.addBodyNode(
@@ -352,27 +363,29 @@ class ClientResolver extends BaseResolver {
         { type: 'object_static', name: this.combinator.addInclude('$Core') },
         { type: 'call_static', name: this.config.tea.core.sleep }
       ], [
-        new GrammerValue('param', '_backoffTime'),
+        new GrammerValue('param', '_backoffTime', int16),
       ])
     );
 
     retryTimesIf.addBodyNode(backoffTimeIf);
     whileOperation.addBodyNode(retryTimesIf);
 
+    let retryTimesValue = new GrammerValue('number', 1, int16);
+    retryTimesValue.dataType = int16;
     whileOperation.addBodyNode(new GrammerExpr(
       new GrammerVar('_retryTimes', int16),
       Symbol.assign(),
       new GrammerExpr(
         new GrammerVar('_retryTimes', int16),
         Symbol.plus(),
-        new GrammerValue('number', 1)
+        retryTimesValue
       )
     ));
 
     let requestTryCatch = new GrammerTryCatch();
-    let exceptionVar = new GrammerVar('e', new TypeObject('$Exception'));
-    let exceptionParam = new GrammerValue('var', exceptionVar);
-    let catchException = new GrammerException(new TypeObject('$Exception'), exceptionVar);
+    let exceptionVar = new GrammerVar('e', exceptionType);
+    let exceptionParam = new GrammerValue('var', exceptionVar, exceptionType);
+    let catchException = new GrammerException(exceptionType, exceptionVar);
 
     let tryCatch = new GrammerCatch([
       new GrammerCondition('if', [
@@ -382,7 +395,7 @@ class ClientResolver extends BaseResolver {
         ], [exceptionVar])
       ], [
         new GrammerExpr(
-          new GrammerVar('_lastException', new TypeObject('$Exception'), 'var'),
+          new GrammerVar('_lastException', exceptionType, 'var'),
           Symbol.assign(),
           exceptionVar
         ),
@@ -390,8 +403,8 @@ class ClientResolver extends BaseResolver {
       ]),
       new GrammerThrows(null, [exceptionParam])
     ], catchException);
-    this.currThrows['$Error'] = new TypeObject('$Error');
-    this.currThrows['$Exception'] = new TypeObject('$Exception');
+    this.currThrows['$Error'] = errorType;
+    this.currThrows['$Exception'] = exceptionType;
     this.requestBody(ast, body, requestTryCatch);
     requestTryCatch.addCatch(tryCatch);
 
@@ -401,13 +414,13 @@ class ClientResolver extends BaseResolver {
 
     func.addBodyNode(
       new GrammerThrows(
-        new TypeObject('$ExceptionUnretryable'), [
-          new GrammerValue('var', new GrammerVar('_lastRequest', new TypeObject('$Request'))),
-          new GrammerValue('var', new GrammerVar('_lastException', new TypeObject('$Request')))
+        unretryableType, [
+          new GrammerValue('var', new GrammerVar('_lastRequest', requestType), requestType),
+          new GrammerValue('var', new GrammerVar('_lastException', exceptionType), exceptionType)
         ]
       )
     );
-    this.currThrows['$ExceptionUnretryable'] = new TypeObject('$ExceptionUnretryable');
+    this.currThrows['$ExceptionUnretryable'] = unretryableType;
   }
 
   requestBody(ast, body, func) {
@@ -416,7 +429,7 @@ class ClientResolver extends BaseResolver {
         // TeaRequest _request = new TeaRequest()
         func.addBodyNode(
           new GrammerExpr(
-            new GrammerVar(this.config.request, new TypeObject('$Request')),
+            new GrammerVar(this.config.request, requestType),
             Symbol.assign(),
             new GrammerNewObject(this.combinator.addInclude('$Request'))
           )
@@ -438,10 +451,10 @@ class ClientResolver extends BaseResolver {
 
       if (body.type === 'apiBody') {
         var doActionParams = [];
-        doActionParams.push(new GrammerValue('param', this.config.request));
+        doActionParams.push(new GrammerValue('param', this.config.request, requestType));
 
         if (ast.runtimeBody) {
-          doActionParams.push(new GrammerValue('param', this.config.runtime));
+          doActionParams.push(new GrammerValue('param', this.config.runtime, runtimeType));
         }
 
         // response = Tea.doAction
@@ -458,9 +471,9 @@ class ClientResolver extends BaseResolver {
         // _lastRequest = request_;
         func.addBodyNode(
           new GrammerExpr(
-            new GrammerVar('_lastRequest', new TypeObject('$Request'), 'var'),
+            new GrammerVar('_lastRequest', requestType, 'var'),
             Symbol.assign(),
-            new GrammerVar(this.config.request, new TypeObject('$Request'))
+            new GrammerVar(this.config.request, requestType)
           )
         );
 
@@ -568,6 +581,7 @@ class ClientResolver extends BaseResolver {
     } else if (object.type === 'number') {
       valGrammer.type = 'number';
       valGrammer.value = object.value.value;
+      valGrammer.dataType = this.resolveTypeItem(object.inferred);
     } else if (object.type === 'virtualVariable') {
       valGrammer.type = 'call';
       let call = new GrammerCall('prop', [
@@ -576,21 +590,16 @@ class ClientResolver extends BaseResolver {
       ]);
       valGrammer.value = call;
     } else if (object.type === 'template_string') {
-      valGrammer.type = 'expr';
-      let expr = [];
-      let n = 0;
+      valGrammer.type = 'behavior';
+      let behaviorTamplateString = new BehaviorTamplateString();
       object.elements.forEach(ele => {
-        if (n !== 0) {
-          expr.push(new GrammerExpr(null, Symbol.concat()));
-        }
         if (ele.type !== 'element') {
-          expr.push(this.renderGrammerValue(null, ele.expr));
+          behaviorTamplateString.addItem(this.renderGrammerValue(null, ele.expr));
         } else {
-          expr.push(new GrammerValue('string', ele.value.string));
+          behaviorTamplateString.addItem(new GrammerValue('string', ele.value.string, new TypeString()));
         }
-        n++;
       });
-      valGrammer.value = expr;
+      valGrammer.value = behaviorTamplateString;
     } else if (object.type === 'null') {
       valGrammer.type = 'null';
       valGrammer.value = 'null';
@@ -855,8 +864,8 @@ class ClientResolver extends BaseResolver {
         node.expr = new BehaviorToModel(node.expr, stmt.expectedType.name);
       }
     } else if (stmt.type === 'throw') {
-      this.currThrows['$Error'] = new TypeObject('$Error');
-      node = new GrammerThrows(new TypeObject('$Error'));
+      this.currThrows['$Error'] = errorType;
+      node = new GrammerThrows(errorType);
       if (Array.isArray(stmt.expr)) {
         stmt.expr.forEach(e => {
           node.addParam(this.renderGrammerValue(null, e));
@@ -956,8 +965,8 @@ class ClientResolver extends BaseResolver {
       });
       if (stmt.catchId) {
         const exceptionGram = new GrammerException(
-          new TypeObject('$Exception'),
-          new GrammerVar(stmt.catchId.lexeme, new TypeObject('$Exception'))
+          exceptionType,
+          new GrammerVar(stmt.catchId.lexeme, exceptionType)
         );
         const catchGram = new GrammerCatch([], exceptionGram);
 

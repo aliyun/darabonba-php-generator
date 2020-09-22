@@ -147,6 +147,9 @@ class BaseResolver {
     } else if (typeNode.type) {
       if (typeNode.type === 'fieldType') {
         if (typeNode.fieldType.idType) {
+          if (typeNode.fieldType.idType === 'module') {
+            return new TypeObject(this.combinator.addInclude(typeNode.fieldType.lexeme));
+          }
           return new TypeObject(this.combinator.addModelInclude(typeNode.fieldType.lexeme));
         }
         return this.resolveTypeItem(typeNode.fieldType, typeNode);
