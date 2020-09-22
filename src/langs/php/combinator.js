@@ -12,6 +12,8 @@ const {
 } = require('../common/enum');
 
 const {
+  BehaviorToMap,
+
   AnnotationItem,
   ConstructItem,
   ObjectItem,
@@ -334,7 +336,7 @@ class Combinator extends CombinatorBase {
       this.emitValidate(emitter, notes);
       let props = object.body.filter(node => node instanceof PropItem);
       this.emitToMap(emitter, props, notes);
-      this.emitFromMap(emitter, object.name, props, notes);
+      this.emitFromMap(emitter, className, props, notes);
     }
 
     // emit body nodes : PropItem | FuncItem | ConstructItem | AnnotationItem
@@ -730,7 +732,11 @@ class Combinator extends CombinatorBase {
       let tmp = [];
       gram.params.forEach(p => {
         let emit = new Emitter();
-        this.grammer(emit, p, false, false);
+        if (p.value instanceof BehaviorToMap && gram.type === 'sys_func' && gram.path[1].name === 'isUnset') {
+          this.grammer(emit, p.value.grammer, false, false);
+        } else {
+          this.grammer(emit, p, false, false);
+        }
         tmp.push(emit.output);
       });
       params = tmp.join(', ');
@@ -796,7 +802,7 @@ class Combinator extends CombinatorBase {
       emitter.emit(`${_convertStaticParam(name)}::class`);
     } else if (gram.varType === 'var' || gram.varType === 'const') {
       const name = gram.name ? gram.name : gram.key;
-      emitter.emit(`$${_convertStaticParam(name)}`);
+      emitter.emit(`$${_convertStaticParam(name, false)}`);
     } else {
       debug.stack(gram);
     }
@@ -1125,9 +1131,22 @@ class Combinator extends CombinatorBase {
   behaviorToMap(emitter, behavior) {
     const grammer = behavior.grammer;
     if (grammer instanceof GrammerCall) {
+      grammer.path.push({
+        type: 'call',
+        name: 'toMap'
+      });
       this.grammerCall(emitter, grammer);
     } else if (grammer instanceof GrammerVar) {
-      this.grammerVar(emitter, grammer);
+      const grammerCall = new GrammerCall('method');
+      grammerCall.path.push({
+        type: 'object',
+        name: grammer.name
+      });
+      grammerCall.path.push({
+        type: 'call',
+        name: 'toMap'
+      });
+      this.grammerCall(emitter, grammerCall);
     } else {
       debug.stack(grammer);
     }
@@ -1135,6 +1154,22 @@ class Combinator extends CombinatorBase {
 
   grammerSymbol(emitter, gram) {
     emitter.emit(_symbol(gram));
+  }
+
+  behaviorTamplateString(emitter, behavior) {
+    let tmp = [];
+    behavior.items.forEach(item => {
+      let emit = new Emitter(this.config);
+      if (item.dataType instanceof TypeString) {
+        this.grammer(emit, item, false, false);
+      } else {
+        emit.emit('strval(');
+        this.grammer(emit, item, false, false);
+        emit.emit(')');
+      }
+      tmp.push(emit.output);
+    });
+    emitter.emit(tmp.join(' . '));
   }
 }
 
