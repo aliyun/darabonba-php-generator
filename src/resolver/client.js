@@ -40,7 +40,6 @@ const {
   TypeMap,
   TypeString,
   TypeItem,
-  TypeArray,
   TypeNull,
   BehaviorTamplateString,
 } = require('../langs/common/items');
@@ -215,34 +214,7 @@ class ClientResolver extends BaseResolver {
       func.params.push(param);
     });
 
-    if (ast.returnType && ast.returnType.idType && ast.returnType.idType === 'model') {
-      func.return.push(new TypeObject(this.combinator.addModelInclude(ast.returnType.lexeme)));
-    } else if (ast.returnType && ast.returnType.type) {
-      if (ast.returnType.type === 'moduleModel') {
-        let tmp = [];
-        ast.returnType.path.forEach(p => {
-          tmp.push(p.lexeme);
-        });
-        let type = tmp.join('.');
-        func.return.push(new TypeObject(this.combinator.addModelInclude(type)));
-      } else if (ast.returnType.type === 'array') {
-        func.return.push(new TypeArray(this.resolveTypeItem(ast.returnType.subType)));
-      } else if (ast.returnType.type === 'map') {
-        if (ast.returnType.valueType.lexeme && _isBasicType(ast.returnType.valueType.lexeme)) {
-          func.return.push(
-            new TypeMap(this.resolveTypeItem(ast.returnType.keyType), this.resolveTypeItem(ast.returnType.valueType))
-          );
-        }
-      }
-    } else if (ast.returnType && ast.returnType.lexeme) {
-      if (ast.returnType.idType && ast.returnType.idType === 'module') {
-        func.return.push(new TypeObject(this.combinator.addInclude(ast.returnType.lexeme)));
-      } else if (_isBasicType(ast.returnType.lexeme)) {
-        func.return.push(this.resolveTypeItem(ast.returnType));
-      }
-    } else {
-      debug.stack('Unsupported ast.returnType', ast.returnType);
-    }
+    func.return.push(this.resolveTypeItem(ast.returnType));
 
     if (ast.runtimeBody) {
       this.runtimeMode(func, ast, body);
