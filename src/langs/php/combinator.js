@@ -1163,7 +1163,7 @@ class Combinator extends CombinatorBase {
       if (item.dataType instanceof TypeString) {
         this.grammer(emit, item, false, false);
       } else {
-        emit.emit('strval(');
+        emit.emit('(string) (');
         this.grammer(emit, item, false, false);
         emit.emit(')');
       }

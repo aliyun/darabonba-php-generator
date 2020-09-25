@@ -195,7 +195,6 @@ describe('client resolver should be ok', function () {
       inferred: {
         type: 'model',
         name: 'ComplexRequest.header',
-        moduleName: undefined
       }
     });
     expect(grammerValue.value.name).to.be.eql('test.a.b');

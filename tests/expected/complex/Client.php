@@ -149,6 +149,7 @@ class Client extends SourceClient {
         $_request->headers["host"] = "hello";
         $_lastRequest = $_request;
         $_response= Tea::send($_request);
+        $temp_str = "test " . (string) (100) . " " . (string) (true) . "";
         $resp = $_response;
         $req = new \Source\Models\Request([
             "accesskey" => $request->accessKey,
