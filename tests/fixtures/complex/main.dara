@@ -104,6 +104,7 @@ api Complex3(request: ComplexRequest): ComplexRequest {
   __request.body = Source.body();
   __request.headers.host = 'hello';
 } returns {
+  var temp_str = `test ${100} ${true}`;
   var resp = __response;
   var req = new Source.Request{
     accesskey = request.accessKey,
