@@ -741,6 +741,9 @@ class Combinator extends CombinatorBase {
       });
       params = tmp.join(', ');
     }
+    if (gram.type === 'map' || gram.type === 'key') {
+      pre = '@';
+    }
     if (gram.type === 'super') {
       pre = `parent::__construct(${params})`;
     } else {

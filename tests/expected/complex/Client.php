@@ -22,7 +22,7 @@ class Client extends SourceClient {
 
     public function __construct($config){
         parent::__construct($config);
-        $_configs[0] = $config;
+        @$_configs[0] = $config;
     }
 
     /**
@@ -42,9 +42,9 @@ class Client extends SourceClient {
         $_lastException = null;
         $_now = time();
         $_retryTimes = 0;
-        while (Tea::allowRetry($_runtime["retry"], $_retryTimes, $_now)) {
+        while (Tea::allowRetry(@$_runtime["retry"], $_retryTimes, $_now)) {
             if ($_retryTimes > 0) {
-                $_backoffTime = Tea::getBackoffTime($_runtime["backoff"], $_retryTimes);
+                $_backoffTime = Tea::getBackoffTime(@$_runtime["backoff"], $_retryTimes);
                 if ($_backoffTime > 0) {
                     Tea::sleep($_backoffTime);
                 }
@@ -61,7 +61,7 @@ class Client extends SourceClient {
                 $modelMapVal = [];
                 $subModelMapVal = [];
                 $version = "/" . "2019-01-08" . "" . $this->_pathname . "";
-                $mapAccess = $_API["version"];
+                $mapAccess = @$_API["version"];
                 $_request->protocol = $this->_protocol;
                 $_request->port = 80;
                 $_request->method = "GET";
@@ -69,7 +69,7 @@ class Client extends SourceClient {
                 $_request->query = SourceClient::query(Tea::merge([
                     "date" => "2019",
                     "access" => $mapAccess,
-                    "test" => $mapVal["test"]
+                    "test" => @$mapVal["test"]
                 ], $request->header));
                 $_request->body = SourceClient::body();
                 $_lastRequest = $_request;
@@ -214,7 +214,7 @@ class Client extends SourceClient {
             "b",
             "c"
         ];
-        $config = $configs[0];
+        $config = @$configs[0];
         return $config;
     }
 
@@ -229,7 +229,7 @@ class Client extends SourceClient {
                 "c"
             ]
         ];
-        $config = $data["configs"][0];
+        $config = @$data["configs"][0];
         return $config;
     }
 
@@ -252,7 +252,7 @@ class Client extends SourceClient {
             "b",
             "c"
         ];
-        $configs[3] = $config;
+        @$configs[3] = $config;
         return $configs;
     }
 
@@ -268,8 +268,8 @@ class Client extends SourceClient {
                 "c"
             ]
         ];
-        $data["configs"][3] = $config;
-        return $data["configs"];
+        @$data["configs"][3] = $config;
+        return @$data["configs"];
     }
 
     /**
@@ -308,7 +308,7 @@ class Client extends SourceClient {
                 "value" => "string"
             ]
         ];
-        return $data["configs"]["value"];
+        return @$data["configs"]["value"];
     }
 
     /**
