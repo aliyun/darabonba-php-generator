@@ -59,9 +59,9 @@ class Client {
         $_lastException = null;
         $_now = time();
         $_retryTimes = 0;
-        while (Tea::allowRetry($_runtime["retry"], $_retryTimes, $_now)) {
+        while (Tea::allowRetry(@$_runtime["retry"], $_retryTimes, $_now)) {
             if ($_retryTimes > 0) {
-                $_backoffTime = Tea::getBackoffTime($_runtime["backoff"], $_retryTimes);
+                $_backoffTime = Tea::getBackoffTime(@$_runtime["backoff"], $_retryTimes);
                 if ($_backoffTime > 0) {
                     Tea::sleep($_backoffTime);
                 }
@@ -119,9 +119,9 @@ class Client {
         $_lastException = null;
         $_now = time();
         $_retryTimes = 0;
-        while (Tea::allowRetry($_runtime["retry"], $_retryTimes, $_now)) {
+        while (Tea::allowRetry(@$_runtime["retry"], $_retryTimes, $_now)) {
             if ($_retryTimes > 0) {
-                $_backoffTime = Tea::getBackoffTime($_runtime["backoff"], $_retryTimes);
+                $_backoffTime = Tea::getBackoffTime(@$_runtime["backoff"], $_retryTimes);
                 if ($_backoffTime > 0) {
                     Tea::sleep($_backoffTime);
                 }

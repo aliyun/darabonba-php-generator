@@ -15,8 +15,8 @@ class Client extends SourceClient {
             "ap-northeast-1" => "cusanalytic.aliyuncs.com",
             "ap-south-1" => "cusanalytic.aliyuncs.com"
         ];
-        $_endpointMap["ap-northeast-1"];
+        @$_endpointMap["ap-northeast-1"];
         $_endpointMap["ap-northeast-1"] = "";
-        $_endpointMap["test"] = "test";
+        @$_endpointMap["test"] = "test";
     }
 }
