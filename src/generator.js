@@ -52,6 +52,7 @@ class Generator {
 
     const combinator = this.getCombinator(this.config);
     combinator.combine(objects);
+    return objects;
   }
 
   resolve(type, ast, globalAST) {
