@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.10 2020-09-29
+
+- Using a compatible method to get the value from the array.
+- Fix output path when moduleDir is `./` or `../`
+
 ## 1.1.9 2020-09-29
 
 - Improved code generation.
