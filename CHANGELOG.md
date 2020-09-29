@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.1.9 2020-09-29
+
+- Improved code generation.
+- Support the latest features of dara parser.
+
 ## 1.1.8 2020-08-28
 
 - Fix the error when the type of `expectedType` is array.
