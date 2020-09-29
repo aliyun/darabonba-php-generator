@@ -5,6 +5,8 @@ const debug = require('../src/lib/debug');
 const mm = require('mm');
 const expect = require('chai').expect;
 const Emitter = require('../src/lib/emitter');
+const os = require('os');
+
 require('mocha-sinon');
 
 const {
@@ -59,6 +61,12 @@ describe('debug should be ok', function () {
     expect(process.exit.calledWith(-1)).to.be.true;
   });
 
+  it('warning should be ok', function () {
+    debug.warning('this is warning message');
+    expect(console.log.calledWith(`\x1b[33m${os.EOL}[WARNING] this is warning message\x1b[0m${os.EOL}`)).to.be.false;
+    expect(process.exit.calledWith(-1)).to.be.false;
+  });
+
   it('stack should be ok', function () {
     try {
       debug.stack('called debug stack with message', 'data1', 'data2');
@@ -95,6 +103,20 @@ describe('emitter should be ok', function () {
   it('indent should be ok', function () {
     const emitter = new Emitter();
     expect(emitter.indent(1)).to.be.eql('    ');
+  });
+
+  it('fixed should be ok', function () {
+    const emitter = new Emitter();
+    emitter.fixed('this is test string.', 25);
+    expect(emitter.output).to.be.eql('this is test string.     ');
+
+    emitter.output = '';
+    emitter.fixed('this is test string.', 25, 'r');
+    expect(emitter.output).to.be.eql('     this is test string.');
+
+    emitter.output = '';
+    emitter.fixed('this is test string.', 30, 'm');
+    expect(emitter.output).to.be.eql('     this is test string.     ');
   });
 
   it('emit should be ok', function () {

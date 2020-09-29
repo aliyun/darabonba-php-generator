@@ -32,7 +32,7 @@ function check(moduleName, expectedFiles = []) {
       clientName: 'Client',
       modelDirName: 'Models'
     },
-    ...pkgInfo,
+    ...pkgInfo
   };
   const generator = new Generator(config, lang);
 
@@ -153,10 +153,33 @@ describe('package_info tests', function () {
     this.sinon.stub(fs, 'existsSync');
     this.sinon.stub(fs, 'readFileSync');
     this.sinon.stub(fs, 'writeFileSync');
+    this.sinon.stub(fs, 'mkdirSync');
+    this.sinon.stub(path, 'join');
   });
 
   it('emit package files shoule be ok', function () {
     const packageInfo = new PackageInfo({ package: 'a.b.c' });
+    mm(packageInfo, 'resolveOutputDir', function () { return './output/'; });
+    mm(packageInfo, 'render', function () { return '{}'; });
+    packageInfo.emit({
+      name: 'name',
+      desc: 'desc',
+      github: 'github',
+    });
+    mm.restore();
+  });
+
+  it('emit package files shoule be ok', function () {
+    const packageInfo = new PackageInfo({
+      package: 'a.b.c',
+      maintainers: ['author@mail.com'],
+      withTest: 1,
+      packageInfo: {
+        files: {
+          'license': 'license-file-path',
+        }
+      }
+    });
     mm(packageInfo, 'resolveOutputDir', function () { return './output/'; });
     mm(packageInfo, 'render', function () { return '{}'; });
     packageInfo.emit({
