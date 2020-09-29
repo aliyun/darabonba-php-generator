@@ -119,7 +119,9 @@ class Generator {
         const aliasId = item.lexeme;
         const moduleDir = this.config.libraries[aliasId];
         let targetPath;
-        if (moduleDir.startsWith('/')) {
+        if (moduleDir.startsWith('./') || moduleDir.startsWith('../')) {
+          targetPath = path.join(this.config.pkgDir, moduleDir);
+        } else if (moduleDir.startsWith('/')) {
           targetPath = moduleDir;
         } else {
           targetPath = path.join(this.config.pkgDir, lock[moduleDir]);
