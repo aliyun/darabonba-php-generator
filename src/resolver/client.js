@@ -659,7 +659,7 @@ class ClientResolver extends BaseResolver {
           call.addParams(grammerValue);
         });
       }
-
+      call.returnType = this.resolveTypeItem(object.inferred);
       valGrammer.value = call;
     } else if (object.type === 'construct') {
       valGrammer.type = 'instance';
@@ -725,7 +725,7 @@ class ClientResolver extends BaseResolver {
           current = object.propertyPathTypes[i];
         }
       }
-      call.addPath({ type: 'map', name: accessKey });
+      call.addPath({ type: 'map', name: accessKey, isVar: object.accessKey.type === 'variable' });
       valGrammer.value = call;
     } else if (object.type === 'array_access') {
       valGrammer.type = 'call';
@@ -751,7 +751,7 @@ class ClientResolver extends BaseResolver {
           current = object.propertyPathTypes[i];
         }
       }
-      call.addPath({ type: 'list', name: accessKey });
+      call.addPath({ type: 'list', name: accessKey, isVar: object.accessKey.type === 'variable' });
       valGrammer.value = call;
     } else {
       debug.stack('unimpelemented : ' + object.type, object);

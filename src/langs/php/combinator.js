@@ -774,9 +774,9 @@ class Combinator extends CombinatorBase {
         } else if (path.type === 'prop_static') {
           pre += `::${pathName}`;
         } else if (path.type === 'map') {
-          pre += `["${pathName}"]`;
+          pre += path.isVar ? `[$${pathName}]` : `["${pathName}"]`;
         } else if (path.type === 'list') {
-          pre += `[${pathName}]`;
+          pre += path.isVar ? `[$${pathName}]` : `[${pathName}]`;
         } else {
           debug.stack(gram);
         }
