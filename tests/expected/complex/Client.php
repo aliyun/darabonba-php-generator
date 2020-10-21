@@ -61,7 +61,7 @@ class Client extends SourceClient {
                 $modelMapVal = [];
                 $subModelMapVal = [];
                 $version = "/" . "2019-01-08" . "" . $this->_pathname . "";
-                $mapAccess = @$_API["version"];
+                $mapAccess = @$_API[$version];
                 $_request->protocol = $this->_protocol;
                 $_request->port = 80;
                 $_request->method = "GET";
