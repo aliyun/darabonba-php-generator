@@ -90,7 +90,9 @@ class TypeDecimal extends TypeNumber {
 
 class TypeBool extends TypeBase { }
 
-class TypeArray extends TypeBase {
+class TypeTree extends TypeBase { }
+
+class TypeArray extends TypeTree {
   constructor(itemType = null) {
     super();
     assert.strictEqual(true, itemType instanceof TypeItem);
@@ -98,14 +100,14 @@ class TypeArray extends TypeBase {
   }
 }
 
-class TypeBytes extends TypeArray {
+class TypeBytes extends TypeTree {
   constructor() {
     super(new TypeInteger(8, true));
     // bytes = uint8[]
   }
 }
 
-class TypeMap extends TypeBase {
+class TypeMap extends TypeTree {
   constructor(keyType, valType) {
     super();
     assert.strictEqual(true, keyType instanceof TypeItem);
@@ -122,7 +124,7 @@ class TypeObject extends TypeItem {
   }
 }
 
-class TypeStream extends TypeItem {
+class TypeStream extends TypeBase {
   constructor(writable = null) {
     super();
     this.writable = writable;
@@ -607,6 +609,7 @@ module.exports = {
   TypeNumber,
   TypeArray,
   TypeBytes,
+  TypeTree,
   TypeBool,
   TypeBase,
   TypeItem,
