@@ -732,6 +732,8 @@ class ClientResolver extends BaseResolver {
       let accessKey;
       if (object.accessKey.type === 'number') {
         accessKey = object.accessKey.value.value;
+      } else if (object.accessKey.type === 'variable') {
+        accessKey = object.accessKey.id.lexeme;
       } else {
         debug.stack(object);
       }
