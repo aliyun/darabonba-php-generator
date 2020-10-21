@@ -243,6 +243,16 @@ class Client extends SourceClient {
     }
 
     /**
+     * @param ComplexRequest $request
+     * @param string $config
+     * @param int $index
+     * @return void
+     */
+    public static function arrayAccess4($request, $config, $index){
+        $request->configs->value[$index] = $config;
+    }
+
+    /**
      * @param string $config
      * @return array
      */

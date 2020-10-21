@@ -150,6 +150,10 @@ static function arrayAccess3(request: ComplexRequest): string {
   return configVal;
 }
 
+static function arrayAccess4(request: ComplexRequest, config: string, index: int16): void {
+  request.configs.value[index] = config;
+}
+
 static function arrayAssign(config: string): [ string ] {
   var configs = ['a', 'b', 'c'];
   configs[3] = config;
