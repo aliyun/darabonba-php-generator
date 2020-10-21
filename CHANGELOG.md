@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.11 2020-10-21
+
+- Feature: Supports getting values from "Map&List" with variables.
+
 ## 1.1.10 2020-09-29
 
 - Using a compatible method to get the value from the array.
