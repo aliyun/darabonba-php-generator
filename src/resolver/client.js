@@ -544,6 +544,7 @@ class ClientResolver extends BaseResolver {
         }
         current = object.propertyPathTypes[i];
       }
+      call.returnType = this.resolveTypeItem(object.inferred);
       valGrammer.type = 'call';
       valGrammer.value = call;
       if (object.needCast) {
@@ -790,7 +791,7 @@ class ClientResolver extends BaseResolver {
         debug.stack(stmt);
       }
       let expectedType = stmt.expectedType ? stmt.expectedType : null;
-      assert.equal(true, type instanceof TypeItem);
+      assert.strictEqual(true, type instanceof TypeItem);
       let variate = new GrammerVar(stmt.id.lexeme, type);
       let value = this.renderGrammerValue(null, stmt.expr, expectedType);
       node = new GrammerExpr(variate, Symbol.assign(), value);
