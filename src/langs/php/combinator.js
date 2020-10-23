@@ -20,7 +20,7 @@ const {
   FuncItem,
   PropItem,
 
-  GrammerVar,
+  // GrammerVar,
   GrammerCall,
   GrammerCatch,
   GrammerValue,
@@ -1133,26 +1133,11 @@ class Combinator extends CombinatorBase {
 
   behaviorToMap(emitter, behavior) {
     const grammer = behavior.grammer;
-    if (grammer instanceof GrammerCall) {
-      grammer.path.push({
-        type: 'call',
-        name: 'toMap'
-      });
-      this.grammerCall(emitter, grammer);
-    } else if (grammer instanceof GrammerVar) {
-      const grammerCall = new GrammerCall('method');
-      grammerCall.path.push({
-        type: 'object',
-        name: grammer.name
-      });
-      grammerCall.path.push({
-        type: 'call',
-        name: 'toMap'
-      });
-      this.grammerCall(emitter, grammerCall);
-    } else {
-      debug.stack(grammer);
-    }
+    const grammerCall = new GrammerCall('sys_func', [
+      { type: 'object_static', name: this.addInclude('$Core') },
+      { type: 'call_static', name: 'merge' }
+    ], [grammer]);
+    this.grammer(emitter, grammerCall, false, false);
   }
 
   grammerSymbol(emitter, gram) {
