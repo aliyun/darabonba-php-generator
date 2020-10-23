@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.12 2020-10-23
+
+- Converting `Model` to `array` in a compatible way.
+
 ## 1.1.11 2020-10-21
 
 - Feature: Supports getting values from "Map&List" with variables.
