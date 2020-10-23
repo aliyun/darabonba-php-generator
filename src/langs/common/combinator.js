@@ -31,6 +31,7 @@ class BaseConbinator {
     this.config = config;
     this.imports = imports;
 
+    this.libraries = imports.libraries;
     this.requirePackage = imports.requirePackage;
     this.thirdPackageDaraMeta = imports.thirdPackageDaraMeta;
     this.thirdPackageScope = imports.thirdPackageScope;
