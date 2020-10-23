@@ -107,6 +107,7 @@ class Generator {
     let thirdPackageModel = {};
     let thirdPackageClient = {};
     let thirdPackageClientAlias = {};
+    let libraries = {};
 
     const selfClientName = this.config.clientName ? this.config.clientName : this.config.client.name;
 
@@ -115,6 +116,11 @@ class Generator {
       const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
       let packageNameSet = [];
       let clientNameSet = [];
+      Object.keys(lock).forEach(key => {
+        const tmp = key.split(':');
+        const name = tmp[1];
+        libraries[name] = lock[key];
+      });
       ast.imports.forEach((item) => {
         const aliasId = item.lexeme;
         const moduleDir = this.config.libraries[aliasId];
@@ -178,6 +184,7 @@ class Generator {
       });
     }
     return {
+      libraries,
       requirePackage,
       thirdPackageDaraMeta,
       thirdPackageScope,
