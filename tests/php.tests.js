@@ -3,13 +3,11 @@
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
-const mm = require('mm');
 require('mocha-sinon');
 
 const DSL = require('@darabonba/parser');
 
 const Generator = require('../src/generator');
-const PackageInfo = require('../src/langs/php/package_info');
 
 const lang = 'php';
 
@@ -144,49 +142,5 @@ describe('PHP Generator', function () {
       'composer.json',
       'src/Client.php'
     ]);
-  });
-});
-
-describe('package_info tests', function () {
-  beforeEach(function () {
-    this.sinon.stub(console, 'log');
-    this.sinon.stub(fs, 'existsSync');
-    this.sinon.stub(fs, 'readFileSync');
-    this.sinon.stub(fs, 'writeFileSync');
-    this.sinon.stub(fs, 'mkdirSync');
-    this.sinon.stub(path, 'join');
-  });
-
-  it('emit package files shoule be ok', function () {
-    const packageInfo = new PackageInfo({ package: 'a.b.c' });
-    mm(packageInfo, 'resolveOutputDir', function () { return './output/'; });
-    mm(packageInfo, 'render', function () { return '{}'; });
-    packageInfo.emit({
-      name: 'name',
-      desc: 'desc',
-      github: 'github',
-    });
-    mm.restore();
-  });
-
-  it('emit package files shoule be ok', function () {
-    const packageInfo = new PackageInfo({
-      package: 'a.b.c',
-      maintainers: ['author@mail.com'],
-      withTest: 1,
-      packageInfo: {
-        files: {
-          'license': 'license-file-path',
-        }
-      }
-    });
-    mm(packageInfo, 'resolveOutputDir', function () { return './output/'; });
-    mm(packageInfo, 'render', function () { return '{}'; });
-    packageInfo.emit({
-      name: 'name',
-      desc: 'desc',
-      github: 'github',
-    });
-    mm.restore();
   });
 });
