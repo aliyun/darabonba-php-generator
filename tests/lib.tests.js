@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const debug = require('../src/lib/debug');
 const mm = require('mm');
 const expect = require('chai').expect;
@@ -18,7 +19,8 @@ const {
   _avoidKeywords,
   _modify,
   _symbol,
-  _toSnakeCase
+  _toSnakeCase,
+  _dir
 } = require('../src/lib/helper');
 
 describe('debug should be ok', function () {
@@ -257,5 +259,19 @@ describe('helper tests', function () {
     expect(_toSnakeCase('_runtime')).to.be.eql('_runtime');
     expect(_toSnakeCase('TT123')).to.be.eql('tt123');
     expect(_toSnakeCase('fooBar')).to.be.eql('foo_bar');
+  });
+
+  it('_dir should be ok', function () { 
+    mm(fs, 'existsSync', function (filename) {
+      return false;
+    });
+    mm(path, 'dirname', function (filename) {
+      return '';
+    });
+    mm(fs, 'mkdirSync', function (filename, option = {}) { 
+      return true;
+    });
+    _dir('some/path');
+    mm.restore();
   });
 });

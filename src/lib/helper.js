@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+const fs = require('fs');
 const DSL = require('@darabonba/parser');
 
 let config = {};
@@ -167,11 +169,28 @@ function _assignObject(targetObj, ...objs) {
   return targetObj;
 }
 
+function _render(template, params) {
+  Object.keys(params).forEach((key) => {
+    template = template.split('${' + key + '}').join(params[key]);
+  });
+  return template;
+}
+
+function _dir(output) {
+  if (!fs.existsSync(path.dirname(output))) {
+    fs.mkdirSync(path.dirname(output), {
+      recursive: true
+    });
+  }
+}
+
 module.exports = {
+  _dir,
   _config,
   _string,
   _modify,
   _symbol,
+  _render,
   _flatten,
   _unflatten,
   _camelCase,
@@ -179,10 +198,10 @@ module.exports = {
   _upperFirst,
   _lowerFirst,
   _isKeywords,
+  _toSnakeCase,
   _isBasicType,
   _assignObject,
   _subModelName,
   _avoidKeywords,
-  _toSnakeCase,
   _convertStaticParam,
 };

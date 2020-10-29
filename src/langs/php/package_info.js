@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const BasePackageInfo = require('../common/package_info');
 
-const { _deepClone } = require('../../lib/helper');
+const { _deepClone, _render } = require('../../lib/helper');
 
 const OPTION_LOCAL = 1;   // use local tmpl file to render content
 const OPTION_SOURCE = 2;  // config by Darafile.{lang}.packageInfo
@@ -86,7 +86,7 @@ class PackageInfo extends BasePackageInfo {
       }
       if (content !== '') {
         if (optional & OPTION_RENDER) {
-          content = this.render(content, params);
+          content = _render(content, params);
         }
         if (filename === 'composer.json') {
           // extra require
