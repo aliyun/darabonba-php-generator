@@ -157,14 +157,10 @@ class GrammerValue extends Grammer {
       this.key = key;
       this.dataType = null;  // TypeItem
     }
-    this.type = type;    // map | array | string | number | call | null | behavior | param | expr | merge | var | class
+    this.type = type;        // map | array | string | number | call | null | behavior | param | expr | merge | var | class
     this.value = value;
     this.needCast = needCast;
     this.isExpand = false;
-  }
-  setType(type) {
-    assert.strictEqual(true, type instanceof TypeItem);
-    this.type = type;
   }
 }
 
