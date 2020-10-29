@@ -3,18 +3,12 @@
 const fs = require('fs');
 const path = require('path');
 const debug = require('../../lib/debug');
+const { _render } = require('../../lib/helper');
 
 class BasePackageInfo {
   constructor(config) {
     this.config = config;
     this.outputDir = '';
-  }
-
-  render(tamplate, params = {}) {
-    Object.keys(params).forEach((key) => {
-      tamplate = tamplate.split('${' + key + '}').join(params[key]);
-    });
-    return tamplate;
   }
 
   renderAuto(templatePath, targetPath, params) {
@@ -23,7 +17,7 @@ class BasePackageInfo {
   }
 
   renderContent(templateContent, targetPath, params) {
-    let content = this.render(templateContent, params);
+    let content = _render(templateContent, params);
     if (!fs.existsSync(path.dirname(targetPath))) {
       fs.mkdirSync(path.dirname(targetPath), {
         recursive: true

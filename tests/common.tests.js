@@ -121,13 +121,6 @@ describe('package_info should be ok', function () {
     this.sinon.stub(console, 'log');
   });
 
-  it('package_info : render should be ok', function () {
-    const packageInfo = new PackageInfo();
-    expect(
-      packageInfo.render('${key}', { key: 'render-key' })
-    ).to.be.eql('render-key');
-  });
-
   it('package_info : checkParams should be ok', function () {
     const packageInfo = new PackageInfo();
     const param = { key: 'value' };
