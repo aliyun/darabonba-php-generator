@@ -870,7 +870,8 @@ class Combinator extends CombinatorBase {
         emitMap.call(this, emitter, gram.value);
       }
     } else if (gram.type === 'string') {
-      emitter.emit(`"${gram.value}"`);
+      let str = gram.value.split('\\"').map(str => str.split('"').join('\\"')).join('\\"');
+      emitter.emit(`"${str.split('$').join('\\$')}"`);
     } else if (gram.type === 'null') {
       emitter.emit('null');
     } else if (gram.type === 'behavior' || gram.type === 'call'
