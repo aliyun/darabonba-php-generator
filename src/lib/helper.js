@@ -4,7 +4,55 @@ const path = require('path');
 const fs = require('fs');
 const DSL = require('@darabonba/parser');
 
+const {
+  TypeGeneric,
+  TypeDecimal,
+  TypeInteger,
+  TypeStream,
+  TypeObject,
+  TypeString,
+  TypeNumber,
+  TypeArray,
+  TypeBytes,
+  TypeBool,
+  TypeItem,
+  TypeVoid,
+  TypeNull,
+  TypeMap,
+  TypeBase,
+  TypeTree,
+  PropItem,
+  FuncItem,
+  ConstructItem,
+  AnnotationItem,
+} = require('../langs/common/items');
+
 let config = {};
+
+const is = {
+  undefined: a => typeof (a) === 'undefined',
+  any: a => a instanceof TypeGeneric,
+  array: a => a instanceof TypeArray,
+  map: a => a instanceof TypeMap,
+  decimal: a => a instanceof TypeDecimal,
+  base: a => a instanceof TypeBase,
+  null: a => a instanceof TypeNull,
+  integer: a => a instanceof TypeInteger,
+  stream: a => a instanceof TypeStream,
+  object: a => a instanceof TypeObject,
+  string: a => a instanceof TypeString,
+  number: a => a instanceof TypeNumber,
+  bytes: a => a instanceof TypeBytes,
+  bool: a => a instanceof TypeBool,
+  type: a => a instanceof TypeItem,
+  void: a => a instanceof TypeVoid,
+  tree: a => a instanceof TypeTree,
+  // Item
+  prop: a => a instanceof PropItem,
+  func: a => a instanceof FuncItem,
+  construct: a => a instanceof ConstructItem,
+  annotation: a => a instanceof AnnotationItem,
+};
 
 function _config(langConfig = null) {
   if (null !== langConfig) {
@@ -184,14 +232,25 @@ function _dir(output) {
   }
 }
 
+function _contain(str, substr) {
+  return str.indexOf(substr) > -1;
+}
+
+function _startWith(str, substr) {
+  return str.indexOf(substr) === 0;
+}
+
 module.exports = {
+  is,
   _dir,
   _config,
   _string,
   _modify,
   _symbol,
   _render,
+  _contain,
   _flatten,
+  _startWith,
   _unflatten,
   _camelCase,
   _deepClone,
