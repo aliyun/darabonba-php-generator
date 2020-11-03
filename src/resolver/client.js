@@ -32,16 +32,17 @@ const {
   BehaviorTimeNow,
   BehaviorDoAction,
   BehaviorSetMapItem,
-  TypeVoid,
-  TypeObject,
-  TypeGeneric,
-  TypeInteger,
-  TypeBool,
+  BehaviorTamplateString,
+
   TypeMap,
-  TypeString,
+  TypeBool,
+  TypeVoid,
   TypeItem,
   TypeNull,
-  BehaviorTamplateString,
+  TypeObject,
+  TypeString,
+  TypeInteger,
+  TypeGeneric,
 } = require('../langs/common/items');
 
 const {
