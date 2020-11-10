@@ -317,7 +317,7 @@ class ClientResolver extends BaseResolver {
             { type: 'map', name: 'backoff' }
           ]), genericType),
           new GrammerValue('param', '_retryTimes', int16),
-        ])
+        ], int16)
       )
     );
 
