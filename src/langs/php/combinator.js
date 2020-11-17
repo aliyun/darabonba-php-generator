@@ -221,7 +221,7 @@ class Combinator extends CombinatorBase {
       tmp.splice(tmp.length - 1, 1);
       layer = layer ? layer + '.' + tmp.join('.') : tmp.join('.');
     }
-    this.emitClass(emitter, object);
+    const currClassName = this.emitClass(emitter, object);
     outputParts.body = emitter.output;
 
     /******************************** emit head ********************************/
@@ -250,6 +250,9 @@ class Combinator extends CombinatorBase {
       }).join('.');
       if (config.packageInfo) {
         config.dir = config.outputDir + '/src/';
+      }
+      if (object.type === 'client' && config.exec) {
+        outputParts.foot = `${currClassName}::main(array_slice($argv, 1));`;
       }
       this.combineOutputParts(config, outputParts);
     }
@@ -355,6 +358,7 @@ class Combinator extends CombinatorBase {
     });
     this.levelDown();
     emitter.emitln('}', this.level);
+    return className;
   }
 
   emitValidate(emitter, notes) {
