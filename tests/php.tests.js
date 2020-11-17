@@ -136,6 +136,12 @@ describe('PHP Generator', function () {
     ]);
   });
 
+  it('exec should ok', function () {
+    check('exec', [
+      'Client.php'
+    ]);
+  });
+
   it('package should ok', function () {
     check('package', [
       'autoload.php',

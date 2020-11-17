@@ -1,0 +1,3 @@
+static async function main(args: [string]): void {
+    
+}
