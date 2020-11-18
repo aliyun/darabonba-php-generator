@@ -252,7 +252,15 @@ class Combinator extends CombinatorBase {
         config.dir = config.outputDir + '/src/';
       }
       if (object.type === 'client' && config.exec) {
-        outputParts.foot = `${currClassName}::main(array_slice($argv, 1));`;
+        emitter = new Emitter(this.config);
+        emitter.emitln('$path = __DIR__ . \\DIRECTORY_SEPARATOR . \'..\' . \\DIRECTORY_SEPARATOR . \'vendor\' . \\DIRECTORY_SEPARATOR . \'autoload.php\';', this.level);
+        emitter.emitln('if (file_exists($path)) {', this.level);
+        this.levelUp();
+        emitter.emitln('require_once $path;', this.level);
+        this.levelDown();
+        emitter.emitln('}', this.level);
+        emitter.emitln(`${currClassName}::main(array_slice($argv, 1));`, this.level);
+        outputParts.foot = emitter.output;
       }
       this.combineOutputParts(config, outputParts);
     }
