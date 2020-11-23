@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.13 2020-11-23
+
+- Support `exec` mode.
+
 ## 1.1.12 2020-10-23
 
 - Converting `Model` to `array` in a compatible way.
