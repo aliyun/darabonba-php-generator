@@ -202,11 +202,15 @@ describe('client resolver should be ok', function () {
     grammerValue = code.renderGrammerValue(null, {
       type: 'property_access',
       id: {
-        inferred: 'map',
+        inferred: {
+          type: 'map',
+          keyType: { type: 'basic', name: 'string' },
+          valueType: { type: 'basic', name: 'string' }
+        },
         lexeme: '__module'
       },
       propertyPath: [{ lexeme: 'test' }],
-      propertyPathTypes: [{ name: 'test' }],
+      propertyPathTypes: [{ type: 'basic', name: 'any' }],
       needCast: true,
       inferred: { type: 'basic', name: 'string' }
     });

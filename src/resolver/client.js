@@ -51,7 +51,7 @@ const {
 } = require('../langs/common/enum');
 
 const {
-  _isBasicType
+  _isBasicType, is
 } = require('../lib/helper');
 const assert = require('assert');
 
@@ -529,23 +529,26 @@ class ClientResolver extends BaseResolver {
       valGrammer.type = 'string';
       valGrammer.value = object.value.string;
     } else if (object.type === 'property_access') {
-      var current = object.id.inferred;
-
-      let call = new GrammerCall('key');
-      var paramName = object.id.lexeme;
-      call.addPath({ type: 'object', name: paramName });
-      for (var i = 0; i < object.propertyPath.length; i++) {
-        var name = object.propertyPath[i].lexeme;
-
-        if (current.type === 'model') {
-          call.type = 'prop';
-          call.addPath({ type: 'prop', name: name });
+      let last_path_type = this.resolveTypeItem(object.id.inferred);
+      let call = new GrammerCall('prop', [], [], last_path_type);
+      call.addPath({ type: 'object', name: object.id.lexeme, dataType: last_path_type });
+      object.propertyPath.forEach((item, i) => {
+        var path_name = item.lexeme;
+        let path_type = this.resolveTypeItem(object.propertyPathTypes[i]);
+        let call_type = 'prop';
+        if (is.array(last_path_type)) {
+          call_type = 'list';
+        } else if (is.map(last_path_type)) {
+          call_type = 'map';
+        } else if (is.object(last_path_type)) {
+          call_type = 'prop';
         } else {
-          call.addPath({ type: 'map', name: name });
+          debug.stack(last_path_type);
         }
-        current = object.propertyPathTypes[i];
-      }
-      call.returnType = this.resolveTypeItem(object.inferred);
+        call.addPath({ type: call_type, name: path_name, dataType: path_type });
+        last_path_type = path_type;
+      });
+
       valGrammer.type = 'call';
       valGrammer.value = call;
       if (object.needCast) {

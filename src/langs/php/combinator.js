@@ -753,9 +753,7 @@ class Combinator extends CombinatorBase {
       });
       params = tmp.join(', ');
     }
-    if (gram.type === 'map' || gram.type === 'key') {
-      pre = '@';
-    }
+    let last_path;
     if (gram.type === 'super') {
       pre = `parent::__construct(${params})`;
     } else {
@@ -792,11 +790,15 @@ class Combinator extends CombinatorBase {
         } else {
           debug.stack(gram);
         }
+        last_path = path;
       });
     }
 
     if (pre[0] === '-' || pre[0] === ':') {
       pre = pre.slice(2);
+    }
+    if (last_path && (last_path.type === 'map' || last_path.type === 'list')) {
+      pre = '@' + pre;
     }
     emitter.emit(pre);
   }
