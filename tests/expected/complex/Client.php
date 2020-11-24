@@ -238,7 +238,7 @@ class Client extends SourceClient {
      * @return string
      */
     public static function arrayAccess3($request){
-        $configVal = $request->configs->value[0];
+        $configVal = @$request->configs->value[0];
         return $configVal;
     }
 
@@ -249,7 +249,7 @@ class Client extends SourceClient {
      * @return void
      */
     public static function arrayAccess4($request, $config, $index){
-        $request->configs->value[$index] = $config;
+        @$request->configs->value[$index] = $config;
     }
 
     /**
@@ -288,7 +288,7 @@ class Client extends SourceClient {
      * @return void
      */
     public static function arrayAssign3($request, $config){
-        $request->configs->value[0] = $config;
+        @$request->configs->value[0] = $config;
     }
 
     /**
@@ -296,7 +296,7 @@ class Client extends SourceClient {
      * @return string
      */
     public static function mapAccess($request){
-        $configInfo = $request->configs->extra["name"];
+        $configInfo = @$request->configs->extra["name"];
         return $configInfo;
     }
 
@@ -305,7 +305,7 @@ class Client extends SourceClient {
      * @return string
      */
     public static function mapAccess2($request){
-        $configInfo = $request->configs->extra["name"];
+        $configInfo = @$request->configs->extra["name"];
         return $configInfo;
     }
 
