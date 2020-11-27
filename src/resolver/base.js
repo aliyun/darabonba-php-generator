@@ -137,25 +137,25 @@ class BaseResolver {
   resolveTypeItem(typeNode, sourceNode = null) {
     if (typeNode.idType) {
       if (typeNode.idType === 'model') {
-        return new TypeObject(this.combinator.addModelInclude(typeNode.lexeme));
+        return new TypeObject(`#${typeNode.lexeme}`);
       } else if (typeNode.idType === 'module') {
-        return new TypeObject(this.combinator.addInclude(typeNode.lexeme));
+        return new TypeObject(`^${typeNode.lexeme}`);
       } else if (typeNode.idType === 'builtin_model') {
-        return new TypeObject(this.combinator.addInclude(typeNode.lexeme));
+        return new TypeObject(`^${typeNode.lexeme}`);
       }
       debug.stack(typeNode, sourceNode);
     } else if (typeNode.type) {
       if (typeNode.type === 'fieldType') {
         if (typeNode.fieldType.idType) {
           if (typeNode.fieldType.idType === 'module') {
-            return new TypeObject(this.combinator.addInclude(typeNode.fieldType.lexeme));
+            return new TypeObject(`^${typeNode.fieldType.lexeme}`);
           }
-          return new TypeObject(this.combinator.addModelInclude(typeNode.fieldType.lexeme));
+          return new TypeObject(`#${typeNode.fieldType.lexeme}`);
         }
         return this.resolveTypeItem(typeNode.fieldType, typeNode);
       } else if (typeNode.type === 'modelBody') {
         // is sub model
-        const modelName = this.combinator.addModelInclude([this.object.name, sourceNode.fieldName.lexeme].join('.'));
+        const modelName = `#${[this.object.name, sourceNode.fieldName.lexeme].join('.')}`;
         return new TypeObject(modelName);
       } else if (_isBasicType(typeNode.type)) {
         return this.resolveTypeItem(typeNode.type, typeNode);
@@ -166,12 +166,12 @@ class BaseResolver {
         if (typeNode.moduleName) {
           name = typeNode.moduleName + '.' + name;
         }
-        return new TypeObject(this.combinator.addModelInclude(name));
+        return new TypeObject(`#${name}`);
       } else if (typeNode.type === 'module_instance') {
-        return new TypeObject(this.combinator.addInclude(typeNode.name));
+        return new TypeObject(`^${typeNode.name}`);
       } else if (typeNode.type === 'param') {
         if (typeNode.paramType.idType) {
-          return new TypeObject(this.combinator.addModelInclude(typeNode.paramType.lexeme));
+          return new TypeObject(`#${typeNode.paramType.lexeme}`);
         }
         return this.resolveTypeItem(typeNode.paramType, typeNode);
       } else if (typeNode.type === 'array') {
@@ -182,14 +182,14 @@ class BaseResolver {
         typeNode.path.forEach(item => {
           tmp.push(item.lexeme);
         });
-        return new TypeObject(this.combinator.addModelInclude(tmp.join('.')));
+        return new TypeObject(`#${tmp.join('.')}`);
       } else if (typeNode.type === 'subModel' || typeNode.type === 'subModel_or_moduleModel') {
         // subModel_or_moduleModel is retained for compatibility with older parser.
         let tmp = [];
         typeNode.path.forEach(item => {
           tmp.push(item.lexeme);
         });
-        return new TypeObject(this.combinator.addModelInclude(tmp.join('.')));
+        return new TypeObject(`#${tmp.join('.')}`);
       }
       debug.stack(typeNode, sourceNode);
     } else if (typeNode.lexeme) {
@@ -201,9 +201,9 @@ class BaseResolver {
     } else if (typeNode === 'array') {
       let itemType;
       if (sourceNode.fieldItemType.type === 'modelBody') {
-        itemType = new TypeObject(this.combinator.addModelInclude(sourceNode.itemType));
+        itemType = new TypeObject(`#${sourceNode.itemType}`);
       } else if (sourceNode.fieldItemType.idType === 'model') {
-        itemType = new TypeObject(this.combinator.addModelInclude(sourceNode.fieldItemType.lexeme));
+        itemType = new TypeObject(`#${sourceNode.fieldItemType.lexeme}`);
       } else {
         itemType = this.resolveTypeItem(sourceNode.fieldItemType, sourceNode);
       }
@@ -248,7 +248,7 @@ class BaseResolver {
       return new TypeInteger(parseInt(len), true);
     }
     if (typeof typeNode === 'string' && typeNode.length > 0) {
-      return new TypeObject(this.combinator.addModelInclude(typeNode));
+      return new TypeObject(`#${typeNode}`);
     }
     debug.stack('Unsupported type node', { typeNode, sourceNode });
   }

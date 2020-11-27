@@ -97,13 +97,13 @@ class ClientResolver extends BaseResolver {
 
     // resolve extends
     if (ast.extends) {
-      object.extends.push(combinator.addInclude(ast.extends.lexeme));
+      object.extends.push(`^${ast.extends.lexeme}`);
     } else if (config.baseClient) {
       let extendsClass = [];
       if (Array.isArray(config.baseClient)) {
-        config.baseClient.forEach(item => extendsClass.push(combinator.addInclude(item)));
+        config.baseClient.forEach(item => extendsClass.push(`^${item}`));
       } else {
-        extendsClass = [combinator.addInclude(config.baseClient)];
+        extendsClass = [`^${config.baseClient}`];
       }
       object.extends = extendsClass;
     }
@@ -284,7 +284,7 @@ class ClientResolver extends BaseResolver {
     let whileOperation = new GrammerCondition('while');
     whileOperation.addCondition(
       new GrammerCall('method', [
-        { type: 'object_static', name: this.combinator.addInclude('$Core') },
+        { type: 'object_static', name: '$Core' },
         { type: 'call_static', name: this.config.tea.core.allowRetry }
       ], [
         new GrammerValue('call', new GrammerCall('key', [
@@ -309,7 +309,7 @@ class ClientResolver extends BaseResolver {
         new GrammerVar('_backoffTime', int16),
         Symbol.assign(),
         new GrammerCall('method', [
-          { type: 'object_static', name: this.combinator.addInclude('$Core') },
+          { type: 'object_static', name: '$Core' },
           { type: 'call_static', name: this.config.tea.core.getBackoffTime }
         ], [
           new GrammerValue('call', new GrammerCall('key', [
@@ -333,7 +333,7 @@ class ClientResolver extends BaseResolver {
     );
     backoffTimeIf.addBodyNode(
       new GrammerCall('method', [
-        { type: 'object_static', name: this.combinator.addInclude('$Core') },
+        { type: 'object_static', name: '$Core' },
         { type: 'call_static', name: this.config.tea.core.sleep }
       ], [
         new GrammerValue('param', '_backoffTime', int16),
@@ -363,7 +363,7 @@ class ClientResolver extends BaseResolver {
     let tryCatch = new GrammerCatch([
       new GrammerCondition('if', [
         new GrammerCall('method', [
-          { type: 'object_static', name: this.combinator.addInclude('$Core') },
+          { type: 'object_static', name: '$Core' },
           { type: 'call_static', name: this.config.tea.core.isRetryable }
         ], [exceptionVar])
       ], [
@@ -404,7 +404,7 @@ class ClientResolver extends BaseResolver {
           new GrammerExpr(
             new GrammerVar(this.config.request, requestType),
             Symbol.assign(),
-            new GrammerNewObject(this.combinator.addInclude('$Request'))
+            new GrammerNewObject('$Request')
           )
         );
       }
@@ -489,7 +489,7 @@ class ClientResolver extends BaseResolver {
         valGrammer.type = 'var';
         let grammerVar;
         if (object.id.type === 'model') {
-          const name = this.combinator.addModelInclude(object.id.lexeme);
+          const name = `#${object.id.lexeme}`;
           const type = this.resolveTypeItem(object.inferred);
           type.objectName = name;
           grammerVar = new GrammerVar(object.id.lexeme, type);
@@ -593,7 +593,7 @@ class ClientResolver extends BaseResolver {
           }
         });
       }
-      objectName = this.combinator.addModelInclude(objectName);
+      objectName = `#${objectName}`;
 
       valGrammer.type = 'instance';
       let params = [];
@@ -638,7 +638,7 @@ class ClientResolver extends BaseResolver {
           }
         } else if (object.left.type === 'static_call') {
           if (object.left.id.type === 'module') {
-            call.addPath({ type: 'object_static', name: this.combinator.addInclude(object.left.id.lexeme) });
+            call.addPath({ type: 'object_static', name: `^${object.left.id.lexeme}` });
             isStatic = true;
           } else {
             // call.addPath({ type: 'call_static', name: object.left.id.lexeme });
@@ -668,7 +668,7 @@ class ClientResolver extends BaseResolver {
       valGrammer.value = call;
     } else if (object.type === 'construct') {
       valGrammer.type = 'instance';
-      const objectName = this.combinator.addInclude(object.aliasId.lexeme);
+      const objectName = `^${object.aliasId.lexeme}`;
       valGrammer.value = new GrammerNewObject(objectName);
       object.args.forEach(item => {
         valGrammer.value.addParam(this.renderGrammerValue(null, item));
