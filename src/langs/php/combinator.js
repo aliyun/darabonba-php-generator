@@ -48,8 +48,7 @@ const {
   _deepClone,
   _upperFirst,
   _isKeywords,
-  _avoidKeywords,
-  _convertStaticParam,
+  _avoidKeywords
 } = require('../../lib/helper');
 
 function _name(str) {
@@ -209,6 +208,7 @@ class Combinator extends CombinatorBase {
     }
     this.includeList = object.includeList;
     this.includeModelList = object.includeModelList;
+    this.classNameMap = {};
 
     let emitter, outputParts = { head: '', body: '', foot: '' };
 
@@ -286,10 +286,7 @@ class Combinator extends CombinatorBase {
       }
       return 'array';
     } else if (type instanceof TypeObject) {
-      if (type.objectName.indexOf('$') === 0) {
-        return this.addInclude(type.objectName);
-      }
-      return type.objectName;
+      return this.resolveName(type.objectName);
     } else if (type instanceof TypeStream) {
       return this.addInclude('$Stream');
     } else if (type instanceof TypeGeneric) {
@@ -321,7 +318,7 @@ class Combinator extends CombinatorBase {
         object.extends = [object.extends];
       }
       object.extends.forEach(baseClass => {
-        tmp.push(baseClass);
+        tmp.push(this.resolveName(baseClass));
       });
       parent = 'extends ' + tmp.join(', ') + ' ';
     }
@@ -495,7 +492,7 @@ class Combinator extends CombinatorBase {
           emitter.emitln('$n = 0;', this.level);
           emitter.emitln(`foreach(${mapVal} as $item) {`, this.level);
           this.levelUp();
-          emitter.emitln(`$model->${prop.name}[$n++] = null !== $item ? ${prop.type.itemType.objectName}::fromMap($item) : $item;`, this.level);
+          emitter.emitln(`$model->${prop.name}[$n++] = null !== $item ? ${this.resolveName(prop.type.itemType.objectName)}::fromMap($item) : $item;`, this.level);
           this.levelDown();
           emitter.emitln('}', this.level);
         } else {
@@ -504,7 +501,7 @@ class Combinator extends CombinatorBase {
         this.levelDown();
         emitter.emitln('}', this.level);
       } else if (prop.type instanceof TypeObject) {
-        emitter.emitln(`$model->${prop.name} = ${prop.type.objectName}::fromMap(${mapVal});`, this.level);
+        emitter.emitln(`$model->${prop.name} = ${this.resolveName(prop.type.objectName)}::fromMap(${mapVal});`, this.level);
       } else {
         emitter.emitln(`$model->${prop.name} = ${mapVal};`, this.level);
       }
@@ -758,7 +755,7 @@ class Combinator extends CombinatorBase {
       pre = `parent::__construct(${params})`;
     } else {
       gram.path.forEach((path, i) => {
-        let pathName = typeof path.name === 'string' ? path.name.replace('@', '_') : path.name;
+        let pathName = this.resolveName(path.name);
         if (path.type === 'parent') {
           if (gram.path[i + 1] && gram.path[i + 1].type.indexOf('static') > -1) {
             pre += 'self';
@@ -772,21 +769,25 @@ class Combinator extends CombinatorBase {
             }
           }
         } else if (path.type === 'object') {
-          pre += `$${_convertStaticParam(pathName)}`;
+          if (path.name.indexOf('@') === 0 && pre === '') {
+            pre += `$this->${pathName}`;
+          } else {
+            pre += `$${pathName}`;
+          }
         } else if (path.type === 'object_static') {
-          pre += `${_convertStaticParam(pathName)}`;
+          pre += `${pathName}`;
         } else if (path.type === 'call') {
-          pre += `->${_avoidKeywords(pathName)}(${params})`;
+          pre += `->${pathName}(${params})`;
         } else if (path.type === 'call_static') {
-          pre += `::${_avoidKeywords(pathName)}(${params})`;
+          pre += `::${pathName}(${params})`;
         } else if (path.type === 'prop') {
           pre += `->${pathName}`;
         } else if (path.type === 'prop_static') {
           pre += `::${pathName}`;
         } else if (path.type === 'map') {
-          pre += path.isVar ? `[$${pathName}]` : `["${pathName}"]`;
+          pre += path.isVar ? `[$${path.name}]` : `["${path.name}"]`;
         } else if (path.type === 'list') {
-          pre += path.isVar ? `[$${pathName}]` : `[${pathName}]`;
+          pre += path.isVar ? `[$${path.name}]` : `[${path.name}]`;
         } else {
           debug.stack(gram);
         }
@@ -816,10 +817,10 @@ class Combinator extends CombinatorBase {
   grammerVar(emitter, gram) {
     if (gram.varType === 'static_class') {
       const name = gram.name ? gram.name : gram.key;
-      emitter.emit(`${_convertStaticParam(name)}::class`);
+      emitter.emit(`${this.resolveName(name)}::class`);
     } else if (gram.varType === 'var' || gram.varType === 'const') {
       const name = gram.name ? gram.name : gram.key;
-      emitter.emit(`$${_convertStaticParam(name, false)}`);
+      emitter.emit(`$${this.resolveName(name, false)}`);
     } else {
       debug.stack(gram);
     }
@@ -1078,7 +1079,7 @@ class Combinator extends CombinatorBase {
   grammerNewObject(emitter, gram) {
     let objectName = '';
     objectName = gram.name;
-    emitter.emit(`new ${objectName}(`);
+    emitter.emit(`new ${this.resolveName(objectName)}(`);
     if (!Array.isArray(gram.params)) {
       this.grammerValue(emitter, gram.params);
     } else {

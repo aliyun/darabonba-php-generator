@@ -14,6 +14,7 @@ const {
 } = require('./items');
 
 const {
+  _name,
   _config,
   _upperFirst,
   _lowerFirst,
@@ -80,6 +81,18 @@ class BaseConbinator {
       }
     });
     return notes;
+  }
+
+  resolveName(path_name, avoidKeyword = true) {
+    path_name = `${path_name}`;
+    if (path_name.indexOf('^') === 0) {
+      path_name = this.addInclude(path_name.substr(1));
+    } else if (path_name.indexOf('#') === 0) {
+      path_name = this.addModelInclude(path_name.substr(1));
+    } else if (path_name.indexOf('$') === 0) {
+      path_name = this.addInclude(path_name);
+    }
+    return _name(path_name, avoidKeyword);
   }
 
   emitAnnotations(emitter, annotations) {
