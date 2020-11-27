@@ -3,11 +3,11 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
-use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Request;
 use AlibabaCloud\Tea\Exception\TeaError;
 use \Exception;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Tea;
+use AlibabaCloud\Tea\Request;
 
 /**
  * top annotation

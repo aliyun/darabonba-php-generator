@@ -8,9 +8,9 @@ use import\Client as importClient;
 use GuzzleHttp\Psr7\Stream;
 
 use Tea\PHP\Tests\Models\MyModel\submodel;
-use Tea\PHP\Tests\Models\M;
 use Tea\PHP\Tests\Models\MyModel\subarraymodel;
-use import\Models\Request;
+use Tea\PHP\Tests\Models\M;
+use AlibabaCloud\Tea\Request;
 use Tea\PHP\Tests\Models\M\subM;
 
 class MyModel extends Model {
@@ -285,7 +285,7 @@ class MyModel extends Model {
             $model->existModel = M::fromMap($map['existModel']);
         }
         if(isset($map['request'])){
-            $model->request = \AlibabaCloud\Tea\Request::fromMap($map['request']);
+            $model->request = Request::fromMap($map['request']);
         }
         if(isset($map['complexList'])){
             if(!empty($map['complexList'])){
@@ -392,7 +392,7 @@ class MyModel extends Model {
     public $maparray;
 
     /**
-     * @var Request[]
+     * @var \import\Models\Request[]
      */
     public $moduleModelMap;
 
@@ -432,7 +432,7 @@ class MyModel extends Model {
     public $existModel;
 
     /**
-     * @var \AlibabaCloud\Tea\Request
+     * @var Request
      */
     public $request;
 

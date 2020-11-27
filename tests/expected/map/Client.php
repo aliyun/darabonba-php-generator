@@ -5,8 +5,6 @@ namespace Tea\PHP\Tests;
 
 use Source\SourceClient;
 
-use Source\Models\Config;
-
 class Client extends SourceClient {
     public function __construct($config){
         parent::__construct($config);
@@ -15,8 +13,8 @@ class Client extends SourceClient {
             "ap-northeast-1" => "cusanalytic.aliyuncs.com",
             "ap-south-1" => "cusanalytic.aliyuncs.com"
         ];
-        @$_endpointMap["ap-northeast-1"];
-        $_endpointMap["ap-northeast-1"] = "";
-        @$_endpointMap["test"] = "test";
+        @$this->_endpointMap["ap-northeast-1"];
+        $this->_endpointMap["ap-northeast-1"] = "";
+        @$this->_endpointMap["test"] = "test";
     }
 }

@@ -3,8 +3,8 @@
 // This file is auto-generated, don't edit it. Thanks.
 namespace Tea\PHP\Tests;
 
-use Source\SourceClient;
 use AlibabaCloud\Tea\Exception\TeaError;
+use Source\SourceClient;
 
 use Source\Models\RuntimeObject;
 use Source\Models\Request;

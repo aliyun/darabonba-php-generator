@@ -4,25 +4,24 @@
 namespace Tea\PHP\Tests;
 
 use Source\SourceClient;
-use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Request;
 use AlibabaCloud\Tea\Exception\TeaError;
 use \Exception;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
+use AlibabaCloud\Tea\Tea;
+use AlibabaCloud\Tea\Request;
+use AlibabaCloud\Tea\Response;
 
-use Source\Models\Config;
 use Tea\PHP\Tests\Models\ComplexRequest;
 use Source\Models\RuntimeObject;
-use Tea\PHP\Tests\Models\Source;
+use Source\Models\Config;
 use Tea\PHP\Tests\Models\ComplexRequest\header;
-use AlibabaCloud\Tea\Response;
 
 class Client extends SourceClient {
     protected $_configs;
 
     public function __construct($config){
         parent::__construct($config);
-        @$_configs[0] = $config;
+        @$this->_configs[0] = $config;
     }
 
     /**
@@ -61,7 +60,7 @@ class Client extends SourceClient {
                 $modelMapVal = [];
                 $subModelMapVal = [];
                 $version = "/" . "2019-01-08" . "" . $this->_pathname . "";
-                $mapAccess = @$_API[$version];
+                $mapAccess = @$this->_API[$version];
                 $_request->protocol = $this->_protocol;
                 $_request->port = 80;
                 $_request->method = "GET";
