@@ -109,15 +109,6 @@ function _avoidKeywords(str) {
   return str;
 }
 
-function _convertStaticParam(param, _avoidKeyword = true) {
-  if (param === '__response') {
-    param = config.response;
-  } else if (param === '__request') {
-    param = config.request;
-  }
-  return _avoidKeyword ? _avoidKeywords(param) : param;
-}
-
 function _isKeywords(str) {
   return config.keywords.indexOf(str.toLowerCase()) > -1;
 }
@@ -240,9 +231,23 @@ function _startWith(str, substr) {
   return str.indexOf(substr) === 0;
 }
 
+function _name(str, avoidKeyword = true) {
+  str = `${str}`;
+  if (str.indexOf('@') === 0) {
+    str = `_${str.substr(1)}`;
+  }
+  if (str === '__response') {
+    str = config.response;
+  } else if (str === '__request') {
+    str = config.request;
+  }
+  return avoidKeyword ? _avoidKeywords(str) : str;
+}
+
 module.exports = {
   is,
   _dir,
+  _name,
   _config,
   _string,
   _modify,
@@ -261,6 +266,5 @@ module.exports = {
   _isBasicType,
   _assignObject,
   _subModelName,
-  _avoidKeywords,
-  _convertStaticParam,
+  _avoidKeywords
 };
