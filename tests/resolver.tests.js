@@ -39,7 +39,7 @@ describe('client resolver should be ok', function () {
     mm(code.combinator, 'addInclude', function (className) { return className; });
     code.config.baseClient = 'BaseClient';
     code.resolve();
-    expect(code.object.extends).to.be.eql(['BaseClient']);
+    expect(code.object.extends).to.be.eql(['^BaseClient']);
 
     mm.restore();
   });
@@ -197,7 +197,7 @@ describe('client resolver should be ok', function () {
         name: 'ComplexRequest.header',
       }
     });
-    expect(grammerValue.value.name).to.be.eql('test.a.b');
+    expect(grammerValue.value.name).to.be.eql('#test.a.b');
 
     grammerValue = code.renderGrammerValue(null, {
       type: 'property_access',
