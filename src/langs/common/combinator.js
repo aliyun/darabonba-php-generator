@@ -20,7 +20,7 @@ const {
   _lowerFirst,
 } = require('../../lib/helper.js');
 
-class BaseConbinator {
+class BaseCombinator {
   constructor(config = {}, imports = {}) {
     this.level = 0;
     this.eol = '';
@@ -203,4 +203,4 @@ class BaseConbinator {
   }
 }
 
-module.exports = BaseConbinator;
+module.exports = BaseCombinator;
