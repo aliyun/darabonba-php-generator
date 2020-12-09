@@ -28,7 +28,7 @@ class ModelResolver extends BaseResolver {
     const config = this.config;
     const ast = this.ast;
 
-    assert.equal(ast.type, 'model');
+    assert.strictEqual(ast.type, 'model');
 
     combinator.config.emitType = 'model';
 
