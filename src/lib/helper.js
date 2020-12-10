@@ -164,9 +164,14 @@ function _flatten(obj, sep = '.') {
         recurse(item, prefix ? `${prefix}${sep}${index}` : `${index}`, res);
       });
     } else if (curr instanceof Object) {
-      Object.keys(curr).forEach((key) => {
-        recurse(curr[key], prefix ? `${prefix}${sep}${key}` : `${key}`, res);
-      });
+      const keys = Object.keys(curr);
+      if (keys.length) {
+        keys.forEach((key) => {
+          recurse(curr[key], prefix ? `${prefix}${sep}${key}` : `${key}`, res);
+        });
+      } else if (prefix) {
+        res[prefix] = curr;
+      }
     } else {
       res[prefix] = curr;
     }
