@@ -13,7 +13,7 @@ class Class_ extends Model {
     }
     /**
      * @param array $map
-     * @return Class
+     * @return Class_
      */
     public static function fromMap($map = []) {
         $model = new self();
