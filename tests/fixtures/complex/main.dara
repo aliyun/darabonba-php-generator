@@ -12,6 +12,7 @@ init(config: Source.Config){
 }
 
 model ComplexRequest = {
+  duplicatName: Source.complexrequest,
   accessKey: string,
   body: readable(name='Body', example='Body', description='Body'),
   strs: [ string ](name='Strs', example='Strs', description='Strs'),

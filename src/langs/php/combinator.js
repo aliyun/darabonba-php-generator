@@ -48,7 +48,8 @@ const {
   _deepClone,
   _upperFirst,
   _isKeywords,
-  _avoidKeywords
+  _avoidKeywords,
+  is
 } = require('../../lib/helper');
 
 function _name(str) {
@@ -101,16 +102,16 @@ class Combinator extends CombinatorBase {
       let tmp = realFullClassName.split('\\');
       last = tmp[tmp.length - 1];
     }
-
-    if (this.classNameMap[last]) {
-      if (this.classNameMap[last] !== realFullClassName) {
+    let lower = last.toLowerCase();
+    if (this.classNameMap[lower]) {
+      if (this.classNameMap[lower] !== realFullClassName) {
         // return full class name if already have same name class
         return realFullClassName;
       }
       return last;
     }
 
-    this.classNameMap[last] = realFullClassName;
+    this.classNameMap[lower] = realFullClassName;
     if (this.thirdPackageClientAlias[className]) {
       // has alias
       this.includeList.push({ import: realFullClassName, alias: this.thirdPackageClientAlias[className] });
@@ -145,14 +146,15 @@ class Combinator extends CombinatorBase {
 
     let tmp = realFullClassName.split('\\');
     let last = tmp[tmp.length - 1];
-    if (this.classNameMap[last]) {
-      if (this.classNameMap[last] !== realFullClassName) {
+    let lower = last.toLowerCase();
+    if (this.classNameMap[lower]) {
+      if (this.classNameMap[lower] !== realFullClassName) {
         // return full class name if already have same name class
         return realFullClassName;
       }
       return last;
     }
-    this.classNameMap[last] = realFullClassName;
+    this.classNameMap[lower] = realFullClassName;
     this.includeModelList.push({ import: realFullClassName, alias: null });
     return last;
   }
@@ -327,13 +329,15 @@ class Combinator extends CombinatorBase {
       className = this.config.client.name;
       this.config.filename = className;
     }
+    className = _avoidKeywords(className);
     if (object.annotations.length > 0) {
       this.emitAnnotations(emitter, object.annotations);
     }
     if (_isKeywords(className)) {
-      this.config.filename = _avoidKeywords(className);
+      this.config.filename = className;
     }
-    emitter.emitln(`class ${_avoidKeywords(className)} ${parent}{`, this.level);
+    this.classNameMap[className.toLowerCase()] = className;
+    emitter.emitln(`class ${className} ${parent}{`, this.level);
     this.levelUp();
     const notes = this.resolveNotes(object.body);
     if (Object.keys(notes).length > 0) {
@@ -449,7 +453,7 @@ class Combinator extends CombinatorBase {
         }
       } else if (prop.type instanceof TypeBase || prop.type instanceof TypeBytes || prop.type instanceof TypeStream) {
         emitter.emitln(`$res['${name}'] = $this->${prop.name};`, this.level);
-      } else {
+      } else if (!is.stream(prop.type)){
         emitter.emitln(`$res['${name}'] = null !== $this->${prop.name} ? $this->${prop.name}->toMap() : null;`, this.level);
       }
       this.levelDown();

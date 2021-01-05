@@ -30,3 +30,7 @@ model Request = {
     extra: map[string] string
   },
 }
+
+model complexrequest = {
+
+}

@@ -18,6 +18,7 @@ class ComplexRequest extends Model {
         'part' => 'Part',
     ];
     public function validate() {
+        Model::validateRequired('duplicatName', $this->duplicatName, true);
         Model::validateRequired('accessKey', $this->accessKey, true);
         Model::validateRequired('body', $this->body, true);
         Model::validateRequired('strs', $this->strs, true);
@@ -27,6 +28,9 @@ class ComplexRequest extends Model {
     }
     public function toMap() {
         $res = [];
+        if (null !== $this->duplicatName) {
+            $res['duplicatName'] = null !== $this->duplicatName ? $this->duplicatName->toMap() : null;
+        }
         if (null !== $this->accessKey) {
             $res['accessKey'] = $this->accessKey;
         }
@@ -62,6 +66,9 @@ class ComplexRequest extends Model {
      */
     public static function fromMap($map = []) {
         $model = new self();
+        if(isset($map['duplicatName'])){
+            $model->duplicatName = \Source\Models\complexrequest::fromMap($map['duplicatName']);
+        }
         if(isset($map['accessKey'])){
             $model->accessKey = $map['accessKey'];
         }
@@ -93,6 +100,11 @@ class ComplexRequest extends Model {
         }
         return $model;
     }
+    /**
+     * @var \Source\Models\complexrequest
+     */
+    public $duplicatName;
+
     /**
      * @var string
      */
