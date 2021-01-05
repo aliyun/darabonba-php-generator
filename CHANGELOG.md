@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.14 2021-01-05
+
+- Fix duplicate class names..
+
 ## 1.1.13 2020-11-23
 
 - Support `exec` mode.
