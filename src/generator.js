@@ -3,6 +3,9 @@
 const path = require('path');
 const fs = require('fs');
 const debug = require('./lib/debug');
+const promisify = require('util').promisify;
+const exists = promisify(fs.exists);
+const readFile = promisify(fs.readFile);
 
 const { _deepClone, _assignObject } = require('./lib/helper');
 const ClientResolver = require('./resolver/client');
@@ -14,11 +17,12 @@ class Generator {
       throw new Error('`option.outputDir` should not empty');
     }
     this.lang = lang;
-    this.initConfig(meta);
+    this.meta = meta;
   }
 
-  visit(ast) {
-    this.imports = this.resolveImports(ast);
+  async visit(ast) {
+    await this.initConfig(this.meta);
+    this.imports = await this.resolveImports(ast);
     if (this.config.clientName) {
       this.config.client.name = this.config.clientName;
     }
@@ -29,34 +33,34 @@ class Generator {
     const objects = [];
 
     // combine client code
-    const clientObjectItem = this.resolve('client', ast, ast);
+    const clientObjectItem = await this.resolve('client', ast, ast);
     objects.push(clientObjectItem);
 
     // combine model code
-    ast.moduleBody.nodes.filter((item) => {
+    await Promise.all(ast.moduleBody.nodes.filter((item) => {
       return item.type === 'model';
-    }).forEach((model) => {
+    }).map(async (model) => {
       const modelName = model.modelName.lexeme;
-      const modelObjectItem = this.resolve('model', model, ast);
+      const modelObjectItem = await this.resolve('model', model, ast);
       if (ast.models) {
-        Object.keys(ast.models).filter((key) => {
+        await Promise.all(Object.keys(ast.models).filter((key) => {
           return key.startsWith(modelName + '.');
-        }).forEach((key) => {
+        }).map(async (key) => {
           const subModel = ast.models[key];
-          const subModelObjectItem = this.resolve('model', subModel, ast);
+          const subModelObjectItem = await this.resolve('model', subModel, ast);
           modelObjectItem.subObject.push(subModelObjectItem);
-        });
+        }));
       }
       objects.push(modelObjectItem);
-    });
+    }));
 
-    const combinator = this.getCombinator(this.config);
+    const combinator = await this.getCombinator(this.config);
     combinator.combine(objects);
     return objects;
   }
 
-  resolve(type, ast, globalAST) {
-    const combinator = this.getCombinator(this.config);
+  async resolve(type, ast, globalAST) {
+    const combinator = await this.getCombinator(this.config);
     let resolver;
     switch (type) {
     case 'client':
@@ -72,7 +76,7 @@ class Generator {
     return objectItem;
   }
 
-  getCombinator(configOriginal) {
+  async getCombinator(configOriginal) {
     const config = _deepClone(configOriginal);
 
     // init combinator
@@ -80,9 +84,10 @@ class Generator {
     return new Combinator(config, this.imports);
   }
 
-  initConfig(meta) {
+  async initConfig(meta) {
     const langDir = path.join(__dirname, `./langs/${this.lang}/`);
-    if (!fs.existsSync(langDir)) {
+    const exist = await exists(langDir);
+    if (!exist) {
       throw new Error(`Not supported language : ${this.lang}`);
     }
     const langConfig = require(`./langs/${this.lang}/config`);
@@ -97,7 +102,7 @@ class Generator {
     this.config = config;
   }
 
-  resolveImports(ast) {
+  async resolveImports(ast) {
     const imports = ast.imports;
 
     let requirePackage = [];
@@ -113,7 +118,8 @@ class Generator {
 
     if (imports.length > 0) {
       const lockPath = path.join(this.config.pkgDir, '.libraries.json');
-      const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+      const content = await readFile(lockPath, 'utf8');
+      const lock = JSON.parse(content);
       let packageNameSet = [];
       let clientNameSet = [];
       Object.keys(lock).forEach(key => {
@@ -121,7 +127,7 @@ class Generator {
         const name = tmp[1];
         libraries[name] = lock[key];
       });
-      ast.imports.forEach((item) => {
+      await Promise.all(ast.imports.map(async (item) => { 
         const aliasId = item.lexeme;
         const moduleDir = this.config.libraries[aliasId];
         let targetPath;
@@ -133,10 +139,10 @@ class Generator {
           targetPath = path.join(this.config.pkgDir, lock[moduleDir]);
         }
         // get dara meta
-        const daraFilePath = fs.existsSync(path.join(targetPath, 'Teafile'))
+        const daraFilePath = await exists(path.join(targetPath, 'Teafile'))
           ? path.join(targetPath, 'Teafile')
           : path.join(targetPath, 'Darafile');
-        const daraMeta = JSON.parse(fs.readFileSync(daraFilePath));
+        const daraMeta = JSON.parse(await readFile(daraFilePath, 'utf-8'));
         thirdPackageDaraMeta[aliasId] = daraMeta;
         thirdPackageScope[aliasId] = daraMeta.scope;
 
@@ -181,7 +187,7 @@ class Generator {
         }
         // third package model dir name
         thirdPackageModel[aliasId] = modelDir;
-      });
+      }));
     }
     return {
       libraries,
