@@ -48,8 +48,7 @@ const {
   _deepClone,
   _upperFirst,
   _isKeywords,
-  _avoidKeywords,
-  is
+  _avoidKeywords
 } = require('../../lib/helper');
 
 function _name(str) {
@@ -453,7 +452,7 @@ class Combinator extends CombinatorBase {
         }
       } else if (prop.type instanceof TypeBase || prop.type instanceof TypeBytes || prop.type instanceof TypeStream) {
         emitter.emitln(`$res['${name}'] = $this->${prop.name};`, this.level);
-      } else if (!is.stream(prop.type)){
+      } else {
         emitter.emitln(`$res['${name}'] = null !== $this->${prop.name} ? $this->${prop.name}->toMap() : null;`, this.level);
       }
       this.levelDown();
