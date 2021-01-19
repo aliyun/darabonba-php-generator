@@ -84,13 +84,19 @@ class BaseCombinator {
   }
 
   resolveName(path_name, avoidKeyword = true) {
-    path_name = `${path_name}`;
-    if (path_name.indexOf('^') === 0) {
-      path_name = this.addInclude(path_name.substr(1));
-    } else if (path_name.indexOf('#') === 0) {
-      path_name = this.addModelInclude(path_name.substr(1));
-    } else if (path_name.indexOf('$') === 0) {
-      path_name = this.addInclude(path_name);
+    if (path_name instanceof Grammer) {
+      let emit = new Emitter(this.config);
+      this.grammer(emit, path_name, false, false);
+      path_name = emit.output;
+    } else {
+      path_name = `${path_name}`;
+      if (path_name.indexOf('^') === 0) {
+        path_name = this.addInclude(path_name.substr(1));
+      } else if (path_name.indexOf('#') === 0) {
+        path_name = this.addModelInclude(path_name.substr(1));
+      } else if (path_name.indexOf('$') === 0) {
+        path_name = this.addInclude(path_name);
+      }
     }
     return _name(path_name, avoidKeyword);
   }

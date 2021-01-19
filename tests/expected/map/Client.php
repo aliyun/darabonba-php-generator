@@ -5,6 +5,8 @@ namespace Tea\PHP\Tests;
 
 use Source\SourceClient;
 
+use Tea\PHP\Tests\Models\B;
+
 class Client extends SourceClient {
     public function __construct($config){
         parent::__construct($config);
@@ -16,5 +18,9 @@ class Client extends SourceClient {
         @$this->_endpointMap["ap-northeast-1"];
         $this->_endpointMap["ap-northeast-1"] = "";
         @$this->_endpointMap["test"] = "test";
+        $b = new B([]);
+        foreach($b->mm as $a){
+            @$a->m[$a->str];
+        }
     }
 }
