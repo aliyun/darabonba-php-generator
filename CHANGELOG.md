@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.15 2021-01-19
+
+- Fixed the problem of accessing map or array with object's properties.
+
 ## 1.1.14 2021-01-05
 
 - Fix duplicate class names..
