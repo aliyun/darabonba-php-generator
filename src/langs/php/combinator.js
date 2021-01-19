@@ -21,6 +21,7 @@ const {
   PropItem,
 
   // GrammerVar,
+  Grammer,
   GrammerCall,
   GrammerCatch,
   GrammerValue,
@@ -788,9 +789,21 @@ class Combinator extends CombinatorBase {
         } else if (path.type === 'prop_static') {
           pre += `::${pathName}`;
         } else if (path.type === 'map') {
-          pre += path.isVar ? `[$${path.name}]` : `["${path.name}"]`;
+          if (path.isVar) {
+            pre += `[$${pathName}]`;
+          } else if (path.name instanceof Grammer) {
+            pre += `[${pathName}]`;
+          } else {
+            pre += `["${pathName}"]`;
+          }
         } else if (path.type === 'list') {
-          pre += path.isVar ? `[$${path.name}]` : `[${path.name}]`;
+          if (path.isVar) {
+            pre += `[$${pathName}]`;
+          } else if (path.name instanceof Grammer) {
+            pre += `[${pathName}]`;
+          } else {
+            pre += `[${pathName}]`;
+          }
         } else {
           debug.stack(gram);
         }

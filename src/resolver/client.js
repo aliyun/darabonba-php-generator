@@ -529,7 +529,7 @@ class ClientResolver extends BaseResolver {
       valGrammer.type = 'string';
       valGrammer.value = object.value.string;
     } else if (object.type === 'property_access') {
-      let last_path_type = this.resolveTypeItem(object.id.inferred);
+      let last_path_type = this.resolveTypeItem(object.id.inferred || object.inferred);
       let call = new GrammerCall('prop', [], [], last_path_type);
       call.addPath({ type: 'object', name: object.id.lexeme, dataType: last_path_type });
       object.propertyPath.forEach((item, i) => {
@@ -706,11 +706,15 @@ class ClientResolver extends BaseResolver {
       valGrammer.value = call;
     } else if (object.type === 'map_access') {
       valGrammer.type = 'call';
-      let accessKey = object.accessKey.id ? object.accessKey.id.lexeme : object.accessKey.value.lexeme;
-      if (object.accessKey.id) {
+      let accessKey;
+      if (object.accessKey.inferred) {
+        accessKey = this.renderGrammerValue(null, object.accessKey);
+      } else if (object.accessKey.type === 'variable') {
         accessKey = object.accessKey.id.lexeme;
       } else if (object.accessKey.type === 'string') {
         accessKey = object.accessKey.value.string;
+      } else if (object.accessKey.value && object.accessKey.value.lexeme) {
+        accessKey = object.accessKey.value.lexeme;
       } else {
         debug.stack(object);
       }
@@ -730,12 +734,17 @@ class ClientResolver extends BaseResolver {
           current = object.propertyPathTypes[i];
         }
       }
-      call.addPath({ type: 'map', name: accessKey, isVar: object.accessKey.type === 'variable' });
+      call.addPath({ type: 'map', name: accessKey });
+      if (object.inferred) {
+        call.returnType = this.resolveTypeItem(object.inferred);
+      }
       valGrammer.value = call;
     } else if (object.type === 'array_access') {
       valGrammer.type = 'call';
       let accessKey;
-      if (object.accessKey.type === 'number') {
+      if (object.accessKey.inferred) {
+        accessKey = this.renderGrammerValue(null, object.accessKey);
+      } else if (object.accessKey.type === 'number') {
         accessKey = object.accessKey.value.value;
       } else if (object.accessKey.type === 'variable') {
         accessKey = object.accessKey.id.lexeme;
@@ -759,6 +768,9 @@ class ClientResolver extends BaseResolver {
         }
       }
       call.addPath({ type: 'list', name: accessKey, isVar: object.accessKey.type === 'variable' });
+      if (object.inferred) {
+        call.returnType = this.resolveTypeItem(object.inferred);
+      }
       valGrammer.value = call;
     } else {
       debug.stack('unimpelemented : ' + object.type, object);
