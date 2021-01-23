@@ -772,6 +772,9 @@ class ClientResolver extends BaseResolver {
         call.returnType = this.resolveTypeItem(object.inferred);
       }
       valGrammer.value = call;
+    } else if (['and', 'or', 'not'].indexOf(object.type) > -1) {
+      valGrammer.type = 'expr';
+      valGrammer.value = this.visitIfConfition(object);
     } else {
       debug.stack('unimpelemented : ' + object.type, object);
     }
