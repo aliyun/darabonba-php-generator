@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.16 2021-01-23
+
+- Fixed the problem of resolve multi conditions AST.
+
 ## 1.1.15 2021-01-19
 
 - Fixed the problem of accessing map or array with object's properties.
