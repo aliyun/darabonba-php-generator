@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const { debug } = require('@axiosleo/cli-tool');
+const debug = require('../../lib/debug');
 
 class Counter {
   constructor(start = -1) {
