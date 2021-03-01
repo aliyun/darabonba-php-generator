@@ -8,7 +8,7 @@ class Emitter {
   constructor(option = {}) {
     this.config = {
       indent: '    ',
-      eol: 'auto',    // \n | \r\n | auto
+      eol: 'auto',
       dir: '',
       layer: '',
       filename: '',
@@ -28,33 +28,6 @@ class Emitter {
     return this.config.indent.repeat(level);
   }
 
-  /**
-   * 
-   * @param {*} content 
-   * @param {*} length 
-   * @param {*} fillPosition left|middle|right
-   * @param {*} fill 
-   */
-  fixed(content, length = 10, fillPosition = 'l', fill = ' ') {
-    if (content.length < length) {
-      var leftFill = '';
-      var rightFill = '';
-      if (fillPosition.indexOf('r') === 0) {
-        leftFill = fill.repeat(length - content.length);
-      } else if (fillPosition.indexOf('m') === 0) {
-        var left = Math.floor((length - content.length) / 2);
-        leftFill = fill.repeat(left);
-        rightFill = fill.repeat(length - content.length - left);
-      } else {
-        rightFill = fill.repeat(length - content.length);
-      }
-      fill = fill.repeat(length - content.length);
-      content = leftFill + content + rightFill;
-    }
-    this.emit(content);
-    return this;
-  }
-
   emit(str = '', level) {
     this.output += this.indent(level) + str;
     return this;
@@ -69,11 +42,6 @@ class Emitter {
     strs.forEach(str => {
       this.emitln(str, level);
     });
-    return this;
-  }
-
-  erase(lenght) {
-    this.output = this.output.substring(0, this.output.length - lenght);
     return this;
   }
 

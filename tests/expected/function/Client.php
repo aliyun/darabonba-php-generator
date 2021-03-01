@@ -43,6 +43,11 @@ class Client {
      * @return void
      */
     public static function helloParams($a, $b){
+        $x = false;
+        $y = true;
+        $z = false;
+        if ($x && $y || !$z) {
+        }
     }
 
     /**

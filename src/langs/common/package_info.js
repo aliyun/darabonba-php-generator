@@ -2,8 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const debug = require('../../lib/debug');
-const { _render } = require('../../lib/helper');
+const { debug } = require('@axiosleo/cli-tool');
+const { _render } = require('@axiosleo/cli-tool/src/helper/str');
 
 class BasePackageInfo {
   constructor(config) {
