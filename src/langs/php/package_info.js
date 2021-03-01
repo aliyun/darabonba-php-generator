@@ -4,8 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const BasePackageInfo = require('../common/package_info');
 
-const { _deep_clone } = require('@axiosleo/cli-tool/src/helper/obj');
-const { _render } = require('@axiosleo/cli-tool/src/helper/str');
+const { _deepClone, _render } = require('../../lib/helper');
 
 const OPTION_LOCAL = 1;   // use local tmpl file to render content
 const OPTION_SOURCE = 2;  // config by Darafile.{lang}.packageInfo
@@ -50,7 +49,7 @@ const files = {
 
 class PackageInfo extends BasePackageInfo {
   emit(packageInfo, requirePackage) {
-    const config = _deep_clone(this.config);
+    const config = _deepClone(this.config);
     let outputDir = this.resolveOutputDir(packageInfo, '');
     this.checkParams(packageInfo, ['name', 'desc', 'github']);
     const params = {

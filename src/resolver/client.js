@@ -1,6 +1,6 @@
 'use strict';
 
-const { debug } = require('@axiosleo/cli-tool');
+const debug = require('../lib/debug');
 const BaseResolver = require('./base');
 
 const {

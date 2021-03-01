@@ -2,11 +2,11 @@
 
 const path = require('path');
 const fs = require('fs');
-const { debug } = require('@axiosleo/cli-tool');
+const debug = require('./lib/debug');
 
+const { _deepClone, _assignObject } = require('./lib/helper');
 const ClientResolver = require('./resolver/client');
 const ModelResolver = require('./resolver/model');
-const { _assign, _deep_clone } = require('@axiosleo/cli-tool/src/helper/obj');
 
 class Generator {
   constructor(meta = {}, lang = 'php') {
@@ -73,7 +73,7 @@ class Generator {
   }
 
   getCombinator(configOriginal) {
-    const config = _deep_clone(configOriginal);
+    const config = _deepClone(configOriginal);
 
     // init combinator
     const Combinator = require(`./langs/${this.lang}/combinator`);
@@ -87,12 +87,12 @@ class Generator {
     }
     const langConfig = require(`./langs/${this.lang}/config`);
 
-    const config = _deep_clone(require('./langs/common/config'));
-    _assign(config, {
+    const config = _deepClone(require('./langs/common/config'));
+    _assignObject(config, {
       dir: meta.outputDir,
     }, langConfig, meta);
     if (meta[this.lang]) {
-      _assign(config, meta[this.lang]);
+      _assignObject(config, meta[this.lang]);
     }
     this.config = config;
   }
