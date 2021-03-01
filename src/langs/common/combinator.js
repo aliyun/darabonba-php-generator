@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('../../lib/debug');
+const { debug } = require('@axiosleo/cli-tool');
 const Emitter = require('../../lib/emitter');
 
 const {
@@ -13,11 +13,11 @@ const {
   ObjectItem,
 } = require('./items');
 
+const { _upper_first, _lower_first } = require('@axiosleo/cli-tool/src/helper/str');
+
 const {
   _name,
   _config,
-  _upperFirst,
-  _lowerFirst,
 } = require('../../lib/helper.js');
 
 class BaseCombinator {
@@ -59,7 +59,7 @@ class BaseCombinator {
   }
 
   coreClass(objName) {
-    const key = _lowerFirst(objName.split('$').join(''));
+    const key = _lower_first(objName.split('$').join(''));
     if (this.config.tea[key]) {
       return this.config.tea[key].name;
     }
@@ -145,7 +145,7 @@ class BaseCombinator {
   systemfunc(emitter, gram) {
     let tmp = [];
     gram.path.forEach(path => {
-      tmp.push(_upperFirst(path.name));
+      tmp.push(_upper_first(path.name));
     });
     if (tmp.length === 0) {
       debug.stack('Invalid path. path list cannot be empty.');
@@ -169,7 +169,7 @@ class BaseCombinator {
     if (gram instanceof Behavior) {
       method = gram.name;
     } else if (gram instanceof Grammer) {
-      method = _lowerFirst(gram.constructor.name);
+      method = _lower_first(gram.constructor.name);
     } else {
       debug.stack('Unsupported', gram);
     }

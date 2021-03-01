@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const debug = require('../../lib/debug');
+const { debug } = require('@axiosleo/cli-tool');
 const CombinatorBase = require('../common/combinator');
 const Emitter = require('../../lib/emitter');
 const PackageInfo = require('./package_info');
@@ -43,11 +43,11 @@ const {
   TypeMap,
 } = require('../common/items');
 
+const { _upper_first } = require('@axiosleo/cli-tool/src/helper/str');
+const { _deep_clone } = require('@axiosleo/cli-tool/src/helper/obj');
 const {
   _symbol,
   _modify,
-  _deepClone,
-  _upperFirst,
   _isKeywords,
   _avoidKeywords
 } = require('../../lib/helper');
@@ -189,13 +189,13 @@ class Combinator extends CombinatorBase {
       clientObjectItem.body.forEach(node => {
         if (node instanceof FuncItem) {
           const func = new FuncItem();
-          func.name = `test${_upperFirst(node.name)}`;
+          func.name = `test${_upper_first(node.name)}`;
           func.modify.push(Modify.public());
           object.addBodyNode(func);
         }
       });
       const outputParts = this.combineOject(object, false);
-      const config = _deepClone(this.config);
+      const config = _deep_clone(this.config);
       config.filename = `${clientObjectItem.name}Test`;
       config.dir = `${config.dir}/tests/`;
       config.layer = '';
@@ -245,7 +245,7 @@ class Combinator extends CombinatorBase {
 
     /***************************** combine output ******************************/
     if (output) {
-      const config = _deepClone(this.config);
+      const config = _deep_clone(this.config);
       config.filename = _avoidKeywords(object.name);
       config.layer = layer.split('.').map(m => {
         return _avoidKeywords(m);
@@ -394,7 +394,7 @@ class Combinator extends CombinatorBase {
           if (note.type === 'string') {
             val = `'${val}'`;
           }
-          emitter.emitln(`Model::validate${_upperFirst(note.key)}('${note.prop}', $this->${note.prop}, ${val});`, this.level);
+          emitter.emitln(`Model::validate${_upper_first(note.key)}('${note.prop}', $this->${note.prop}, ${val});`, this.level);
         });
       });
       this.levelDown();

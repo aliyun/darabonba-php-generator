@@ -14,7 +14,7 @@ const {
   GrammerValue,
   FuncItem
 } = require('../src/langs/common/items');
-const { _deepClone } = require('../src/lib/helper');
+const { _deep_clone } = require('@axiosleo/cli-tool/src/helper/obj');
 
 const lang = 'php';
 const Combinator = require(`../src/langs/${lang}/combinator.js`);
@@ -30,7 +30,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('resolve should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({ moduleBody: { nodes: [] } }, combinator, {});
@@ -45,7 +45,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('resolveInitBody should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({}, combinator, {});
@@ -82,7 +82,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('code : requestBody should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({}, combinator, {});
@@ -104,7 +104,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('renderGrammerValue should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({}, combinator, {});
@@ -220,7 +220,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('visitStmt should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({}, combinator, {});
@@ -282,7 +282,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('visitIfConfition should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({}, combinator, {});
@@ -304,7 +304,7 @@ describe('client resolver should be ok', function () {
   });
 
   it('visitIfElse should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const code = new ClientResolver({}, combinator, {});
@@ -330,7 +330,7 @@ describe('client resolver should be ok', function () {
 
 describe('model resolver should be ok', function () {
   it('resolve should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const model = new ModelResolver({
@@ -349,7 +349,7 @@ describe('model resolver should be ok', function () {
   });
 
   it('initProp should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const model = new ModelResolver({}, combinator, {});
@@ -389,7 +389,7 @@ describe('model resolver should be ok', function () {
   });
 
   it('findSubModelsUsed should be ok', function () {
-    const combinator = new Combinator(Object.assign(_deepClone(config), {
+    const combinator = new Combinator(Object.assign(_deep_clone(config), {
       package: 'test', model: { dir: 'Models' }
     }), {});
     const model = new ModelResolver({}, combinator, {});
