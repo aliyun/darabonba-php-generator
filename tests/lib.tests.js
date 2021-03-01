@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const debug = require('../src/lib/debug');
+const { debug } = require('@axiosleo/cli-tool');
 const mm = require('mm');
 const expect = require('chai').expect;
 const Emitter = require('../src/lib/emitter');
@@ -11,17 +11,14 @@ const os = require('os');
 require('mocha-sinon');
 
 const {
-  _camelCase,
   _subModelName,
   _string,
-  _upperFirst,
   _config,
   _avoidKeywords,
   _modify,
   _symbol,
-  _toSnakeCase,
-  _dir
 } = require('../src/lib/helper');
+const { _snake_case } = require('@axiosleo/cli-tool/src/helper/str');
 
 describe('debug should be ok', function () {
   beforeEach(function () {
@@ -107,20 +104,6 @@ describe('emitter should be ok', function () {
     expect(emitter.indent(1)).to.be.eql('    ');
   });
 
-  it('fixed should be ok', function () {
-    const emitter = new Emitter();
-    emitter.fixed('this is test string.', 25);
-    expect(emitter.output).to.be.eql('this is test string.     ');
-
-    emitter.output = '';
-    emitter.fixed('this is test string.', 25, 'r');
-    expect(emitter.output).to.be.eql('     this is test string.');
-
-    emitter.output = '';
-    emitter.fixed('this is test string.', 30, 'm');
-    expect(emitter.output).to.be.eql('     this is test string.     ');
-  });
-
   it('emit should be ok', function () {
     const emitter = new Emitter();
     emitter.emit('emit some string');
@@ -139,13 +122,6 @@ describe('emitter should be ok', function () {
     expect(emitter.output).to.be.eql('');
     emitter.emits(0, 'row1', 'row2');
     expect(emitter.output).to.be.eql('row1' + emitter.eol + 'row2' + emitter.eol);
-  });
-
-  it('erase should be ok', function () {
-    const emitter = new Emitter();
-    emitter.emit('full string');
-    emitter.erase(3);
-    expect(emitter.output).to.be.eql('full str');
   });
 
   it('currRow should be ok', function () {
@@ -205,14 +181,6 @@ describe('emitter should be ok', function () {
 });
 
 describe('helper tests', function () {
-  it('_upperFirst should be ok', function () {
-    expect(_upperFirst(null)).to.be.eql('');
-  });
-
-  it('_camelCase should be ok', function () {
-    expect(_camelCase('test_camel_case')).to.be.eql('testCamelCase');
-  });
-
   it('_subModelName should be ok', function () {
     expect(_subModelName('test.model.name')).to.be.eql('TestModelName');
   });
@@ -253,12 +221,12 @@ describe('helper tests', function () {
   });
 
   it('_toSnakeCase should be ok', function () {
-    expect(_toSnakeCase('TestABC')).to.be.eql('test_abc');
-    expect(_toSnakeCase(null)).to.be.eql('');
-    expect(_toSnakeCase('SLS')).to.be.eql('sls');
-    expect(_toSnakeCase('_runtime')).to.be.eql('_runtime');
-    expect(_toSnakeCase('TT123')).to.be.eql('tt123');
-    expect(_toSnakeCase('fooBar')).to.be.eql('foo_bar');
+    expect(_snake_case('TestABC')).to.be.eql('test_abc');
+    expect(_snake_case(null)).to.be.eql('');
+    expect(_snake_case('SLS')).to.be.eql('sls');
+    expect(_snake_case('_runtime')).to.be.eql('_runtime');
+    expect(_snake_case('TT123')).to.be.eql('tt123');
+    expect(_snake_case('fooBar')).to.be.eql('foo_bar');
   });
 
   it('_dir should be ok', function () { 
@@ -271,7 +239,6 @@ describe('helper tests', function () {
     mm(fs, 'mkdirSync', function (filename, option = {}) { 
       return true;
     });
-    _dir('some/path');
     mm.restore();
   });
 });

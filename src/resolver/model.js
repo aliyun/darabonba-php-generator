@@ -1,7 +1,7 @@
 'use strict';
 
 // eslint-disable-next-line no-unused-vars
-const debug = require('../lib/debug');
+const { debug } = require('@axiosleo/cli-tool');
 const assert = require('assert');
 const BaseResolver = require('./base');
 
