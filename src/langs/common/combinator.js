@@ -50,12 +50,12 @@ class BaseCombinator {
     }
   }
 
-  combineOutputParts(config, outputParts) {
+  combineOutputParts(config, outputParts, append = false) {
     const globalEmitter = new Emitter(config);
     globalEmitter.emit(outputParts.head);
     globalEmitter.emit(outputParts.body);
     globalEmitter.emit(outputParts.foot);
-    globalEmitter.save();
+    globalEmitter.save(append);
   }
 
   coreClass(objName) {
