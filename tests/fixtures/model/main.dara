@@ -44,4 +44,5 @@ model MyModel = {
   uint16Field: uint16,
   uint32Field: uint32,
   uint64Field: uint64,
+  link?: string(name='personal_photo', example='http://*/*.png'),
 };
