@@ -16,6 +16,7 @@ use Tea\PHP\Tests\Models\M\subM;
 class MyModel extends Model {
     protected $_name = [
         'name' => 'realName',
+        'link' => 'personal_photo',
     ];
     public function validate() {
         Model::validateRequired('stringfield', $this->stringfield, true);
@@ -203,6 +204,9 @@ class MyModel extends Model {
         if (null !== $this->uint64Field) {
             $res['uint64Field'] = $this->uint64Field;
         }
+        if (null !== $this->link) {
+            $res['personal_photo'] = $this->link;
+        }
         return $res;
     }
     /**
@@ -333,6 +337,9 @@ class MyModel extends Model {
         }
         if(isset($map['uint64Field'])){
             $model->uint64Field = $map['uint64Field'];
+        }
+        if(isset($map['personal_photo'])){
+            $model->link = $map['personal_photo'];
         }
         return $model;
     }
@@ -510,5 +517,11 @@ class MyModel extends Model {
      * @var int
      */
     public $uint64Field;
+
+    /**
+     * @example http://*\/*.png
+     * @var string
+     */
+    public $link;
 
 }

@@ -585,7 +585,7 @@ class Combinator extends CombinatorBase {
     } else if (annotation.mode === 'multi') {
       emitter.emitln('/**', level);
       annotation.content.forEach(c => {
-        emitter.emitln(` * ${c}`, level);
+        emitter.emitln(` * ${c.split('*/').join('*\\/')}`, level);
       });
       emitter.emitln(' */', level);
     } else {
