@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.17 2021-03-25
+
+- Fixed an problem when there is a "*/" string in the annotaion.
+
 ## 1.1.16 2021-01-23
 
 - Fixed the problem of resolve multi conditions AST.
