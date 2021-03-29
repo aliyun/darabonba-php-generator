@@ -4,7 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const BasePackageInfo = require('../common/package_info');
 
-const { _deepClone, _render } = require('../../lib/helper');
+const { _deepClone, _render, _toSnakeCase } = require('../../lib/helper');
+const dara = require('../common/dara');
 
 const OPTION_LOCAL = 0b1;   // use local tmpl file to render content
 const OPTION_SOURCE = 0b10;  // config by Darafile.{lang}.packageInfo
@@ -48,7 +49,8 @@ const files = {
 };
 
 class PackageInfo extends BasePackageInfo {
-  emit(packageInfo, requirePackage) {
+  emit(thirdPackageDaraMeta) {
+    const packageInfo = this.config.packageInfo;
     const config = _deepClone(this.config);
     let outputDir = this.resolveOutputDir(packageInfo, '');
     this.checkParams(packageInfo, ['name', 'desc', 'github']);
@@ -91,12 +93,32 @@ class PackageInfo extends BasePackageInfo {
         if (filename === 'composer.json') {
           // extra require
           let json = JSON.parse(content);
-          if (requirePackage) {
-            requirePackage.forEach(item => {
-              let [p, v] = item.split(':');
-              json.require[p] = v;
-            });
-          }
+          Object.keys(thirdPackageDaraMeta).forEach(key => {
+            const item = thirdPackageDaraMeta[key];
+            let name;
+            let version = '*';
+            if (item.releases && item.releases.php) {
+              let [p, v] = item.releases.php.split(':');
+              name = p;
+              version = v;
+            } else {
+              if (item.php && item.php.packageInfo && item.php.packageInfo.name) {
+                name = item.php.packageInfo.name;
+              } else {
+                name = `${item.scope}/${_toSnakeCase(item.name)}`;
+              }
+            }
+            if (dara.exclude(item.scope, item.name)) {
+              if (json.require[name]) {
+                delete json.require[name];
+              }
+              return;
+            }
+            if (version && version[0] && version[0] !== '^') {
+              version = '^' + version;
+            }
+            json.require[name] = version;
+          });
           if (config.maintainers) {
             json.authors = [];
             config.maintainers.forEach(maintainer => {
