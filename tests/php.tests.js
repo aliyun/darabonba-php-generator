@@ -136,6 +136,12 @@ describe('PHP Generator', function () {
     ]);
   });
 
+  it('number should ok', function () {
+    check('number', [
+      'Client.php'
+    ]);
+  });
+
   it('exec should ok', function () {
     check('exec', [
       'Client.php'
