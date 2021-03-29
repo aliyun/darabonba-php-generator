@@ -1,0 +1,18 @@
+import Number;
+
+static async function main(args: [string]): void {
+    var a = "123";
+    var b = Number.parseInt(a);
+    var c = Number.parseFloat(a);
+    var d = Number.parseDouble(a);
+    var e = Number.itol(b);
+    var f = Number.parseLong(a);
+    var g = Number.add(e,f);
+    g = Number.sub(e,f);
+    g = Number.mul(e,f);
+    var z = Number.div(e,f);
+    var h = Number.gt(e,f);
+    h = Number.gte(e,f);
+    h = Number.lt(e,f);
+    h = Number.lte(e,f);
+}

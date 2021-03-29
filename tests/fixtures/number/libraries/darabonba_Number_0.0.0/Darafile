@@ -1,0 +1,6 @@
+{
+	"scope": "darabonba",
+	"name": "Number",
+	"version": "0.0.0",
+	"main": "./main.tea"
+}

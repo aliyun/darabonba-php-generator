@@ -1,0 +1,9 @@
+{
+  "scope": "darabonba",
+  "name": "number",
+  "version": "0.0.1",
+  "main": "./main.dara",
+  "libraries": {
+    "Number": "darabonba:Number:*"
+  }
+}
