@@ -5,6 +5,8 @@ const debug = require('../../lib/debug');
 const CombinatorBase = require('../common/combinator');
 const Emitter = require('../../lib/emitter');
 const PackageInfo = require('./package_info');
+const dara = require('../common/dara');
+const modules = require('./modules');
 
 const {
   Symbol,
@@ -162,7 +164,7 @@ class Combinator extends CombinatorBase {
   combine(objectArr = []) {
     if (this.config.packageInfo) {
       const packageInfo = new PackageInfo(this.config);
-      packageInfo.emit(this.config.packageInfo, this.requirePackage);
+      packageInfo.emit(this.thirdPackageDaraMeta);
     }
 
     const [clientObjectItem] = objectArr.filter(obj => obj.type === 'client');
@@ -738,6 +740,19 @@ class Combinator extends CombinatorBase {
   }
 
   grammerCall(emitter, gram) {
+    if (gram.type === 'sys_func' || gram.type === 'method') {
+      const obj = this.judge(gram);
+      if (obj !== null) {
+        const resolve_method = dara.resolve(...Object.values(obj));
+        if (resolve_method !== null) {
+          if (!modules[resolve_method]) {
+            debug.stack(`Unsupported method : ${resolve_method}`);
+          }
+          modules[resolve_method].call(this, emitter, gram);
+          return;
+        }
+      }
+    }
     // path : 'parent', 'object', 'object_static', 'call', 'call_static', 'prop', 'prop_static', 'map', 'list'
     var pre = '';
     let params = '';
