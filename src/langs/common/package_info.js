@@ -6,8 +6,9 @@ const debug = require('../../lib/debug');
 const { _render } = require('../../lib/helper');
 
 class BasePackageInfo {
-  constructor(config) {
+  constructor(config, dependencies) {
     this.config = config;
+    this.dependencies = dependencies;
     this.outputDir = '';
   }
 
