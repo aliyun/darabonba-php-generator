@@ -69,30 +69,30 @@ function _name(str) {
 }
 
 class Combinator extends CombinatorBase {
-  constructor(config, imports) {
-    super(config, imports);
+  constructor(config, dependencies) {
+    super(config, dependencies);
     this.eol = ';';
     this.classNameMap = {};
-    if (this.config.modelDirName) {
-      this.config.model.dir = this.config.modelDirName;
-    }
   }
 
   addInclude(className) {
     let realFullClassName = '';
     let last = '';
+    const dependencies = this.dependencies;
     if (className.indexOf('$') > -1) {
       realFullClassName = this.coreClass(className);
-    } else if (this.thirdPackageNamespace[className]) {
+    } else if (dependencies[className]) {
+      const package_name = dependencies[className].package_name;
+      const client_name = dependencies[className].client_name;
       // is third package
-      realFullClassName = `\\${this.thirdPackageNamespace[className].split('.').join('\\')}\\${this.thirdPackageClient[className]}`;
-      if (this.thirdPackageClientAlias[className]) {
-        last = this.thirdPackageClientAlias[className].split('->').join('');
+      realFullClassName = `\\${package_name.split('.').join('\\')}\\${client_name}`;
+      if (dependencies[className].client_alias) {
+        last = dependencies[className].client_alias.split('->').join('');
       }
-    } else if (this.config.baseClient.indexOf(className) > -1) {
+    } else if (this.config.baseClient && this.config.baseClient === className) {
       realFullClassName = `\\${className.split('.').join('\\')}`;
     } else {
-      debug.stack(className, this.thirdPackageNamespace);
+      debug.stack(`Class Name Error : ${className}`, dependencies);
     }
 
     // avoid keywords
@@ -114,9 +114,9 @@ class Combinator extends CombinatorBase {
     }
 
     this.classNameMap[lower] = realFullClassName;
-    if (this.thirdPackageClientAlias[className]) {
+    if (this.dependencies[className]) {
       // has alias
-      this.includeList.push({ import: realFullClassName, alias: this.thirdPackageClientAlias[className] });
+      this.includeList.push({ import: realFullClassName, alias: this.dependencies[className].client_alias });
     } else {
       this.includeList.push({ import: realFullClassName, alias: null });
     }
@@ -127,11 +127,13 @@ class Combinator extends CombinatorBase {
   addModelInclude(modelName, useFull = false) {
     let realFullClassName = '';
     let accessPath = modelName.split('.');
+    const dependencies = this.dependencies;
     if (modelName.indexOf('$') > -1) {
       realFullClassName = this.coreClass(modelName);
-    } else if (accessPath.length > 1 && this.thirdPackageNamespace[accessPath[0]]) {
+    } else if (accessPath.length > 1 && dependencies[accessPath[0]]) {
+      const info = dependencies[accessPath[0]];
       // is third package model
-      realFullClassName = `\\${this.thirdPackageNamespace[accessPath[0]].split('.').join('\\')}\\${this.thirdPackageModel[accessPath[0]]}\\${accessPath.slice(1).join('\\')}`;
+      realFullClassName = `\\${info.package_name.split('.').join('\\')}\\${info.model_dir}\\${accessPath.slice(1).join('\\')}`;
     } else {
       // is not third package model
       realFullClassName = `\\${this.config.package.split('.').join('\\')}\\${this.config.model.dir}\\${accessPath.join('\\')}`;
@@ -163,8 +165,8 @@ class Combinator extends CombinatorBase {
 
   combine(objectArr = []) {
     if (this.config.packageInfo) {
-      const packageInfo = new PackageInfo(this.config);
-      packageInfo.emit(this.thirdPackageDaraMeta);
+      const packageInfo = new PackageInfo(this.config, this.dependencies);
+      packageInfo.emit();
     }
 
     const [clientObjectItem] = objectArr.filter(obj => obj.type === 'client');

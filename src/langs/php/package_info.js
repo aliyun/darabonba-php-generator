@@ -49,7 +49,8 @@ const files = {
 };
 
 class PackageInfo extends BasePackageInfo {
-  emit(thirdPackageDaraMeta) {
+  emit() {
+    const dependencies = this.dependencies;
     const packageInfo = this.config.packageInfo;
     const config = _deepClone(this.config);
     let outputDir = this.resolveOutputDir(packageInfo, '');
@@ -93,8 +94,8 @@ class PackageInfo extends BasePackageInfo {
         if (filename === 'composer.json') {
           // extra require
           let json = JSON.parse(content);
-          Object.keys(thirdPackageDaraMeta).forEach(key => {
-            const item = thirdPackageDaraMeta[key];
+          Object.keys(dependencies).forEach(key => {
+            const item = dependencies[key].meta;
             let name;
             let version = '*';
             if (item.releases && item.releases.php) {
