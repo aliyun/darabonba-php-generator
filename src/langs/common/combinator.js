@@ -22,7 +22,7 @@ const {
 } = require('../../lib/helper.js');
 
 class BaseCombinator {
-  constructor(config = {}, imports = {}) {
+  constructor(config = {}, dependencies = {}) {
     this.level = 0;
     this.eol = '';
 
@@ -31,16 +31,7 @@ class BaseCombinator {
     this.includeSet = [];
 
     this.config = config;
-    this.imports = imports;
-
-    this.libraries = imports.libraries;
-    this.requirePackage = imports.requirePackage;
-    this.thirdPackageDaraMeta = imports.thirdPackageDaraMeta;
-    this.thirdPackageScope = imports.thirdPackageScope;
-    this.thirdPackageNamespace = imports.thirdPackageNamespace;
-    this.thirdPackageClient = imports.thirdPackageClient;
-    this.thirdPackageClientAlias = imports.thirdPackageClientAlias;
-    this.thirdPackageModel = imports.thirdPackageModel;
+    this.dependencies = dependencies;
 
     _config(this.config);
   }
@@ -81,7 +72,7 @@ class BaseCombinator {
       return null;
     }
     const name = grammer.path[0].name.substr(1);
-    const scope = this.thirdPackageScope[name];
+    const scope = this.dependencies[name].scope;
     if (!scope) {
       return null;
     }
