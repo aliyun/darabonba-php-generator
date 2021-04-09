@@ -19,7 +19,6 @@
   "author": "Alibaba Cloud OpenAPI Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@axiosleo/cli-tool": "^1.2.13",
     "@darabonba/parser": "^1.2.7",
     "camelcase": "^6.0",
     "enum": "^3.0"
