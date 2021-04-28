@@ -64,6 +64,14 @@ generator.visit(ast);
 // The execution result will be output in the 'outputDir'
 ```
 
+## 快速开始
+
+```bash
+git clone https://github.com/aliyun/darabonba-php-generator.git
+cd darabonba-php-generator/
+node examples/complex.js
+```
+
 ## 问题反馈
 
 [提出问题](https://github.com/aliyun/darabonba-php-generator/issues/new/choose), 不符合指南的问题可能会立即关闭。
