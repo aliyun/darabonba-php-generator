@@ -5,12 +5,16 @@ const os = require('os');
 var count = 0;
 
 function dump(...data) {
-  data.forEach(d => {
-    console.log(d);
-  });
+  if (data && data.length) {
+    data.forEach(d => console.log(d));
+  }
 }
 
 function halt(...data) {
+  let stack = new Error().stack;
+  let tmp = stack.split(os.EOL);
+  let local = tmp[2].indexOf('at Object.jump') > -1 ? tmp[3] : tmp[2];
+  process.stdout.write(`\x1b[33mhalt ${local.trim()}\x1b[0m${os.EOL}`);
   this.dump(...data);
   process.exit(-1);
 }

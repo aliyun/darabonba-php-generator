@@ -12,12 +12,12 @@ class BasePackageInfo {
     this.outputDir = '';
   }
 
-  renderAuto(templatePath, targetPath, params) {
+  renderAuto(templatePath, targetPath, params = {}) {
     let content = fs.readFileSync(templatePath, 'utf-8');
     this.renderContent(content, targetPath, params);
   }
 
-  renderContent(templateContent, targetPath, params) {
+  renderContent(templateContent, targetPath, params = {}) {
     let content = _render(templateContent, params);
     if (!fs.existsSync(path.dirname(targetPath))) {
       fs.mkdirSync(path.dirname(targetPath), {

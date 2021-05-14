@@ -28,20 +28,6 @@ module.exports = {
   request: '_request',
   runtime: '_runtime',
   baseClient: [],
-  tea: {
-    core: {
-      name: 'TeaCore',
-      doAction: 'doAction',
-      allowRetry: 'allowRetry',
-      sleep: 'sleep',
-      getBackoffTime: 'getBackoffTime',
-      isRetryable: 'isRetryable'
-    },
-    model: { name: 'TeaModel' },
-    converter: { name: 'TeaConverter' },
-    response: { name: 'TeaResponse' },
-    request: { name: 'TeaRequest' },
-    exception: { name: 'TeaException' },
-    exceptionUnretryable: { name: 'TeaUnretryableException' },
-  }
+  tea: {},
+  modules: {}
 };
