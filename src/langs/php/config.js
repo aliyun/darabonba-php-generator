@@ -73,5 +73,30 @@ module.exports = {
     exception: { name: '\\Exception' },
     error: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaError' },
     exceptionUnretryable: { name: '\\AlibabaCloud\\Tea\\Exception\\TeaUnableRetryError' },
+  },
+  modules: {
+    darabonba: {
+      // darabonba package name
+      Number: {
+        exclude: true,
+        methods: {
+          // the name of method in package
+          'parseInt': 'parse', // <method-name> : <method-alias-name>
+          'parseLong': 'parse',
+          'parseFloat': 'parse',
+          'parseDouble': 'parse',
+          'itol': 'parse',
+          'ltoi': 'parse',
+          'add': 'binary_operation',
+          'sub': 'binary_operation',
+          'mul': 'binary_operation',
+          'div': 'binary_operation',
+          'gt': 'binary_operation',
+          'gte': 'binary_operation',
+          'lt': 'binary_operation',
+          'lte': 'binary_operation'
+        }
+      }
+    }
   }
 };

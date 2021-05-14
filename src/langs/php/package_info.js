@@ -4,8 +4,12 @@ const path = require('path');
 const fs = require('fs');
 const BasePackageInfo = require('../common/package_info');
 
-const { _deepClone, _render, _toSnakeCase } = require('../../lib/helper');
-const dara = require('../common/dara');
+const {
+  _render,
+  _deepClone,
+  _toSnakeCase,
+  _isExcludePackage
+} = require('../../lib/helper');
 
 const OPTION_LOCAL = 0b1;   // use local tmpl file to render content
 const OPTION_SOURCE = 0b10;  // config by Darafile.{lang}.packageInfo
@@ -109,7 +113,7 @@ class PackageInfo extends BasePackageInfo {
                 name = `${item.scope}/${_toSnakeCase(item.name)}`;
               }
             }
-            if (dara.exclude(item.scope, item.name)) {
+            if (_isExcludePackage(item.scope, item.name)) {
               if (json.require[name]) {
                 delete json.require[name];
               }
