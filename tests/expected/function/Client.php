@@ -46,8 +46,7 @@ class Client {
         $x = false;
         $y = true;
         $z = false;
-        if ($x && $y || !$z) {
-        }
+        if ($x && $y || !$z) {}
     }
 
     /**
