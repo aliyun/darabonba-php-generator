@@ -41,14 +41,10 @@ class Client {
      * @return void
      */
     public static function helloIf(){
-        if (true) {
-        }
-        if (true) {
-        }
-        else if (true) {
-        }
-        else {
-        }
+        if (true) {}
+        if (true) {}
+        else if (true) {}
+        else {}
     }
 
     /**
