@@ -496,7 +496,7 @@ class ClientResolver extends BaseResolver {
           grammerVar.varType = 'static_class';
           grammerVar.name = name;
         } else if (object.type === 'variable') {
-          grammerVar = new GrammerVar(object.id.lexeme, this.resolveTypeItem(object.inferred));
+          grammerVar = new GrammerVar(object.id.lexeme, this.resolveTypeItem(object.inferred ? object.inferred : 'string'));
           grammerVar.varType = 'var';
         }
         valGrammer.value = grammerVar;
