@@ -25,6 +25,8 @@ const {
   FuncItem,
   ConstructItem,
   AnnotationItem,
+  GrammerCall,
+  Grammer,
 } = require('../langs/common/items');
 
 let config = {};
@@ -52,6 +54,7 @@ const is = {
   func: a => a instanceof FuncItem,
   construct: a => a instanceof ConstructItem,
   annotation: a => a instanceof AnnotationItem,
+  grammer: a => a instanceof Grammer
 };
 
 function _config(langConfig = null) {
@@ -249,6 +252,52 @@ function _name(str, avoidKeyword = true) {
   return avoidKeyword ? _avoidKeywords(str) : str;
 }
 
+function _resolveGrammerCall(grammer, dependencies) {
+  if (!(grammer instanceof GrammerCall)) {
+    return null;
+  }
+  if (grammer.path.length !== 2) {
+    return null;
+  }
+  if (grammer.path[0].type !== 'object_static' || grammer.path[1].type !== 'call_static') {
+    return null;
+  }
+  if (grammer.path[0].name[0] !== '^') {
+    return null;
+  }
+  const name = grammer.path[0].name.substr(1);
+  const scope = dependencies[name].scope;
+  if (!scope) {
+    return null;
+  }
+  const modules = config.modules;
+  if (!modules[scope]) {
+    return null;
+  }
+  const package_name = name;
+  const method_name = grammer.path[1].name;
+  const m = modules[scope];
+  if (!m[package_name]) {
+    return null;
+  }
+  const methods = m[package_name].methods;
+  if (methods[method_name] === '') {
+    return `${_toSnakeCase(scope)}_${_toSnakeCase(package_name)}_${_toSnakeCase(method_name)}`;
+  } else if (!methods[method_name]) {
+    return null;
+  }
+  return methods[method_name];
+}
+
+function _isExcludePackage(scope, package_name) {
+  const modules = config.modules;
+  if (!modules[scope]) {
+    return false;
+  }
+  const m = modules[scope];
+  return m[package_name] && m[package_name].exclude;
+}
+
 module.exports = {
   is,
   _dir,
@@ -271,5 +320,7 @@ module.exports = {
   _isBasicType,
   _assignObject,
   _subModelName,
-  _avoidKeywords
+  _avoidKeywords,
+  _isExcludePackage,
+  _resolveGrammerCall
 };

@@ -5,7 +5,6 @@ const Emitter = require('../../lib/emitter');
 
 const {
   Grammer,
-  GrammerCall,
   GrammerThrows,
 
   Behavior,
@@ -19,6 +18,7 @@ const {
   _config,
   _upperFirst,
   _lowerFirst,
+  is,
 } = require('../../lib/helper.js');
 
 class BaseCombinator {
@@ -58,27 +58,6 @@ class BaseCombinator {
     debug.stack('Unsupported core class name : ' + objName);
   }
 
-  judge(grammer) {
-    if (!(grammer instanceof GrammerCall)) {
-      return null;
-    }
-    if (grammer.path.length !== 2) {
-      return null;
-    }
-    if (grammer.path[0].type !== 'object_static' || grammer.path[1].type !== 'call_static') {
-      return null;
-    }
-    if (grammer.path[0].name[0] !== '^') {
-      return null;
-    }
-    const name = grammer.path[0].name.substr(1);
-    const scope = this.dependencies[name].scope;
-    if (!scope) {
-      return null;
-    }
-    return { scope, package_name: name, method_name: grammer.path[1].name };
-  }
-
   resolveNotes(nodes) {
     let notes = {};
     nodes.filter(node => node instanceof PropItem).map(prop => {
@@ -103,11 +82,11 @@ class BaseCombinator {
       path_name = emit.output;
     } else {
       path_name = `${path_name}`;
-      if (path_name.indexOf('^') === 0) {
+      if (path_name.indexOf('^') === 0) { // Client
         path_name = this.addInclude(path_name.substr(1));
-      } else if (path_name.indexOf('#') === 0) {
+      } else if (path_name.indexOf('#') === 0) { // Model
         path_name = this.addModelInclude(path_name.substr(1));
-      } else if (path_name.indexOf('$') === 0) {
+      } else if (path_name.indexOf('$') === 0) { // System : Tea Core Class
         path_name = this.addInclude(path_name);
       }
     }
@@ -205,6 +184,15 @@ class BaseCombinator {
       emit.emitln(this.eol);
     }
     emitter = null;
+  }
+
+  gramRender(gram) {
+    if (!is.grammer(gram)) {
+      return '';
+    }
+    let emitter = new Emitter(this.config);
+    this.grammer(emitter, gram, false, false);
+    return emitter.output;
   }
 
   grammerNewLine(emitter, gram) {
