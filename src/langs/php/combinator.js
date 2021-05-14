@@ -5,7 +5,6 @@ const debug = require('../../lib/debug');
 const CombinatorBase = require('../common/combinator');
 const Emitter = require('../../lib/emitter');
 const PackageInfo = require('./package_info');
-const dara = require('../common/dara');
 const modules = require('./modules');
 
 const {
@@ -51,7 +50,8 @@ const {
   _deepClone,
   _upperFirst,
   _isKeywords,
-  _avoidKeywords
+  _avoidKeywords,
+  _resolveGrammerCall
 } = require('../../lib/helper');
 
 function _name(str) {
@@ -743,16 +743,13 @@ class Combinator extends CombinatorBase {
 
   grammerCall(emitter, gram) {
     if (gram.type === 'sys_func' || gram.type === 'method') {
-      const obj = this.judge(gram);
-      if (obj !== null) {
-        const resolve_method = dara.resolve(...Object.values(obj));
-        if (resolve_method !== null) {
-          if (!modules[resolve_method]) {
-            debug.stack(`Unsupported method : ${resolve_method}`);
-          }
-          modules[resolve_method].call(this, emitter, gram);
-          return;
+      const resolve_method = _resolveGrammerCall(gram, this.dependencies);
+      if (resolve_method !== null) {
+        if (!modules[resolve_method]) {
+          debug.stack(`Unsupported method : ${resolve_method}`);
         }
+        modules[resolve_method].call(this, emitter, gram);
+        return;
       }
     }
     // path : 'parent', 'object', 'object_static', 'call', 'call_static', 'prop', 'prop_static', 'map', 'list'
@@ -996,20 +993,25 @@ class Combinator extends CombinatorBase {
 
     if (gram.type !== 'else') {
       emitter.emit(' (');
-      let emit = new Emitter();
+      let emit = new Emitter(this.config);
       gram.conditionBody.forEach(condition => {
         this.grammer(emitter, condition, false, false);
       });
       emitter.emit(`${emit.output})`);
     }
 
-    emitter.emitln(' {');
-    this.levelUp();
-    gram.body.forEach(node => {
-      this.grammer(emitter, node);
-    });
-    this.levelDown();
-    emitter.emitln('}', this.level);
+    if (gram.body.length) {
+      emitter.emitln(' {');
+      this.levelUp();
+      gram.body.forEach(node => {
+        this.grammer(emitter, node);
+      });
+      this.levelDown();
+      emitter.emitln('}', this.level);
+    } else {
+      emitter.emitln(' {}');
+    }
+   
     if (gram.elseItem.length && gram.elseItem.length > 0) {
       gram.elseItem.forEach(e => {
         this.grammer(emitter, e);
