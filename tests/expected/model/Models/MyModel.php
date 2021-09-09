@@ -7,7 +7,7 @@ use AlibabaCloud\Tea\Model;
 use import\Client as importClient;
 use GuzzleHttp\Psr7\Stream;
 
-use Tea\PHP\Tests\Models\model_;
+use Tea\PHP\Tests\Models\MyModel\model_;
 use Tea\PHP\Tests\Models\MyModel\submodel;
 use Tea\PHP\Tests\Models\MyModel\subarraymodel;
 use Tea\PHP\Tests\Models\M;

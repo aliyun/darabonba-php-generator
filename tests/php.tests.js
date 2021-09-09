@@ -112,8 +112,11 @@ describe('PHP Generator', function () {
       'Client.php',
       'Models/M.php',
       'Models/MyModel.php',
+      'Models/MyModel/model_.php',
+      'Models/MyModel/model/model_.php',
       'Models/MyModel/subarraymodel.php',
       'Models/MyModel/submodel.php',
+      'Models/MyModel/submodel/model_.php',
       'Models/Class_.php',
       'Models/model_.php',
     ]);

@@ -11,7 +11,12 @@ model model = {
 }
 
 model MyModel = {
-  model: model,
+  model: {
+    str: string,
+    model: {
+      str: string
+    },
+  },
   stringfield: string,
   bytesfield: bytes,
   stringarrayfield: [ string ],
@@ -19,6 +24,9 @@ model MyModel = {
   name: string(name='realName'),
   submodel: {
     stringfield: string,
+    model: {
+      str: string
+    },
   },
   submodelMap: map[string]MyModel.submodel,
   mapModel: map[string]M,

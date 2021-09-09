@@ -3,7 +3,6 @@
 const path = require('path');
 const fs = require('fs');
 const debug = require('./lib/debug');
-
 const { _deepClone, _assignObject } = require('./lib/helper');
 const ClientResolver = require('./resolver/client');
 const ModelResolver = require('./resolver/model');

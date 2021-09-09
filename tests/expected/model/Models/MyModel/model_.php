@@ -5,17 +5,15 @@ namespace Tea\PHP\Tests\Models\MyModel;
 
 use AlibabaCloud\Tea\Model;
 
-use Tea\PHP\Tests\Models\MyModel\submodel\model_;
-
-class submodel extends Model {
+class model_ extends Model {
     public function validate() {
-        Model::validateRequired('stringfield', $this->stringfield, true);
+        Model::validateRequired('str', $this->str, true);
         Model::validateRequired('model', $this->model, true);
     }
     public function toMap() {
         $res = [];
-        if (null !== $this->stringfield) {
-            $res['stringfield'] = $this->stringfield;
+        if (null !== $this->str) {
+            $res['str'] = $this->str;
         }
         if (null !== $this->model) {
             $res['model'] = null !== $this->model ? $this->model->toMap() : null;
@@ -24,25 +22,25 @@ class submodel extends Model {
     }
     /**
      * @param array $map
-     * @return submodel
+     * @return model_
      */
     public static function fromMap($map = []) {
         $model = new self();
-        if(isset($map['stringfield'])){
-            $model->stringfield = $map['stringfield'];
+        if(isset($map['str'])){
+            $model->str = $map['str'];
         }
         if(isset($map['model'])){
-            $model->model = model_::fromMap($map['model']);
+            $model->model = \Tea\PHP\Tests\Models\MyModel\model\model_::fromMap($map['model']);
         }
         return $model;
     }
     /**
      * @var string
      */
-    public $stringfield;
+    public $str;
 
     /**
-     * @var model_
+     * @var \Tea\PHP\Tests\Models\MyModel\model\model_
      */
     public $model;
 
