@@ -6,7 +6,12 @@ model M = {
 
 model Class = {};
 
+model model = {
+  str: string
+}
+
 model MyModel = {
+  model: model,
   stringfield: string,
   bytesfield: bytes,
   stringarrayfield: [ string ],
@@ -46,3 +51,4 @@ model MyModel = {
   uint64Field: uint64,
   link?: string(name='link', example='http://*/*.png'),
 };
+
