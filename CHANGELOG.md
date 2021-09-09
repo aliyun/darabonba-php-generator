@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.19 2021-09-09
+
+- Fixed an problem when there Model name is model.
+
 ## 1.1.17 2021-03-25
 
 - Fixed an problem when there is a "*/" string in the annotaion.
