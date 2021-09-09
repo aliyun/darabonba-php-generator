@@ -140,7 +140,13 @@ class Combinator extends CombinatorBase {
     }
 
     // avoid keywords
-    realFullClassName = realFullClassName.split('\\').map(m => {
+    let realFullClassNameArr = realFullClassName.split('\\');
+    realFullClassName = realFullClassNameArr.map((m, i) => {
+      if (i === realFullClassNameArr.length - 1 && m.toLowerCase() === 'model') {
+        // If the model class name is 'model'
+        // add the '_' suffix.
+        return m + '_';
+      }
       return _avoidKeywords(m);
     }).join('\\');
 
@@ -217,7 +223,9 @@ class Combinator extends CombinatorBase {
     this.classNameMap = {};
 
     let emitter, outputParts = { head: '', body: '', foot: '' };
-
+    if (object.type === 'model' && object.name.toLowerCase() === 'model') {
+      object.name = object.name + '_';
+    }
     /******************************** emit body ********************************/
     emitter = new Emitter(this.config);
     if (object.name.indexOf('.') > -1) {
@@ -1011,7 +1019,7 @@ class Combinator extends CombinatorBase {
     } else {
       emitter.emitln(' {}');
     }
-   
+
     if (gram.elseItem.length && gram.elseItem.length > 0) {
       gram.elseItem.forEach(e => {
         this.grammer(emitter, e);
