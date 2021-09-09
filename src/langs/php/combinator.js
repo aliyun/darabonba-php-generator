@@ -223,7 +223,7 @@ class Combinator extends CombinatorBase {
     this.classNameMap = {};
 
     let emitter, outputParts = { head: '', body: '', foot: '' };
-    if (object.type === 'model' && object.name.toLowerCase() === 'model') {
+    if (object.type === 'model' && (object.name.endsWith('.model') || object.name === 'model')) {
       object.name = object.name + '_';
     }
     /******************************** emit body ********************************/
