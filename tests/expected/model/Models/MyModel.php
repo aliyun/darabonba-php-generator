@@ -7,6 +7,7 @@ use AlibabaCloud\Tea\Model;
 use import\Client as importClient;
 use GuzzleHttp\Psr7\Stream;
 
+use Tea\PHP\Tests\Models\model_;
 use Tea\PHP\Tests\Models\MyModel\submodel;
 use Tea\PHP\Tests\Models\MyModel\subarraymodel;
 use Tea\PHP\Tests\Models\M;
@@ -19,6 +20,7 @@ class MyModel extends Model {
         'link' => 'link',
     ];
     public function validate() {
+        Model::validateRequired('model', $this->model, true);
         Model::validateRequired('stringfield', $this->stringfield, true);
         Model::validateRequired('bytesfield', $this->bytesfield, true);
         Model::validateRequired('stringarrayfield', $this->stringarrayfield, true);
@@ -57,6 +59,9 @@ class MyModel extends Model {
     }
     public function toMap() {
         $res = [];
+        if (null !== $this->model) {
+            $res['model'] = null !== $this->model ? $this->model->toMap() : null;
+        }
         if (null !== $this->stringfield) {
             $res['stringfield'] = $this->stringfield;
         }
@@ -215,6 +220,9 @@ class MyModel extends Model {
      */
     public static function fromMap($map = []) {
         $model = new self();
+        if(isset($map['model'])){
+            $model->model = model_::fromMap($map['model']);
+        }
         if(isset($map['stringfield'])){
             $model->stringfield = $map['stringfield'];
         }
@@ -343,6 +351,11 @@ class MyModel extends Model {
         }
         return $model;
     }
+    /**
+     * @var model_
+     */
+    public $model;
+
     /**
      * @var string
      */
