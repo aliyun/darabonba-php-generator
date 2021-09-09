@@ -114,7 +114,8 @@ describe('PHP Generator', function () {
       'Models/MyModel.php',
       'Models/MyModel/subarraymodel.php',
       'Models/MyModel/submodel.php',
-      'Models/Class_.php'
+      'Models/Class_.php',
+      'Models/model_.php',
     ]);
   });
 
