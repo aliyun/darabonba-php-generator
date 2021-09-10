@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.20 2021-09-10
+
+- Fixed an problem when there SubModel name is model.
+
 ## 1.1.19 2021-09-09
 
 - Fixed an problem when there Model name is model.
