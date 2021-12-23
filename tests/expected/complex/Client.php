@@ -295,7 +295,8 @@ class Client extends SourceClient {
      * @return string
      */
     public static function mapAccess($request){
-        $configInfo = @$request->configs->extra["name"];
+        $key = "name";
+        $configInfo = @$request->configs->extra[$key];
         return $configInfo;
     }
 

@@ -1163,6 +1163,14 @@ class Combinator extends CombinatorBase {
     emitter.emitln(';');
   }
 
+  behaviorSetKeyMapItem(emitter, behavior) {
+    let emit = new Emitter();
+    this.grammerCall(emit, behavior.call);
+    emitter.emit(`${emit.output}[$${behavior.key}] = `, this.level);
+    this.grammerValue(emitter, behavior.value);
+    emitter.emitln(';');
+  }
+
   behaviorDoAction(emitter, behavior) {
     emitter.emit('', this.level);
     this.grammerVar(emitter, behavior.var);

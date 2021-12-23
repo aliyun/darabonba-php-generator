@@ -32,6 +32,7 @@ const {
   BehaviorTimeNow,
   BehaviorDoAction,
   BehaviorSetMapItem,
+  BehaviorSetKeyMapItem,
   BehaviorTamplateString,
 
   TypeMap,
@@ -924,7 +925,12 @@ class ClientResolver extends BaseResolver {
         const call = grammerValue.value;
         call.type = 'prop';
         call.path = call.path.splice(0, call.path.length - 1);
-        node = new BehaviorSetMapItem(call, stmt.left.accessKey.value.string, right);
+        if (stmt.left.accessKey.value) {
+          node = new BehaviorSetMapItem(call, stmt.left.accessKey.value.string, right);
+        } else if (stmt.left.accessKey.id) {
+          node = new BehaviorSetKeyMapItem(call, stmt.left.accessKey.id.lexeme, right);
+        }
+        
       }
 
       if (!hasMapAccess) {

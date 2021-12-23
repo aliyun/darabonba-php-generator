@@ -174,7 +174,8 @@ static function arrayAssign3(request: ComplexRequest, config: string): void {
 }
 
 static function mapAccess(request: ComplexRequest): string {
-   var configInfo = request.configs.extra['name'];
+  var key = 'name';
+  var configInfo = request.configs.extra[key];
   return configInfo;
 }
 
