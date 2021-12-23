@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.1.21 2021-12-23
+
+- Fixed an problem when map key is a variable.
+
 ## 1.1.19 2021-09-09
 
 - Fixed an problem when there Model name is model.
