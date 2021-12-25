@@ -1158,15 +1158,8 @@ class Combinator extends CombinatorBase {
   behaviorSetMapItem(emitter, behavior) {
     let emit = new Emitter();
     this.grammerCall(emit, behavior.call);
-    emitter.emit(`${emit.output}["${behavior.key}"] = `, this.level);
-    this.grammerValue(emitter, behavior.value);
-    emitter.emitln(';');
-  }
-
-  behaviorSetKeyMapItem(emitter, behavior) {
-    let emit = new Emitter();
-    this.grammerCall(emit, behavior.call);
-    emitter.emit(`${emit.output}[$${behavior.key}] = `, this.level);
+    const key = typeof behavior.key === 'string' ? `"${behavior.key}"` : this.gramRender(behavior.key);
+    emitter.emit(`${emit.output}[${key}] = `, this.level);
     this.grammerValue(emitter, behavior.value);
     emitter.emitln(';');
   }
