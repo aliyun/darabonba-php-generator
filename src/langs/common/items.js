@@ -544,17 +544,6 @@ class BehaviorSetMapItem extends Behavior {
   }
 }
 
-class BehaviorSetKeyMapItem extends Behavior {
-  constructor(call = null, key = '', value = null) {
-    super();
-    this.name = 'behaviorSetKeyMapItem';
-    assert.strictEqual(true, call instanceof GrammerCall);
-    this.call = call;
-    this.key = key;
-    this.value = value;
-  }
-}
-
 class BehaviorDoAction extends Behavior {
   constructor(responseVar = null, params = [], callbackBody = []) {
     super();
@@ -656,7 +645,6 @@ module.exports = {
   BehaviorToMap,
   BehaviorRetry,
   BehaviorTimeNow,
-  BehaviorSetKeyMapItem,
   BehaviorToModel,
   BehaviorDoAction,
   BehaviorSetMapItem,

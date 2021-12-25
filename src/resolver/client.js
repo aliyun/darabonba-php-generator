@@ -32,7 +32,6 @@ const {
   BehaviorTimeNow,
   BehaviorDoAction,
   BehaviorSetMapItem,
-  BehaviorSetKeyMapItem,
   BehaviorTamplateString,
 
   TypeMap,
@@ -529,6 +528,7 @@ class ClientResolver extends BaseResolver {
     } else if (object.type === 'string') {
       valGrammer.type = 'string';
       valGrammer.value = object.value.string;
+      valGrammer.dataType = this.resolveTypeItem(object.type);
     } else if (object.type === 'property_access') {
       let last_path_type = this.resolveTypeItem(object.id.inferred || object.inferred);
       let call = new GrammerCall('prop', [], [], last_path_type);
@@ -925,12 +925,7 @@ class ClientResolver extends BaseResolver {
         const call = grammerValue.value;
         call.type = 'prop';
         call.path = call.path.splice(0, call.path.length - 1);
-        if (stmt.left.accessKey.value) {
-          node = new BehaviorSetMapItem(call, stmt.left.accessKey.value.string, right);
-        } else if (stmt.left.accessKey.id) {
-          node = new BehaviorSetKeyMapItem(call, stmt.left.accessKey.id.lexeme, right);
-        }
-        
+        node = new BehaviorSetMapItem(call, this.renderGrammerValue(null, stmt.left.accessKey), right);
       }
 
       if (!hasMapAccess) {
