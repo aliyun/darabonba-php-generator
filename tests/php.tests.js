@@ -159,4 +159,12 @@ describe('PHP Generator', function () {
       'src/Client.php'
     ]);
   });
+
+  it('typedef should ok', function () {
+    check('typedef', [
+      'autoload.php',
+      'composer.json',
+      'src/Client.php'
+    ]);
+  });
 });

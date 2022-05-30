@@ -140,6 +140,8 @@ class BaseResolver {
         return new TypeObject(`#${typeNode.lexeme}`);
       } else if (typeNode.idType === 'module') {
         return new TypeObject(`^${typeNode.lexeme}`);
+      } else if (typeNode.idType === 'typedef') {
+        return new TypeObject(`%${typeNode.lexeme}`);
       } else if (typeNode.idType === 'builtin_model') {
         return new TypeObject(`^${typeNode.lexeme}`);
       }
@@ -149,6 +151,8 @@ class BaseResolver {
         if (typeNode.fieldType.idType) {
           if (typeNode.fieldType.idType === 'module') {
             return new TypeObject(`^${typeNode.fieldType.lexeme}`);
+          } else if (typeNode.fieldType.idType === 'typedef') {
+            return new TypeObject(`%${typeNode.fieldType.lexeme}`);
           }
           return new TypeObject(`#${typeNode.fieldType.lexeme}`);
         }
@@ -183,6 +187,17 @@ class BaseResolver {
           tmp.push(item.lexeme);
         });
         return new TypeObject(`#${tmp.join('.')}`);
+      } else if (typeNode.type === 'moduleTypedef') {
+        let tmp = [];
+        typeNode.path.forEach(item => {
+          tmp.push(item.lexeme);
+        });
+        return new TypeObject(`%${tmp.join('.')}`);
+      } else if (typeNode.type === 'typedef') {
+        if (typeNode.moduleName) {
+          return new TypeObject(`%${typeNode.moduleName}.${typeNode.name}`);
+        }
+        return new TypeObject(`%${typeNode.name}`);
       } else if (typeNode.type === 'subModel' || typeNode.type === 'subModel_or_moduleModel') {
         // subModel_or_moduleModel is retained for compatibility with older parser.
         let tmp = [];

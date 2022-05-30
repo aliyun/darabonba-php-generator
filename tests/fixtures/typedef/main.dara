@@ -1,0 +1,38 @@
+import OSS
+
+typedef HttpResponse;
+typedef HttpHeader;
+typedef TeaModel;
+// useless
+typedef Guzzle;
+
+type @vid=OSS.HttpRequest;
+type @model=TeaModel;
+
+init(request: OSS.HttpRequest, model: TeaModel){
+  @vid = request;
+  @model = model;
+}
+
+model M {
+    a?: OSS.HttpRequest,
+    b?: HttpHeader
+}
+
+async function main(test1: OSS.HttpRequest, test2: HttpHeader, test3: TeaModel) : void {
+    var oss = new OSS(test1);
+    var m = new M {
+        a = test1,
+        b = test2
+    };
+    @vid = test1;
+    @model = test3;
+}
+
+async function testHttpRequest(req: OSS.HttpRequest): HttpResponse {
+    return testHttpRequestWith("test", req);
+}
+
+static function testHttpRequestWith(method: string, req: OSS.HttpRequest): HttpResponse
+
+static function testHttpHeader(method: string, headers: HttpHeader): HttpResponse
