@@ -32,6 +32,7 @@ class BaseCombinator {
 
     this.config = config;
     this.dependencies = dependencies;
+    this.typedef = config.typedef;
 
     _config(this.config);
   }
@@ -88,6 +89,8 @@ class BaseCombinator {
         path_name = this.addModelInclude(path_name.substr(1));
       } else if (path_name.indexOf('$') === 0) { // System : Tea Core Class
         path_name = this.addInclude(path_name);
+      } else if (path_name.indexOf('%') === 0) { // Typedef
+        return this.addTypedefInclude(path_name.substr(1));
       }
     }
     return _name(path_name, avoidKeyword);

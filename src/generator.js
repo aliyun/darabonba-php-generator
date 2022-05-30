@@ -70,6 +70,7 @@ function resolveDependencies(lang, config, ast) {
     let client_name = default_client_name;
     let model_dir = default_model_dir;
     let lang_config = !meta[lang] ? {} : meta[lang];
+    let typedef = {};
     if (lang_config.package) {
       package_name = lang_config.package;
     }
@@ -78,6 +79,17 @@ function resolveDependencies(lang, config, ast) {
     }
     if (lang_config.modelDirName) {
       model_dir = lang_config.modelDirName;
+    }
+    if (lang_config.typedef) {
+      const moduleTypedef = lang_config.typedef;
+      Object.keys(moduleTypedef || {}).forEach((types) => {
+        if (!typedef[types]) {
+          typedef[types] = {};
+        }
+        typedef[types].import = moduleTypedef[types].import;
+        typedef[types].type = moduleTypedef[types].type;
+        typedef[types].package = moduleTypedef[types].package;
+      });
     }
     // check package name duplication
     if (package_sets.indexOf(package_name.toLowerCase()) > 0) {
@@ -99,7 +111,8 @@ function resolveDependencies(lang, config, ast) {
       package_name,
       client_name,
       client_alias,
-      model_dir
+      model_dir,
+      typedef
     };
   });
   return dependencies;
@@ -199,12 +212,14 @@ class Generator {
       dir: meta.outputDir,
     };
     const meta_lang_config = !meta[lang] ? {} : meta[lang];
+    const typedef = meta[lang] && meta[lang].typedef ? meta[lang].typedef : {};
     this.config = _assignObject(
       config,
       common_config,
       lang_config,
       meta,
-      meta_lang_config
+      meta_lang_config,
+      typedef
     );
   }
 

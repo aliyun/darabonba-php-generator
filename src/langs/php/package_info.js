@@ -99,9 +99,18 @@ class PackageInfo extends BasePackageInfo {
           // extra require
           let json = JSON.parse(content);
           Object.keys(dependencies).forEach(key => {
-            const item = dependencies[key].meta;
+            Object.keys(dependencies[key].typedef).forEach((types) => {
+              if (dependencies[key].typedef[types].package) {
+                let [pack, version] = dependencies[key].typedef[types].package.split(':');
+                if (version && version[0] && version[0] !== '^') {
+                  version = '^' + version;
+                }
+                json.require[pack] = version;
+              }
+            });
             let name;
             let version = '*';
+            const item = dependencies[key].meta;
             if (item.releases && item.releases.php) {
               let [p, v] = item.releases.php.split(':');
               name = p;
@@ -124,6 +133,17 @@ class PackageInfo extends BasePackageInfo {
             }
             json.require[name] = version;
           });
+          if (config.typedef) {
+            Object.keys(config.typedef).forEach((types) => {
+              if (config.typedef[types].package) {
+                let [pack, version] = config.typedef[types].package.split(':');
+                if (version && version[0] && version[0] !== '^') {
+                  version = '^' + version;
+                }
+                json.require[pack] = version;
+              }
+            });
+          }
           if (config.maintainers) {
             json.authors = [];
             config.maintainers.forEach(maintainer => {

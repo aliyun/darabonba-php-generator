@@ -169,6 +169,39 @@ class Combinator extends CombinatorBase {
     return last;
   }
 
+  addTypedefInclude(typeName) {
+    let accessPath = typeName.split('.');
+    let importName = '';
+    let fromName = '';
+    let typedefModule = {};
+    if (accessPath.length === 2) {
+      if (this.dependencies[accessPath[0]]
+        && this.dependencies[accessPath[0]].typedef
+        && this.dependencies[accessPath[0]].typedef[accessPath[1]]) {
+        typedefModule = this.dependencies[accessPath[0]].typedef[accessPath[1]];
+      }
+    } else if (accessPath.length === 1 && this.typedef[accessPath[0]]) {
+      typedefModule = this.typedef[accessPath[0]];
+    }
+    if (typedefModule.import || typedefModule.package) {
+      if (typedefModule.import) {
+        fromName = typedefModule.import;
+      }
+      if (typedefModule.type) {
+        importName = typedefModule.type;
+      }
+    }
+
+    let existResult = this.includeList.some(item => item.import === importName && item.from === fromName);
+    if (!existResult) {
+      this.includeList.push({
+        import: fromName && importName ? `${fromName}\\${importName}` : fromName ? fromName : importName ? importName : null,
+        alias: null,
+      });
+    }
+    return typedefModule.type || typeName;
+  }
+
   combine(objectArr = []) {
     if (this.config.packageInfo) {
       const packageInfo = new PackageInfo(this.config, this.dependencies);
@@ -466,7 +499,11 @@ class Combinator extends CombinatorBase {
       } else if (prop.type instanceof TypeBase || prop.type instanceof TypeBytes || prop.type instanceof TypeStream) {
         emitter.emitln(`$res['${name}'] = $this->${prop.name};`, this.level);
       } else {
-        emitter.emitln(`$res['${name}'] = null !== $this->${prop.name} ? $this->${prop.name}->toMap() : null;`, this.level);
+        if (prop.type.objectName.indexOf('%') === 0) {
+          emitter.emitln(`$res['${name}'] = $this->${prop.name};`, this.level);
+        } else {
+          emitter.emitln(`$res['${name}'] = null !== $this->${prop.name} ? $this->${prop.name}->toMap() : null;`, this.level);
+        }
       }
       this.levelDown();
       emitter.emitln('}', this.level);
@@ -516,7 +553,7 @@ class Combinator extends CombinatorBase {
         }
         this.levelDown();
         emitter.emitln('}', this.level);
-      } else if (prop.type instanceof TypeObject) {
+      } else if (prop.type instanceof TypeObject && prop.type.objectName.indexOf('%') !== 0) {
         emitter.emitln(`$model->${prop.name} = ${this.resolveName(prop.type.objectName)}::fromMap(${mapVal});`, this.level);
       } else {
         emitter.emitln(`$model->${prop.name} = ${mapVal};`, this.level);
@@ -724,13 +761,15 @@ class Combinator extends CombinatorBase {
       let importClass;
       if (include.import === this.config.tea.exception.name) {
         importClass = include.import;
-      } else {
+      } else if (include.import) {
         importClass = include.import.split('\\').filter(str => str.length > 0).join('\\');
       }
-      let emitContent = include.alias ? `use ${importClass} as ${include.alias.split('->').join('')};` : `use ${importClass};`;
-      if (emitSet.indexOf(emitContent) === -1) {
-        emitter.emitln(emitContent);
-        emitSet.push(emitContent);
+      if (importClass) {
+        let emitContent = include.alias ? `use ${importClass} as ${include.alias.split('->').join('')};` : `use ${importClass};`;
+        if (emitSet.indexOf(emitContent) === -1) {
+          emitter.emitln(emitContent);
+          emitSet.push(emitContent);
+        }
       }
     });
     if (this.includeList.length) {
@@ -738,10 +777,12 @@ class Combinator extends CombinatorBase {
     }
     this.includeModelList.forEach(include => {
       const importClass = include.import.split('\\').filter(str => str.length > 0).join('\\');
-      let emitContent = include.alias ? `use ${importClass} as ${include.alias};` : `use ${importClass};`;
-      if (emitSet.indexOf(emitContent) === -1) {
-        emitter.emitln(emitContent);
-        emitSet.push(emitContent);
+      if (importClass) {
+        let emitContent = include.alias ? `use ${importClass} as ${include.alias};` : `use ${importClass};`;
+        if (emitSet.indexOf(emitContent) === -1) {
+          emitter.emitln(emitContent);
+          emitSet.push(emitContent);
+        }
       }
     });
     if (this.includeModelList.length) {

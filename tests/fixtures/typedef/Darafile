@@ -1,0 +1,39 @@
+{
+  "scope": "darabonba",
+  "name": "main",
+  "version": "0.0.1",
+  "main": "./main.dara",
+  "libraries": {
+    "OSS": "alibabacloud:OSS:*"
+  },
+  "php": {
+    "package": "Darabonba.Tests",
+    "packageInfo": {
+      "name": "darabonba/tests",
+      "desc": "Darabonba Tests",
+      "github": ""
+    },
+    "typedef": {
+      "HttpResponse": {
+        "import": "GuzzleHttp\\Psr7",
+        "type": "Response",
+        "package": "guzzlehttp/psr7:^1.8.5 || ^2.2.1"
+      },
+      "HttpHeader": {
+        "import": null,
+        "type": "array",
+        "package": null
+      },
+      "TeaModel": {
+        "import": "AlibabaCloud\\Tea",
+        "type": "Model",
+        "package": "alibabacloud/tea:^3.1.23"
+      },
+      "Guzzle": {
+        "import": "GuzzleHttp",
+        "type": "Guzzle",
+        "package": "guzzlehttp/guzzle:^6.5.6 || ^7.4.3"
+      }
+    }
+  }
+}
