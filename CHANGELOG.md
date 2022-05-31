@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.2.0 2022-05-31
+
+- Support Typedef.
+
 ## 1.1.21 2021-12-23
 
 - Fixed an problem when map key is a variable.
