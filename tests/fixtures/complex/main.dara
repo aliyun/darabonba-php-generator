@@ -199,8 +199,8 @@ static function mapAccess3(): string {
 
 static function mapAssign(request: ComplexRequest, name: string): void {
   request.configs.extra['name'] = name;
-  // var key = 'name';
-  // request.configs.extra[key] = name;
+  var key = 'name';
+  request.configs.extra[key] = name;
 }
 
 async function TemplateString(): string {

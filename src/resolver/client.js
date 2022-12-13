@@ -782,9 +782,6 @@ class ClientResolver extends BaseResolver {
     if (object.inferred) {
       valGrammer.dataType = this.resolveTypeItem(object.inferred);
     }
-    if (!valGrammer.dataType) {
-      debug.stack('Invalid GrammerValue.dataType', valGrammer, object);
-    }
 
     return valGrammer;
   }
