@@ -860,10 +860,10 @@ class Combinator extends CombinatorBase {
             pre += `["${pathName}"]`;
           }
         } else if (path.type === 'list') {
-          if (path.isVar) {
-            pre += `[$${pathName}]`;
-          } else if (path.name instanceof Grammer) {
+          if (path.name instanceof Grammer) {
             pre += `[${pathName}]`;
+          } else if (path.isVar) {
+            pre += `[$${pathName}]`;
           } else {
             pre += `[${pathName}]`;
           }

@@ -229,6 +229,8 @@ class Client extends SourceClient {
             ]
         ];
         $config = @$data["configs"][0];
+        $i = 0;
+        $config = @$data["configs"][$i];
         return $config;
     }
 
@@ -249,6 +251,8 @@ class Client extends SourceClient {
      */
     public static function arrayAccess4($request, $config, $index){
         @$request->configs->value[$index] = $config;
+        $i = 1;
+        @$request->configs->value[$i] = $config;
     }
 
     /**

@@ -143,6 +143,8 @@ static function arrayAccess2(): string {
     configs = ['a', 'b', 'c']
   };
   var config = data.configs[0];
+  var i : integer = 0;
+  config = data.configs[i];
   return config;
 }
 
@@ -153,6 +155,8 @@ static function arrayAccess3(request: ComplexRequest): string {
 
 static function arrayAccess4(request: ComplexRequest, config: string, index: int16): void {
   request.configs.value[index] = config;
+  var i : integer = 1;
+  request.configs.value[i] = config;
 }
 
 static function arrayAssign(config: string): [ string ] {
@@ -195,6 +199,8 @@ static function mapAccess3(): string {
 
 static function mapAssign(request: ComplexRequest, name: string): void {
   request.configs.extra['name'] = name;
+  // var key = 'name';
+  // request.configs.extra[key] = name;
 }
 
 async function TemplateString(): string {
