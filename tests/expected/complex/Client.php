@@ -332,6 +332,8 @@ class Client extends SourceClient {
      */
     public static function mapAssign($request, $name){
         $request->configs->extra["name"] = $name;
+        $key = "name";
+        $request->configs->extra[$key] = $name;
     }
 
     /**
