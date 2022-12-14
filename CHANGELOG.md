@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 1.2.1 2022-12-14
+
+- Fix: reslove list access with variable key.
+- Feat: support map assign with variable key.
+
 ## 1.2.0 2022-05-31
 
 - Support Typedef.
