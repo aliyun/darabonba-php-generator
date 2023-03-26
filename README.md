@@ -66,6 +66,7 @@ generator.visit(ast);
 ```bash
 git clone https://github.com/aliyun/darabonba-php-generator.git
 cd darabonba-php-generator/
+npm install
 node examples/complex.js
 ```
 
