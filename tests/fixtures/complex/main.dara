@@ -6,7 +6,17 @@ const version = '2019-01-08';
 
 type @configs = [ Source.Config ];
 
-init(config: Source.Config){
+
+exception Err1 = {
+  data: map[string]string
+}
+
+exception Err2 = {
+  accessErrMessage: string
+}
+
+
+init(config: Source.Config) {
   super(config);
   @configs[0] = config;
 }
@@ -105,7 +115,7 @@ api Complex3(request: ComplexRequest): ComplexRequest {
   __request.body = Source.body();
   __request.headers.host = 'hello';
 } returns {
-  var temp_str = `test ${100} ${true}`;
+  var temp_str = `test ${100} ${true} ${__request.port + 4} ${__request.headers.host}`;
   var resp = __response;
   var req = new Source.Request{
     accesskey = request.accessKey,
@@ -231,5 +241,45 @@ async function tryCatch(): void {
     var strNoCatch = TemplateString();
   } finally {
     var finalNoCatch = 'ok';
+  }
+}
+
+async function multiTryCatch(a: number): void {
+  try {
+    if(a > 0) {
+      throw new Err1 {
+        name = "str",
+        code = "str",
+        data = {
+          key1 = "str",
+        }
+      };
+    } else if(a == 0) {
+      throw new Err2 {
+        name = "str",
+        code = "str",
+        accessErrMessage = "str2",
+      };
+    } else if(a == -10) {
+      throw new Source.Err3 {
+        name = "str",
+        code = "str",
+      };
+    } else {
+      throw new $Error{
+        name = "str",
+        code = "str",
+      }
+    }
+  } catch(err: Err1) {
+    $Logger.log(err.name);
+  } catch(err: Err2) {
+    $Logger.log(err.name);
+  } catch(err: Source.Err3) {
+    $Logger.log(err.name);
+  } catch(err) {
+    $Logger.log(err.name);
+  } finally {
+    var final = 'ok';
   }
 }

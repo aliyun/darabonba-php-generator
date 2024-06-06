@@ -21,7 +21,7 @@ model Test1{
 model Test2{
   // model的test front comment
   test: string(description='test desc', name='test'),
-  // model的test front comment
+  // model的test2 front comment
   test2: string(description='test2 desc', name='test2'),
 }
 
@@ -35,14 +35,14 @@ model Test3{
   // empty comment1
   // empy comment2
 
-  test1: string(description='test desc', name='test1'), //model的test back comment
+  test1: string(description='test desc', name='test1'), //model的test1 back comment
 }
 
 /**
   Init Func
 */
 // comment between init and annotation
-init(){
+init() {
   // string declate comment
   var str = 'sss';
   // new model instance comment
@@ -95,7 +95,7 @@ api testAPI2(): void {
   };
   // boolean declare comment
   var bool = true;
-  if(bool){
+  if(bool) {
     //empty if
   }else{
     //empty else

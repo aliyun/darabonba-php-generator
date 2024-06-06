@@ -7,9 +7,9 @@
     "lib": "src"
   },
   "scripts": {
-    "lint": "eslint --fix src/ tests/",
-    "test": "mocha --reporter spec --timeout 3000 tests/*.tests.js",
-    "test-cov": "nyc -r=lcov -r=html -r=text -r=json mocha -t 3000 -R spec tests/*.tests.js",
+    "lint": "eslint --fix lib/ tests/",
+    "test": "mocha --reporter spec --timeout 3000 tests/*.test.js",
+    "test-cov": "nyc -r=lcov -r=html -r=text -r=json mocha -t 3000 -R spec tests/*.test.js",
     "ci": "npm run lint && npm run test-cov && codecov"
   },
   "repository": {
@@ -19,7 +19,8 @@
   "author": "Alibaba Cloud OpenAPI Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@darabonba/parser": "^1.2.7",
+    "@darabonba/annotation-parser": "^1.0.0",
+    "@darabonba/parser": "^2.0.5",
     "camelcase": "^6.0",
     "enum": "^3.0"
   },

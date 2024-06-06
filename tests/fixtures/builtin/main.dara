@@ -1,0 +1,346 @@
+static async function arrayTest(args: [string]): void { 
+    if((args.length() > 0) && args.contains('cn-hanghzou')) {
+        var index = args.index('cn-hanghzou');
+        var regionId: string = args.get(index);
+        var all = args.join(',');
+        var first = args.shift();
+        var last = args.pop();
+        var length1 = args.unshift(first);
+        var length2 = args.push(last);
+        var length3:integer = length1 + length2;
+        var longStr = 'long' + first + last;
+        var fullStr = args.join(',');
+        var newArr = ['test'];
+        var cArr: [ string ] = newArr.concat(args);
+        var acsArr = newArr.sort('asc');
+        var descArr = newArr.sort('desc');
+        var llArr: [string] = acsArr.concat(descArr);
+        llArr.append('test', 10);
+        llArr.remove('test');
+    }
+}
+
+static async function bytesTest(args: [string]): void { 
+    var fullStr = args.join(',');
+    var data = fullStr.toBytes('utf8');
+    var newFullStr = data.toString();
+    if(fullStr != newFullStr) {
+        return;
+    }
+    var hexStr = data.toHex();
+
+    var base64Str = data.toBase64();
+
+    var length: integer = data.length();
+
+    var obj = data.toJSON();
+
+    var data2 = $Bytes.from(fullStr, 'base64');
+}
+
+static async function dateTest(args: [string]): void {
+    var date = new $Date('2023-09-12 17:47:31.916000 +0800 UTC');
+    var dateStr = date.format('YYYY-MM-DD HH:mm:ss');
+    var timestamp = date.unix();
+    var yesterday = date.sub('day', 1);
+    var oneDay = date.diff('day', yesterday);
+    var tomorrow = date.add('day', 1);
+    var twoDay = tomorrow.diff('day', date) + oneDay;
+    var hour = date.hour();
+    var minute = date.minute();
+    var second = date.second();
+    var dayOfMonth = date.dayOfMonth();
+    var dayOfWeek = date.dayOfWeek();
+    var weekOfYear = date.weekOfYear();
+    var month = date.month();
+    var year = date.year();
+}
+
+static async function envTest(args: [string]): void {
+    var es = $Env.get('TEST');
+    var ma = $Env.set('TEST', es + 'test');
+    var ma1 = $Env.set('TEST1', 'test1');
+    var ma2 = $Env.set('TEST2', es);
+}
+
+static async function fileTest(args: [string]): void {
+    if($File.exists('/tmp/test')) {
+        var file = new $File('/tmp/test');
+        var path = file.path();
+        var length = file.length() + 10;
+        var createTime = file.createTime();
+        var modifyTime = file.modifyTime();
+        var timeLong = modifyTime.diff('minute', createTime);
+        var data = file.read(300);
+        file.write($Bytes.from('test', 'utf8'));
+        var rs:readable = $File.createReadStream('/tmp/test');
+        var ws:writable = $File.createWriteStream('/tmp/test');
+    }
+}
+
+static async function formTest(args: [string]): void {
+    var m = {
+        key1 = 'test1',
+        key2 = 'test2',
+        key3 = 3,
+        key4 = {
+            key5 = 123,
+            key6 = '321'
+        }
+    };
+    var form = $Form.toFormString(m);
+    form = form + "&key7=23233&key8=" + $Form.getBoundary();
+
+    var r:readable = $Form.toFileForm(m, $Form.getBoundary());
+}
+
+model M {
+    a: string
+}
+
+static async function jsonTest(args: [string]): void {
+    var m = {
+        key1 = 'test1',
+        key2 = 'test2',
+        key3 = 3,
+        key4 = {
+            key5 = 123,
+            key6 = '321'
+        }
+    };
+
+    var m1 = new M {
+        a = 'test',
+    };
+
+    var ms = $JSON.stringify(m);
+    var m1s = $JSON.stringify(m1);
+    var ma = $JSON.parseJSON(ms);
+    var arrStr = '[1,2,3,4]';
+    var arr = $JSON.parseJSON(arrStr);
+}
+
+static async function logerTest(args: [string]): void { 
+    $Logger.log("test");
+    $Logger.info("test");
+    $Logger.warning("test");
+    $Logger.debug("test");
+    $Logger.error("test");
+}
+
+static async function mapTestCase(args: [string]): void { 
+    var mapTest = {
+        key1 = 'value1',
+        key2 = 'value2',
+        key3 = 'value3',
+    };
+
+    var length = mapTest.length();
+    var num = length + 3;
+    var keys = mapTest.keySet();
+    var allKey = '';
+    for(var key : keys) {
+        allKey = allKey + key;
+    }
+    var entries: [ entry[string] ] = mapTest.entries();
+    var newKey = '';
+    var newValue = '';
+    for(var e : entries) {
+        newKey = newKey + e.key();
+        newValue = newValue + e.value();
+    }
+
+    var json = mapTest.toJSON();
+    var mapTest2 = {
+      key1 = 'value4',
+      key4 = 'value5',
+    };
+    var mapTest3 = mapTest.merge(mapTest2);
+    if(mapTest3['key1'] == 'value4') {
+      return;
+    }
+}
+
+static async function numberTest(args: [string]): void { 
+    var num = 3.2;
+    var inum: integer = num.parseInt();
+    var lnum: long = num.parseLong();
+    var fnum: float = num.parseFloat();
+    var dnum: double = num.parseDouble();
+
+    inum = inum.parseInt();
+    lnum = inum.parseLong();
+    fnum = inum.parseFloat();
+    dnum = inum.parseDouble();
+    
+    inum = lnum.parseInt();
+    lnum = lnum.parseLong();
+    fnum = lnum.parseFloat();
+    dnum = lnum.parseDouble();
+
+    inum = fnum.parseInt();
+    lnum = fnum.parseLong();
+    fnum = fnum.parseFloat();
+    dnum = fnum.parseDouble();
+
+    inum = dnum.parseInt();
+    lnum = dnum.parseLong();
+    fnum = dnum.parseFloat();
+    dnum = dnum.parseDouble();
+
+    lnum = inum.itol();
+    inum = lnum.ltoi();
+
+    var randomNum = $Number.random();
+    inum = $Number.floor(inum);
+    inum = $Number.round(inum);
+    var min = $Number.min(inum, fnum);
+    var max = $Number.max(inum, fnum);
+}
+
+static async function streamTest(args: [string]): void {
+    if($File.exists('/tmp/test')) {
+        var rs:readable = $File.createReadStream('/tmp/test');
+        var ws:writable = $File.createWriteStream('/tmp/test');
+        var data = rs.read(30);
+        ws.write(data);
+        rs.pipe(ws);
+        data = $Stream.readAsBytes(rs);
+        var obj = $Stream.readAsJSON(rs);
+        var jsonStr = $Stream.readAsString(rs);
+    }
+}
+
+static async function stringTest(args: [string]): void { 
+    var fullStr = args.join(',');
+    args = fullStr.split(',');
+    
+    if((fullStr.length() > 0) && fullStr.contains('hangzhou')) {
+        var newStr1 = fullStr.replace('/hangzhou/g', 'beijing');
+    }
+
+    if(fullStr.hasPrefix('cn')) {
+        var newStr2 = fullStr.replace('/cn/gi', 'zh');
+    }
+
+    if(fullStr.hasSuffix('beijing')) {
+        var newStr3 = fullStr.replace('/beijing/', 'chengdu');
+    }
+
+    var start = fullStr.index('beijing');
+
+    var end = start + 7;
+
+    var region = fullStr.subString(start, end);
+
+    var lowerRegion = region.toLower();
+    var upperRegion = region.toUpper();
+
+    if(region.equals('beijing')) {
+        region = region + ' ';
+        region = region.trim();
+    }
+
+    var tb: bytes = fullStr.toBytes('utf8');
+    var em = 'xxx';
+    if(em.empty()) {
+        return;
+    }
+    var num = '32.0a';
+    var inum = num.parseInt() + 3;
+    var lnum:long = num.parseLong();
+    var fnum:float = num.parseFloat() + 1.0;
+    var dnum:double = num.parseDouble() + 1.0d;
+}
+
+static async function urlTest(args: [string]): void { 
+    var url = new $URL(args[0]);
+    var path = url.path();
+    var pathname = url.pathname();
+    var protocol = url.protocol();
+    var hostname = url.hostname();
+    var port = url.port();
+    var host = url.host();
+    var hash = url.hash();
+    var search = url.search();
+    var href = url.href();
+    var auth = url.auth();
+    var url2 = $URL.parse(args[1]);
+    path = url2.path();
+    var newUrl = $URL.urlEncode(args[2]);
+    var newSearch = $URL.percentEncode(search);
+    var newPath = $URL.pathEncode(pathname);
+    var all = 'test' + path + protocol + hostname + hash + search + href + auth + newUrl + newSearch + newPath;
+}
+
+static async function xmlTest(args: [string]): void {
+    var m = {
+        key1 = 'test1',
+        key2 = 'test2',
+        key3 = 3,
+        key4 = {
+            key5 = 123,
+            key6 = '321'
+        }
+    };
+    var xml = $XML.toXML(m);
+    xml = xml + "<key7>132</key7>";
+
+    var respMap : map[string]any = $XML.parseXml(xml, null);
+}
+
+static function returnAny(): any;
+
+static async function main(args: [string]):void {
+  arrayTest(args);
+  bytesTest(args);
+  dateTest(args);
+  envTest(args);
+  fileTest(args);
+  formTest(args);
+  logerTest(args);
+  mapTestCase(args);
+  numberTest(args);
+  streamTest(args);
+  stringTest(args);
+  urlTest(args);
+  xmlTest(args);
+
+  var a: integer = $integer(args[0]) + 10;
+    var b: string = $string(a) + args[1] + $string(returnAny());
+    var c: number = $number(b) + $number(a) + $number(returnAny());
+    var d: int8 = $int8(b) + $int8(a) + $int8(returnAny());
+    var e: int16 = $int16(b) + $int16(a) + $int16(returnAny());
+    var f: int32 = $int32(b) + $int32(a) + $int32(returnAny());
+    var g: int64 = $int64(b) + $int64(a) + $int64(returnAny());
+    var h: long = $long(b) + $long(a) + $long(returnAny());
+    var i: ulong = $ulong(b) + $ulong(a) + $ulong(returnAny());
+    var j: uint8 = $uint8(b) + $uint8(a) + $uint8(returnAny());
+    var k: uint16 = $uint16(b) + $uint16(a) + $uint16(returnAny());
+    var l: uint32 = $uint32(b) + $uint32(a) + $uint32(returnAny());
+    var m: uint64 = $uint64(b) + $uint64(a) + $uint64(returnAny());
+    var n: float = $float(b) + $float(a) + $float(returnAny());
+    var o: double = $double(b) + $double(a) + $double(returnAny());
+    if($boolean(args[2])) {
+        var data = $bytes(returnAny());
+        var length: integer = data.length();
+        var test: any = $any(data);
+        var maps: map[string]string = {
+            key = 'value',
+        };
+        var obj: object = $object(maps);
+        var ws = $writable(obj);
+        var rs = $readable(maps);
+        data = rs.read(30);
+        if(!$isNull(data)) {
+            ws.write(data);
+        }
+    }
+
+    $sleep(a);
+    var defaultVal = $string($default(args[0], args[1]));
+
+    if($equal(defaultVal, b)) {
+        return;
+    }
+}
