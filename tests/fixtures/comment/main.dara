@@ -11,8 +11,8 @@ type @a = [ string  ]
   TestModel
 */
 model Test1{
-  test: string(description='test desc', name='test'), //model的test back comment
-  test2: string(description='test2 desc', name='test2', deprecated=true), //model的test2 back comment
+  test: string(description='test desc', name='test', deprecated=false, nullable=false, checkBlank=false, sensitive=false), //model的test back comment
+  test2: string(description='test2 desc', name='test2', deprecated=true, nullable=true, checkBlank=true, sensitive=true), //model的test2 back comment
 }
 
 /**

@@ -5,11 +5,11 @@
 namespace Dara\PHP\Tests\Models;
 use AlibabaCloud\Dara\Model;
 /**
- * @remarks
  * TestModel
  */
 class Test extends Model {
   /**
+   * Alichange app id
    * @var string
    */
   public $test;

@@ -5,17 +5,18 @@
 namespace Dara\PHP\Tests\Models;
 use AlibabaCloud\Dara\Model;
 /**
- * @remarks
  * TestModel2
  */
 class Test2 extends Model {
   // model的test front comment
   /**
+   * test desc
    * @var string
    */
   public $test;
   // model的test2 front comment
   /**
+   * test2 desc
    * @var string
    */
   public $test2;

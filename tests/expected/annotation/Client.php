@@ -9,7 +9,6 @@ use AlibabaCloud\Dara\Request;
 use AlibabaCloud\Dara\Exception\DaraException;
 use AlibabaCloud\Dara\Exception\DaraUnableRetryException;
 /**
- * @remarks
  * top annotation
  */
 class Client {
@@ -20,7 +19,6 @@ class Client {
 
 
   /**
-   * @remarks
    * Init Func
    */
   public function __construct()
@@ -28,7 +26,6 @@ class Client {
   }
 
   /**
-   * @remarks
    * testAPI
    * @return void
    */
@@ -73,11 +70,74 @@ class Client {
   }
 
   /**
-   * @remarks
    * testFunc
    * @return void
    */
   static public function testFunc()
+  {
+  }
+
+  // Deprecated
+  /**
+   * Queries available Alibaba Cloud regions. The natural language that is used to filter responses. For more information, visit [RFC 7231](https://tools.ietf.org/html/rfc7231). Valid values:
+   * *   zh-CN: Chinese
+   * *   en-US: English
+   * *   ja: Japanese
+   * 
+   * Queries available Alibaba Cloud regions. The natural language that is used to filter responses. For more information, visit [RFC 7231](https://tools.ietf.org/html/rfc7231). Valid values:
+   * *   zh-CN: Chinese
+   * *   en-US: English
+   * *   ja: Japanese
+   * 
+   * Default value: zh-CN.
+   * 
+   * 
+   * > 这是Note的内容
+   * 
+   * > Notice: 这是注意的内容
+   * 
+   * @deprecated deprecatedFunc is deprecated.
+   * 
+   * @throws InternalError Server error. 500 服务器端出现未知异常。
+   * @throws StackNotFound The Stack (%(stack_name)s) could not be found.  404 资源栈不存在。
+   * @param string $test
+   * @param string $_test
+   * @return void
+   */
+  static public function deprecatedFunc($test, $_test)
+  {
+    // empty comment1
+    // empty comment2
+  }
+
+  /**
+   * annotation test summary
+   * summary description1
+   * summary description2
+   * 
+   * @deprecated test is deprecated, use xxx instead.
+   * deprecated description1
+   * deprecated description2
+   * 
+   * @throws InternalError Server error. 500 服务器端出现未知异常。
+   * @param string $test
+   * @param string $_test
+   * @return void
+   */
+  static public function multiLineAnnotation($test, $_test)
+  {
+  }
+
+  /**
+   * @deprecated deprecated test for line break.
+   * 
+   * @throws InternalError Server error. 500 服务器端出现未知异常。
+   * throws test for line break.
+   * @param string $test
+   * @param string $_test
+   * @return void
+   */
+  static public function lineBreakAnnotation($test, $_test)
   {
   }
 

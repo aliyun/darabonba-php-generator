@@ -174,6 +174,8 @@ class MyModel extends Model {
    */
   public $uint64Field;
   /**
+   * **example:**
+   * http://xx/xx.png
    * @var string
    */
   public $link;

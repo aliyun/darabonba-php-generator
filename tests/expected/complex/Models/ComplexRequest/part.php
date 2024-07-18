@@ -6,6 +6,7 @@ namespace Dara\PHP\Tests\Models\ComplexRequest;
 use AlibabaCloud\Dara\Model;
 class part extends Model {
   /**
+   * PartNumber
    * @var string
    */
   public $partNumber;

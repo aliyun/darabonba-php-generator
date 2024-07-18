@@ -12,7 +12,6 @@ use AlibabaCloud\Dara\Exception\DaraUnableRetryException;
 use Dara\PHP\Tests\Models\Test3;
 // top comment
 /**
- * @remarks
  * top annotation
  */
 class Client {
@@ -24,7 +23,6 @@ class Client {
 
 
   /**
-   * @remarks
    * Init Func
    */
   // comment between init and annotation
@@ -51,7 +49,6 @@ class Client {
   //testAPI comment one
   //testAPI comment two
   /**
-   * @remarks
    * testAPI
    * @return void
    */
@@ -189,12 +186,7 @@ class Client {
   }
 
   /**
-   * @remarks
    * testFunc
-   * 
-   * @param str - description: string parameter
-   * @param val - description: boolean parameter
-   * @returns description for return
    * @param string $str
    * @param boolean $val
    * @return void

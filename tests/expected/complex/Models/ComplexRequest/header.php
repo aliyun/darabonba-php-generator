@@ -6,6 +6,10 @@ namespace Dara\PHP\Tests\Models\ComplexRequest;
 use AlibabaCloud\Dara\Model;
 class header extends Model {
   /**
+   * Body
+   * 
+   * **example:**
+   * Content
    * @var string
    */
   public $content;

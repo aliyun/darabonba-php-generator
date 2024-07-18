@@ -6,16 +6,30 @@ namespace Dara\PHP\Tests\Models;
 use AlibabaCloud\Dara\Model;
 // import comment
 /**
- * @remarks
  * TestModel
  */
 class Test1 extends Model {
   /**
+   * test desc
+   * 
+   * **check if is blank:** false
+   * 
+   * **if can be null:** false
+   * 
+   * **if sensitive:** false
    * @var string
    */
   public $test;
   //model的test back comment
   /**
+   * test2 desc
+   * 
+   * **check if is blank:** true
+   * 
+   * **if can be null:** true
+   * 
+   * **if sensitive:** true
+   * @deprecated
    * @var string
    */
   public $test2;

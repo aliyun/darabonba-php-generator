@@ -72,6 +72,6 @@ model MyModel = {
   uint16Field: uint16,
   uint32Field: uint32,
   uint64Field: uint64,
-  link?: string(name='link', example='http://*/*.png'),
+  link?: string(name='link', example='http://xx/xx.png'),
 };
 

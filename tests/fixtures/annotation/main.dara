@@ -30,3 +30,68 @@ api testAPI(): void {
 static async function testFunc(): void {
   
 }
+
+/**
+ * @summary Queries available Alibaba Cloud regions. The natural language that is used to filter responses. For more information, visit [RFC 7231](https://tools.ietf.org/html/rfc7231). Valid values:
+ * *   zh-CN: Chinese
+ * *   en-US: English
+ * *   ja: Japanese
+ *
+ * @description Queries available Alibaba Cloud regions. The natural language that is used to filter responses. For more information, visit [RFC 7231](https://tools.ietf.org/html/rfc7231). Valid values:
+ * *   zh-CN: Chinese
+ * *   en-US: English
+ * *   ja: Japanese
+ * 
+ * Default value: zh-CN.
+ * 
+ * 
+ * > 这是Note的内容
+ *
+ * > Notice: 这是注意的内容
+ *
+ * @deprecated deprecatedFunc is deprecated.
+ *
+ * @param test string
+ * @param _test string
+ * @return void
+ * @throws InternalError Server error. 500 服务器端出现未知异常。
+ * @throws StackNotFound The Stack (%(stack_name)s) could not be found.  404 资源栈不存在。
+ */
+// Deprecated
+static async function deprecatedFunc(test: string, _test: string): void {
+    // empty comment1
+    // empty comment2
+}
+
+/**
+ * @summary annotation test summary
+ * summary description1
+ * summary description2
+ *
+ * @deprecated test is deprecated, use xxx instead.
+ * deprecated description1
+ * deprecated description2
+ * 
+ * @param test string param1
+ * @param _test string param2
+ * @return void
+ * @throws InternalError Server error. 500 服务器端出现未知异常。
+*/
+static async function multiLineAnnotation(test: string, _test: string): void {
+}
+
+
+/**
+ * @deprecated 
+ * deprecated test for line break.
+ * 
+ * @param test string param1
+ * param test for line break.
+ * @param _test string param2
+ * @return void
+ * return test for line break.
+ * @throws InternalError Server error. 500 服务器端出现未知异常。
+ * throws test for line break.
+*/
+static async function lineBreakAnnotation(test: string, _test: string): void {
+}

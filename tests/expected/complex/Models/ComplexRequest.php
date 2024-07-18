@@ -19,14 +19,23 @@ class ComplexRequest extends Model {
    */
   public $accessKey;
   /**
+   * Body
+   * 
+   * **example:**
+   * Body
    * @var Stream
    */
   public $body;
   /**
+   * Strs
+   * 
+   * **example:**
+   * Strs
    * @var string[]
    */
   public $strs;
   /**
+   * header
    * @var header
    */
   public $header;
@@ -39,6 +48,7 @@ class ComplexRequest extends Model {
    */
   public $configs;
   /**
+   * Part
    * @var part[]
    */
   public $part;
