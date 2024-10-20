@@ -1,1 +1,3 @@
-static function test(): void;
+model M {}
+
+static function test(m: M): void;

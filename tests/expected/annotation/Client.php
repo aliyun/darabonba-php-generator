@@ -1,69 +1,84 @@
 <?php
 
 // This file is auto-generated, don't edit it. Thanks.
-namespace Tea\PHP\Tests;
-
-use AlibabaCloud\Tea\Exception\TeaError;
-use \Exception;
-use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
-use AlibabaCloud\Tea\Tea;
-use AlibabaCloud\Tea\Request;
-
+ 
+namespace Dara\PHP\Tests;
+use AlibabaCloud\Dara\Dara;
+use AlibabaCloud\Dara\RetryPolicy\RetryPolicyContext;
+use AlibabaCloud\Dara\Request;
+use AlibabaCloud\Dara\Exception\DaraException;
+use AlibabaCloud\Dara\Exception\DaraUnableRetryException;
 /**
+ * @remarks
  * top annotation
  */
 class Client {
-    protected $_a;
+  /**
+   * @var string
+   */
+  protected $_a;
 
-    /**
-     * Init Func
-     */
 
-    /**
-     * testAPI
-     * @return void
-     * @throws TeaError
-     * @throws Exception
-     * @throws TeaUnableRetryError
-     */
-    public function testAPI(){
-        $_runtime = [];
-        $_lastRequest = null;
-        $_lastException = null;
-        $_now = time();
-        $_retryTimes = 0;
-        while (Tea::allowRetry(@$_runtime["retry"], $_retryTimes, $_now)) {
-            if ($_retryTimes > 0) {
-                $_backoffTime = Tea::getBackoffTime(@$_runtime["backoff"], $_retryTimes);
-                if ($_backoffTime > 0) {
-                    Tea::sleep($_backoffTime);
-                }
-            }
-            $_retryTimes = $_retryTimes + 1;
-            try {
-                $_request = new Request();
-                $_lastRequest = $_request;
-                $_response= Tea::send($_request, $_runtime);
-                return null;
-            }
-            catch (Exception $e) {
-                if (!($e instanceof TeaError)) {
-                    $e = new TeaError([], $e->getMessage(), $e->getCode(), $e);
-                }
-                if (Tea::isRetryable($e)) {
-                    $_lastException = $e;
-                    continue;
-                }
-                throw $e;
-            }
+  /**
+   * @remarks
+   * Init Func
+   */
+  public function __construct()
+  {
+  }
+
+  /**
+   * @remarks
+   * testAPI
+   * @return void
+   */
+  public function testAPI()
+  {
+    $_runtime = [ ];
+
+    $_retriesAttempted = 0;
+    $_lastRequest = null;
+    $_lastResponse = null;
+    $_context = new RetryPolicyContext([
+      'retriesAttempted' => $_retriesAttempted,
+    ]);
+    while (Dara::shouldRetry($_runtime['retryOptions'], $_context)) {
+      if ($_retriesAttempted > 0) {
+        $_backoffTime = Dara::getBackoffDelay($_runtime['retryOptions'], $_context);
+        if ($_backoffTime > 0) {
+          Dara::sleep($_backoffTime);
         }
-        throw new TeaUnableRetryError($_lastRequest, $_lastException);
+      }
+
+      $_retriesAttempted++;
+      try {
+        $_request = new Request();
+        $_response = Dara::send($_request, $_runtime);
+        $_lastRequest = $_request;
+        $_lastResponse = $_response;
+
+        return null;
+      } catch (DaraException $e) {
+        $_context = new RetryPolicyContext([
+          'retriesAttempted' => $_retriesAttempted,
+          'lastRequest' => $_lastRequest,
+          'lastResponse' => $_lastResponse,
+          'exception' => $e,
+        ]);
+        continue;
+      }
     }
 
-    /**
-     * testFunc
-     * @return void
-     */
-    public static function testFunc(){
-    }
+    throw new DaraUnableRetryException($_context);
+  }
+
+  /**
+   * @remarks
+   * testFunc
+   * @return void
+   */
+  static public function testFunc()
+  {
+  }
+
 }

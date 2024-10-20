@@ -1,14 +1,17 @@
 <?php
 
 // This file is auto-generated, don't edit it. Thanks.
-namespace Tea\PHP\Tests;
+ 
+namespace Dara\PHP\Tests;
 
 class Client {
 
-    /**
-     * @return string
-     */
-    public static function hello(){
-        return "Hello " . "World!" . "";
-    }
+  /**
+   * @return string
+   */
+  static public function hello()
+  {
+    return 'Hello ' . 'World!' . '';
+  }
+
 }

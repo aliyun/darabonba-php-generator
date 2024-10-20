@@ -34,3 +34,7 @@ model Request = {
 model complexrequest = {
 
 }
+
+exception Err3 = {
+  accessErrMessage: string
+}

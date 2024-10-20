@@ -10,6 +10,17 @@ model model = {
   str: string
 }
 
+exception MainFileError extends $Error {
+  size: number,
+  data: map[string]model,
+  model: {
+    str: string,
+    model: {
+      str: string
+    },
+  }
+}
+
 model MyModel = {
   model: {
     str: string,
@@ -32,7 +43,11 @@ model MyModel = {
   mapModel: map[string]M,
   subarraymodel: [ {} ],
   subarray: [ M ],
+  ssubarray: [[ M ]],
+  ssubmarray: [[ Source ]],
+  ssubmmarray: [[ Source.Request ]],
   maparray: [ map[string]any ],
+  mapsubmarray: [ map[string]Source ],
   moduleModelMap: map[string]Source.Request,
   subModelMap: map[string]M.subM,
   modelMap: map[string]M,
