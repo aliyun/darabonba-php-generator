@@ -8,7 +8,7 @@ class Err1Exception extends DaraException {
   /**
   * @var string[]
   */
-  protected $data;
+  public $data;
 
   public function __construct($map)
   {

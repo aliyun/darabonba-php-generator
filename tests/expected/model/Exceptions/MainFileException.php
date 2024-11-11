@@ -13,7 +13,7 @@ class MainFileException extends DaraException {
   /**
   * @var model_[]
   */
-  protected $data;
+  public $data;
   /**
   * @var \Dara\PHP\Tests\Models\MainFile\model_
   */
