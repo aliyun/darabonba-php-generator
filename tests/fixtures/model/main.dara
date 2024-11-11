@@ -10,7 +10,7 @@ model model = {
   str: string
 }
 
-exception MainFileError extends $Error {
+exception MainFile extends $Error {
   size: number,
   data: map[string]model,
   model: {

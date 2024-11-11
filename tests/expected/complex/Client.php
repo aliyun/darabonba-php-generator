@@ -14,9 +14,9 @@ use AlibabaCloud\Dara\Exception\DaraException;
 use AlibabaCloud\Dara\Exception\DaraUnableRetryException;
 use AlibabaCloud\Dara\Response;
 use Dara\PHP\Tests\Models\ComplexRequest\header;
-use Dara\PHP\Tests\Exceptions\Err1;
-use Dara\PHP\Tests\Exceptions\Err2;
-use Source\Exceptions\Err3;
+use Dara\PHP\Tests\Exceptions\Err1Exception;
+use Dara\PHP\Tests\Exceptions\Err2Exception;
+use Source\Exceptions\Err3Exception;
 use AlibabaCloud\Dara\Util\Console;
 class Client extends SourceClient {
   /**
@@ -411,7 +411,7 @@ class Client extends SourceClient {
   {
     try {
       if ($a > 0) {
-        throw new Err1([
+        throw new Err1Exception([
           'name' => 'str',
           'code' => 'str',
           'data' => [
@@ -419,13 +419,18 @@ class Client extends SourceClient {
           ],
         ]);
       } else if ($a == 0) {
-        throw new Err2([
+        throw new Err2Exception([
           'name' => 'str',
           'code' => 'str',
           'accessErrMessage' => 'str2',
         ]);
       } else if ($a == -10) {
-        throw new Err3([
+        throw new Err3Exception([
+          'name' => 'str',
+          'code' => 'str',
+        ]);
+      } else if ($a == -20) {
+        throw new \Source\Exceptions\Err2Exception([
           'name' => 'str',
           'code' => 'str',
         ]);
@@ -436,11 +441,11 @@ class Client extends SourceClient {
         ]);
       }
 
-    } catch (Err1 $err) {
+    } catch (Err1Exception $err) {
       Console::log($err->name);
-    } catch (Err2 $err) {
+    } catch (Err2Exception $err) {
       Console::log($err->name);
-    } catch (Err3 $err) {
+    } catch (Err3Exception $err) {
       Console::log($err->name);
     } catch (DaraException $err) {
       Console::log($err->name);

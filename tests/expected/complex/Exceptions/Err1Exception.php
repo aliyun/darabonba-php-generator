@@ -4,24 +4,24 @@
  
 namespace Dara\PHP\Tests\Exceptions;
 use AlibabaCloud\Dara\Exception\DaraException;
-class Err2 extends DaraException {
+class Err1Exception extends DaraException {
   /**
-  * @var string
+  * @var string[]
   */
-  protected $accessErrMessage;
+  protected $data;
 
   public function __construct($map)
   {
     parent::__construct($map);
-    $this->accessErrMessage = $map['accessErrMessage'];
+    $this->data = $map['data'];
   }
 
   /**
-  * @return string
+  * @return string[]
   */
-  public function getAccessErrMessage()
+  public function getData()
   {
-    return $this->accessErrMessage;
+    return $this->data;
   }
 }
 

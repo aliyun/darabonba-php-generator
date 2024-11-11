@@ -35,6 +35,10 @@ model complexrequest = {
 
 }
 
+exception Err2 = {
+  accessErrMessage: string
+}
+
 exception Err3 = {
   accessErrMessage: string
 }

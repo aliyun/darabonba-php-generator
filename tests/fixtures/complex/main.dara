@@ -265,6 +265,11 @@ async function multiTryCatch(a: number): void {
         name = "str",
         code = "str",
       };
+    } else if(a == -20) {
+      throw new Source.Err2 {
+        name = "str",
+        code = "str",
+      };
     } else {
       throw new $Error{
         name = "str",

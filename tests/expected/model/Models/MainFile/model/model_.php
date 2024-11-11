@@ -2,29 +2,20 @@
 
 // This file is auto-generated, don't edit it. Thanks.
  
-namespace Dara\PHP\Tests\Models\MainFileError;
+namespace Dara\PHP\Tests\Models\MainFile\model;
 use AlibabaCloud\Dara\Model;
 class model_ extends Model {
   /**
    * @var string
    */
   public $str;
-  /**
-   * @var \Dara\PHP\Tests\Models\MainFileError\model\model_
-   */
-  public $model;
   protected $_name = [
       'str' => 'str',
-      'model' => 'model',
   ];
 
   public function validate()
   {
     Model::validateRequired('str', $this->str, true);
-    if(null !== $this->model) {
-      $this->model->validate();
-    }
-    Model::validateRequired('model', $this->model, true);
     parent::validate();
   }
 
@@ -33,10 +24,6 @@ class model_ extends Model {
     $res = [];
     if (null !== $this->str) {
       $res['str'] = $this->str;
-    }
-
-    if (null !== $this->model) {
-      $res['model'] = null !== $this->model ? $this->model->toArray($noStream) : $this->model;
     }
 
     return $res;
@@ -52,10 +39,6 @@ class model_ extends Model {
     $model = new self();
     if (isset($map['str'])) {
       $model->str = $map['str'];
-    }
-
-    if (isset($map['model'])) {
-      $model->model = \Dara\PHP\Tests\Models\MainFileError\model\model_::fromMap($map['model']);
     }
 
     return $model;

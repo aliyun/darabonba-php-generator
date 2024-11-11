@@ -5,7 +5,7 @@
 namespace Dara\PHP\Tests\Exceptions;
 use AlibabaCloud\Dara\Exception\DaraException;
 use Dara\PHP\Tests\Models\model_;
-class MainFileError extends DaraException {
+class MainFileException extends DaraException {
   /**
   * @var int
   */
@@ -15,7 +15,7 @@ class MainFileError extends DaraException {
   */
   protected $data;
   /**
-  * @var \Dara\PHP\Tests\Models\MainFileError\model_
+  * @var \Dara\PHP\Tests\Models\MainFile\model_
   */
   protected $model;
 
@@ -42,7 +42,7 @@ class MainFileError extends DaraException {
     return $this->data;
   }
   /**
-  * @return \Dara\PHP\Tests\Models\MainFileError\model_
+  * @return \Dara\PHP\Tests\Models\MainFile\model_
   */
   public function getModel()
   {
