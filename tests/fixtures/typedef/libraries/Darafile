@@ -1,0 +1,23 @@
+{
+  "name": "OSS",
+  "main": "./oss.dara",
+  "releases": {
+    "php": "scope/name:1.0.0"
+  },
+  "libraries": {},
+  "php": {
+    "package": "Source",
+    "clientName": "SourceClient",
+    "modelDirName": "Models",
+    "packageInfo": {
+      "name": "source"
+    },
+    "typedef": {
+      "HttpRequest": {
+        "import": "GuzzleHttp\\Psr7",
+        "type": "Request",
+        "package": "guzzlehttp/psr7:^1.8.5 || ^2.2.1"
+      }
+    }
+  }
+}

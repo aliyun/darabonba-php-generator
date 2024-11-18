@@ -3,6 +3,9 @@
   "name": "source",
   "version": "0.0.1",
   "main": "./source.dara",
+  "releases": {
+    "php": "scope/name:1.0.0"
+  },
   "php": {
     "package": "Source",
     "clientName": "Client",

@@ -2,5 +2,13 @@
 	"scope": "darabonba",
 	"name": "Number",
 	"version": "0.0.0",
-	"main": "./main.tea"
+	"main": "./main.tea",
+	"releases": {
+	  "php": "scope/name:1.0.0"
+	},
+	"php": {
+	  "package": "Number.math",
+	  "clientName": "MathUtil",
+	  "modelDirName": "Models"
+	}
 }

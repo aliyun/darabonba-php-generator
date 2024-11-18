@@ -9,7 +9,11 @@
   "csharp": {
     "namespace": "Darabonba.import"
   },
+  "php": {
+    "package": "Darabonba.Import",
+    "clientName": "Client"
+  },
   "releases": {
-    "ts": "@scope/name:*"
+    "php": "scope/name:1.0.0"
   }
 }

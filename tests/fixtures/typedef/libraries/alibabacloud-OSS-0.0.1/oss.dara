@@ -1,6 +1,0 @@
-typedef HttpRequest
-type @vid=HttpRequest
-
-init(test: HttpRequest){
-  @vid = test;
-}

@@ -25,7 +25,7 @@
         "package": null
       },
       "TeaModel": {
-        "import": "AlibabaCloud\\Tea",
+        "import": "AlibabaCloud\\Dara",
         "type": "Model",
         "package": "alibabacloud/tea:^3.1.23"
       },

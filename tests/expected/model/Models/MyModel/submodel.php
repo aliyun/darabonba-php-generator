@@ -1,49 +1,67 @@
 <?php
 
 // This file is auto-generated, don't edit it. Thanks.
-namespace Tea\PHP\Tests\Models\MyModel;
-
-use AlibabaCloud\Tea\Model;
-
-use Tea\PHP\Tests\Models\MyModel\submodel\model_;
-
+ 
+namespace Dara\PHP\Tests\Models\MyModel;
+use AlibabaCloud\Dara\Model;
+use Dara\PHP\Tests\Models\MyModel\submodel\model_;
 class submodel extends Model {
-    public function validate() {
-        Model::validateRequired('stringfield', $this->stringfield, true);
-        Model::validateRequired('model', $this->model, true);
-    }
-    public function toMap() {
-        $res = [];
-        if (null !== $this->stringfield) {
-            $res['stringfield'] = $this->stringfield;
-        }
-        if (null !== $this->model) {
-            $res['model'] = null !== $this->model ? $this->model->toMap() : null;
-        }
-        return $res;
-    }
-    /**
-     * @param array $map
-     * @return submodel
-     */
-    public static function fromMap($map = []) {
-        $model = new self();
-        if(isset($map['stringfield'])){
-            $model->stringfield = $map['stringfield'];
-        }
-        if(isset($map['model'])){
-            $model->model = model_::fromMap($map['model']);
-        }
-        return $model;
-    }
-    /**
-     * @var string
-     */
-    public $stringfield;
+  /**
+   * @var string
+   */
+  public $stringfield;
+  /**
+   * @var model_
+   */
+  public $model;
+  protected $_name = [
+      'stringfield' => 'stringfield',
+      'model' => 'model',
+  ];
 
-    /**
-     * @var model_
-     */
-    public $model;
+  public function validate()
+  {
+    Model::validateRequired('stringfield', $this->stringfield, true);
+    if(null !== $this->model) {
+      $this->model->validate();
+    }
+    Model::validateRequired('model', $this->model, true);
+    parent::validate();
+  }
+
+  public function toArray($noStream = false)
+  {
+    $res = [];
+    if (null !== $this->stringfield) {
+      $res['stringfield'] = $this->stringfield;
+    }
+
+    if (null !== $this->model) {
+      $res['model'] = null !== $this->model ? $this->model->toArray($noStream) : $this->model;
+    }
+
+    return $res;
+  }
+
+  public function toMap($noStream = false)
+  {
+    return $this->toArray($noStream);
+  }
+
+  public static function fromMap($map = [])
+  {
+    $model = new self();
+    if (isset($map['stringfield'])) {
+      $model->stringfield = $map['stringfield'];
+    }
+
+    if (isset($map['model'])) {
+      $model->model = model_::fromMap($map['model']);
+    }
+
+    return $model;
+  }
+
 
 }
+

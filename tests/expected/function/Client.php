@@ -1,59 +1,66 @@
 <?php
 
 // This file is auto-generated, don't edit it. Thanks.
-namespace Tea\PHP\Tests;
-
-use AlibabaCloud\Tea\Tea;
-use \Exception;
-
+ 
+namespace Dara\PHP\Tests;
+use RuntimeException;
 class Client {
 
-    /**
-     * @return void
-     */
-    public static function hello(){
-        return null;
+  /**
+   * @return void
+   */
+  static public function hello()
+  {
+    return null;
+  }
+
+  /**
+   * @return string[]
+   */
+  static public function helloMap()
+  {
+    $m = [ ];
+    return Dara::merge([
+      'key' => 'value',
+      'key-1' => 'value-1',
+    ], $m);
+  }
+
+  /**
+   * @return string[][]
+   */
+  static public function helloArrayMap()
+  {
+    return [
+      [
+        'key' => 'value',
+      ]
+    ];
+  }
+
+  /**
+   * @param string $a
+   * @param string $b
+   * @return void
+   */
+  static public function helloParams($a, $b)
+  {
+    $x = false;
+    $y = true;
+    $z = false;
+    if ($x && $y || !$z) {
+      
     }
 
-    /**
-     * @return array
-     */
-    public static function helloMap(){
-        $m = [];
-        return Tea::merge([
-            "key" => "value",
-            "key-1" => "value-1"
-        ], $m);
-    }
+  }
 
-    /**
-     * @return array
-     */
-    public static function helloArrayMap(){
-        return [
-            [
-                "key" => "value"
-            ]
-        ];
-    }
+  // interface mode
+  /**
+   * @return void
+   */
+  static public function helloInterface()
+  {
+    throw new RuntimeException('Un-implemented!');
+  }
 
-    /**
-     * @param string $a
-     * @param string $b
-     * @return void
-     */
-    public static function helloParams($a, $b){
-        $x = false;
-        $y = true;
-        $z = false;
-        if ($x && $y || !$z) {}
-    }
-
-    /**
-     * interface mode
-     * @return void
-     */
-    public static function helloInterface(){
-        throw new Exception('Un-implemented');
-    }
 }
