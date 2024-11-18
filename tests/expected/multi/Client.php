@@ -3,8 +3,8 @@
 // This file is auto-generated, don't edit it. Thanks.
  
 namespace Dara\PHP\Tests;
-use Dara\PHP\Tests\model\Models\Info;
-use Dara\PHP\Tests\lib\UtilClient;
+use Dara\PHP\Tests\Model\Models\Info;
+use Dara\PHP\Tests\Lib\UtilClient;
 use Dara\PHP\Tests\ApiClient;
 class Client {
   /**

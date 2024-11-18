@@ -2,9 +2,9 @@
 
 // This file is auto-generated, don't edit it. Thanks.
  
-namespace Dara\PHP\Tests\model;
+namespace Dara\PHP\Tests\Model;
 use AlibabaCloud\Tea\Utils\Utils;
-use Dara\PHP\Tests\lib\UtilClient;
+use Dara\PHP\Tests\Lib\UtilClient;
 class UserModel {
 
   /**

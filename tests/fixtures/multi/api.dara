@@ -1,5 +1,6 @@
 import "./model/user" User;
 import "./lib/util" Util;
+import Console;
 
 init() {
 }
@@ -15,6 +16,7 @@ api test3(): number {
   };
   __request.query = Util.getQuery();
 } returns {
+  Console.log('test');
   return __response.statusCode;
 } runtime {
   timeouted = 'retry'
