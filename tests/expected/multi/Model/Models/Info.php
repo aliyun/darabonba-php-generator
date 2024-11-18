@@ -2,7 +2,7 @@
 
 // This file is auto-generated, don't edit it. Thanks.
  
-namespace Dara\PHP\Tests\model\Models;
+namespace Dara\PHP\Tests\Model\Models;
 use AlibabaCloud\Dara\Model;
 use AlibabaCloud\Tea\Utils\Utils\RuntimeOptions;
 class Info extends Model {

@@ -6,8 +6,9 @@ namespace Dara\PHP\Tests;
 use AlibabaCloud\Dara\Dara;
 use AlibabaCloud\Dara\RetryPolicy\RetryPolicyContext;
 use AlibabaCloud\Dara\Request;
-use Dara\PHP\Tests\model\UserModel;
-use Dara\PHP\Tests\lib\UtilClient;
+use Dara\PHP\Tests\Model\UserModel;
+use Dara\PHP\Tests\Lib\UtilClient;
+use AlibabaCloud\Tea\Console\Client;
 use AlibabaCloud\Dara\Exception\DaraException;
 use AlibabaCloud\Dara\Exception\DaraUnableRetryException;
 class ApiClient {
@@ -55,6 +56,7 @@ class ApiClient {
         $_lastRequest = $_request;
         $_lastResponse = $_response;
 
+        Client::log('test');
         return $_response->statusCode;
       } catch (DaraException $e) {
         $_context = new RetryPolicyContext([

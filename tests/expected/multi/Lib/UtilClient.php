@@ -2,7 +2,7 @@
 
 // This file is auto-generated, don't edit it. Thanks.
  
-namespace Dara\PHP\Tests\lib;
+namespace Dara\PHP\Tests\Lib;
 use RuntimeException;
 class UtilClient {
 
