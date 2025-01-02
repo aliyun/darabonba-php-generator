@@ -19,7 +19,7 @@ const {
   TypeDecimal
 } = require('../langs/common/items');
 
-const { _isBasicType } = require('../lib/helper');
+const { _isBasicType, _escape, _string } = require('../lib/helper');
 
 const DSL = require('@darabonba/parser');
 
@@ -159,7 +159,7 @@ class BaseResolver {
         return this.resolveTypeItem(typeNode.fieldType, typeNode);
       } else if (typeNode.type === 'modelBody') {
         // is sub model
-        const modelName = `#${[this.object.name, sourceNode.fieldName.lexeme].join('.')}`;
+        const modelName = `#${[this.object.name, _escape(sourceNode.fieldName.lexeme) || _string(sourceNode.fieldName)].join('.')}`;
         return new TypeObject(modelName);
       } else if (_isBasicType(typeNode.type)) {
         return this.resolveTypeItem(typeNode.type, typeNode);

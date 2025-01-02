@@ -94,7 +94,12 @@ function _subModelName(name) {
 }
 
 function _string(str) {
-  return str.string;
+  if (str.string === '""') {
+    return '\\"\\"';
+  }
+  return str.string.replace(/([^\\])"+|^"/g, function (str) {
+    return str.replace(/"/g, '\\"');
+  });
 }
 
 function _isBasicType(type) {
@@ -298,8 +303,13 @@ function _isExcludePackage(scope, package_name) {
   return m[package_name] && m[package_name].exclude;
 }
 
+function _escape(str) {
+  return str.includes('-') ? `${str}` : str;
+}
+
 module.exports = {
   is,
+  _escape,
   _dir,
   _name,
   _config,

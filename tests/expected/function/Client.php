@@ -22,7 +22,9 @@ class Client {
         $m = [];
         return Tea::merge([
             "key" => "value",
-            "key-1" => "value-1"
+            "key-1" => "value-1",
+            "key-2" => "value-2",
+            "\"\"" => "value-3"
         ], $m);
     }
 
