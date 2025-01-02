@@ -15,6 +15,7 @@ const {
 const {
   Modify,
 } = require('../langs/common/enum');
+const { _escape, _string } = require('../lib/helper');
 
 class ModelResolver extends BaseResolver {
   constructor(astNode, combinator, globalAst) {
@@ -72,7 +73,7 @@ class ModelResolver extends BaseResolver {
       const node = nodes[i];
       const prop = new PropItem();
       prop.belong = object.index;
-      prop.name = node.fieldName.lexeme;
+      prop.name = _escape(node.fieldName.lexeme) || _string(node.fieldName);
       prop.type = this.resolveTypeItem(node.fieldValue, node);
       prop.modify.push(Modify.public());
       if (node.required) {
@@ -117,7 +118,7 @@ class ModelResolver extends BaseResolver {
   }
 
   findSubModelsUsed(node, subModelUsed = [], pre = '') {
-    let name = node.fieldName.lexeme;
+    let name = _escape(node.fieldName.lexeme) || _string(node.fieldName);
     if (pre !== '') {
       name = pre + '.' + name;
     }
