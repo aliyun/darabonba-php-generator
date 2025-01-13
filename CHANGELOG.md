@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 1.2.2 2025-01-13
+
+- Adjust field name for object.
+
 ## 1.2.1 2022-12-14
 
 - Fix: reslove list access with variable key.

@@ -1,6 +1,6 @@
 {
   "name": "@darabonba/php-generator",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "The SDK generator for PHP",
   "main": "src/generator",
   "directories": {
