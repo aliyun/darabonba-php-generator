@@ -4,6 +4,7 @@
  
 namespace Dara\PHP\Tests\Model;
 use AlibabaCloud\Tea\Utils\Utils;
+use AlibabaCloud\Tea\Utils\Test\Test;
 use Dara\PHP\Tests\Lib\UtilClient;
 class UserModel {
 
@@ -14,6 +15,7 @@ class UserModel {
   {
     $a = Utils::getNonce();
     yield $a;
+    Test::convert('test');
     $it = UtilClient::test1();
 
     foreach($it as $test) {

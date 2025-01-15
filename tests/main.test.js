@@ -157,6 +157,13 @@ describe('new Generator', function() {
     const mainFilePath = path.join(__dirname, 'fixtures/multi/sdk.dara');
     const pkgContent = fs.readFileSync(path.join(__dirname, 'fixtures/multi/Darafile'), 'utf8');
     const pkg = JSON.parse(pkgContent);
+    const expectedOverwritePath = path.join(__dirname, 'expected/multi/Overwrite.php');
+    const expectedOverwrite = fs.readFileSync(expectedOverwritePath, 'utf8');
+    const srcPath = path.join(outputDir, 'src');
+    if(!fs.existsSync(srcPath)) {
+      fs.mkdirSync(srcPath, {recursive: true});
+    }
+    fs.writeFileSync(path.join(srcPath, 'Overwrite.php'), expectedOverwrite);
     check(mainFilePath, outputDir, path.join(__dirname, 'expected/multi'), {
       pkgDir: path.join(__dirname, 'fixtures/multi'),
       ...pkg,

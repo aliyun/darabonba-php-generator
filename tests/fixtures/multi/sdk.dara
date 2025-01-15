@@ -1,10 +1,12 @@
 import "./model/user" User;
 import "./lib/util" Util;
 import "./api" API;
+import "./overwrite" Overwrite;
 
 type @user = User.Info
 
 init() {
+    Overwrite.test();
     @user = new User.Info{
         name = 'test'
     };

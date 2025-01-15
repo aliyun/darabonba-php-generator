@@ -3,6 +3,9 @@
 	"name": "Util",
 	"version": "0.2.11",
 	"main": "./main.tea",
+	"exports": {
+	  "Test": "./test/test.dara"
+	},
 	"releases": {
 		"go": "github.com/alibabacloud-go/tea-utils/v2/service:v2.0.4",
 		"ts": "@alicloud/tea-util:^1.4.7",
@@ -25,7 +28,10 @@
 	"php": {
 		"package": "AlibabaCloud.Tea.Utils",
 		"clientName": "Utils",
-		"modelDirName": "Utils"
+		"modelDirName": "Utils",
+		"exports": {
+			"Test": "Test"
+		}
 	},
 	"python": {
 		"package": "alibabacloud_tea_util",

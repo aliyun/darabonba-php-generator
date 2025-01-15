@@ -4,6 +4,7 @@
  
 namespace Dara\PHP\Tests;
 use Dara\PHP\Tests\Model\Models\Info;
+use Dara\PHP\Tests\OverwriteClient;
 use Dara\PHP\Tests\Lib\UtilClient;
 use Dara\PHP\Tests\ApiClient;
 class Client {
@@ -15,6 +16,7 @@ class Client {
 
   public function __construct()
   {
+    OverwriteClient::test();
     $this->_user = new Info([
       'name' => 'test',
     ]);
