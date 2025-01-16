@@ -20,7 +20,8 @@
     "optimize-autoloader": true
   },
   "require": {
-    "php": ">5.5"
+    "php": ">5.5",
+    "alibabacloud/darabonba": "^1.0.0"
   },
   "prefer-stable": true
 }

@@ -21,6 +21,7 @@
   },
   "require": {
     "php": ">5.5",
+    "alibabacloud/darabonba": "^1.0.0",
     "scope/name": "1.0.0",
     "guzzlehttp/psr7": "^1.8.5 || ^2.2.1",
     "alibabacloud/tea": "^3.1.23",
