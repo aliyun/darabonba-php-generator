@@ -1,0 +1,3 @@
+@overwrite(false)
+
+static function test(): void;

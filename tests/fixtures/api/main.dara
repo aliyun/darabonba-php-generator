@@ -1,5 +1,17 @@
 init();
 
+@sse(true)
+api helloSSE(): void {
+  __request.method = 'GET';
+  __request.pathname = '/';
+  __request.headers = {
+    host = 'www.test.com',
+    accept = 'text/event-stream',
+  };
+} returns {
+  return;
+}
+
 api hello(): void {
   __request.method = 'GET';
   __request.pathname = '/';
@@ -17,6 +29,20 @@ api helloRuntime(): void {
     host = 'www.test.com',
   };
 } returns {
+  return;
+} runtime {
+
+}
+
+@sse(true)
+api helloRuntimeSSE(): void {
+  __request.method = 'GET';
+  __request.pathname = '/';
+  __request.headers = {
+    host = 'www.test.com',
+    accept = 'text/event-stream',
+  };
+}  returns {
   return;
 } runtime {
 

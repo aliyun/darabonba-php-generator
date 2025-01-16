@@ -1,0 +1,3 @@
+@clientName("Test")
+
+static function convert(body: string): void;

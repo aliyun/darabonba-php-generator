@@ -1,0 +1,23 @@
+import "./model/user" User;
+import "./lib/util" Util;
+import Console;
+
+init() {
+}
+
+api test3(): number {
+  __request.protocol = "https";
+  __request.method = 'DELETE';
+  __request.pathname = "/";
+  __request.headers = {
+    host = "test.aliyun.com",
+    accept = 'application/json',
+    test = User.test1(),
+  };
+  __request.query = Util.getQuery();
+} returns {
+  Console.log('test');
+  return __response.statusCode;
+} runtime {
+  timeouted = 'retry'
+}
