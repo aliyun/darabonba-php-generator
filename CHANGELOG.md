@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.0.0 2025-01-16
+
+- Upgrade by darabonba V2.
+
 ## 1.2.2 2025-01-13
 
 - Adjust field name for object.
