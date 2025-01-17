@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.0.1 2025-01-17
+
+- Fix the array subtype error.
+
 ## 2.0.0 2025-01-16
 
 - Upgrade by darabonba V2.
