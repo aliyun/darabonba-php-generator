@@ -12,7 +12,7 @@ use Dara\PHP\Tests\Models\M;
 use AlibabaCloud\Dara\Util\Console;
 use AlibabaCloud\Dara\Util\MathUtil;
 use AlibabaCloud\Dara\Util\StreamUtil;
-use AlibabaCloud\Dara\URL;
+use AlibabaCloud\Dara\Url;
 use AlibabaCloud\Dara\Util\XML;
 use RuntimeException;
 class Client {
@@ -322,7 +322,7 @@ class Client {
    */
   static public function urlTest($args)
   {
-    $url = new URL(@$args[0]);
+    $url = new Url(@$args[0]);
     $path = $url->path();
     $pathname = $url->pathname();
     $protocol = $url->protocol();
@@ -333,11 +333,11 @@ class Client {
     $search = $url->search();
     $href = $url->href();
     $auth = $url->auth();
-    $url2 = URL::parse(@$args[1]);
+    $url2 = Url::parse(@$args[1]);
     $path = $url2->path();
-    $newUrl = URL::urlEncode(@$args[2]);
-    $newSearch = URL::percentEncode($search);
-    $newPath = URL::pathEncode($pathname);
+    $newUrl = Url::urlEncode(@$args[2]);
+    $newSearch = Url::percentEncode($search);
+    $newPath = Url::pathEncode($pathname);
     $all = 'test' . $path . $protocol . $hostname . $hash . $search . $href . $auth . $newUrl . $newSearch . $newPath;
   }
 
