@@ -420,7 +420,7 @@ class Client {
 
     }
 
-    usleep($a);
+    usleep($a * 1000);
     $defaultVal = ''.(@$args[0] ? @$args[0] : @$args[1]);
     if ($defaultVal === $b) {
       return null;
