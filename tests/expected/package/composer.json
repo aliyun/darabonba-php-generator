@@ -4,7 +4,12 @@
   "description": "Darabonba Package Test",
   "github": "",
   "main": "src/Client.php",
-  "authors": [],
+  "authors": [
+    {
+      "name": "darabonba",
+      "email": "email.darabonba.com"
+    }
+  ],
   "license": "Apache-2.0",
   "autoload": {
     "psr-4": {
