@@ -10,5 +10,11 @@
             "desc": "Darabonba Package Test",
             "github": ""
         }
-    }
+    },
+    "maintainers": [
+        {
+            "name": "darabonba",
+            "email": "email.darabonba.com"
+        }
+    ]
 }
