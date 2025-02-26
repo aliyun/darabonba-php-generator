@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.0.3 2025-02-26
+
+- Fix the composer.json authors repeat error.
+
 ## 2.0.1 2025-01-17
 
 - Fix the array subtype error.
