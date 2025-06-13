@@ -343,7 +343,8 @@ class MyModel extends Model {
         $res['stringarrayfield'] = [];
         $n1 = 0;
         foreach($this->stringarrayfield as $item1) {
-          $res['stringarrayfield'][$n1++] = $item1;
+          $res['stringarrayfield'][$n1] = $item1;
+          $n1++;
         }
       }
     }
@@ -388,7 +389,8 @@ class MyModel extends Model {
         $res['subarraymodel'] = [];
         $n1 = 0;
         foreach($this->subarraymodel as $item1) {
-          $res['subarraymodel'][$n1++] = null !== $item1 ? $item1->toArray($noStream) : $item1;
+          $res['subarraymodel'][$n1] = null !== $item1 ? $item1->toArray($noStream) : $item1;
+          $n1++;
         }
       }
     }
@@ -398,7 +400,8 @@ class MyModel extends Model {
         $res['subarray'] = [];
         $n1 = 0;
         foreach($this->subarray as $item1) {
-          $res['subarray'][$n1++] = null !== $item1 ? $item1->toArray($noStream) : $item1;
+          $res['subarray'][$n1] = null !== $item1 ? $item1->toArray($noStream) : $item1;
+          $n1++;
         }
       }
     }
@@ -409,12 +412,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($this->ssubarray as $item1) {
           if(is_array($item1)) {
-            $res['ssubarray'][$n1++] = [];
+            $res['ssubarray'][$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $res['ssubarray'][$n1++][$n2++] = null !== $item2 ? $item2->toArray($noStream) : $item2;
+              $res['ssubarray'][$n1][$n2] = null !== $item2 ? $item2->toArray($noStream) : $item2;
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -425,12 +430,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($this->ssubmarray as $item1) {
           if(is_array($item1)) {
-            $res['ssubmarray'][$n1++] = [];
+            $res['ssubmarray'][$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $res['ssubmarray'][$n1++][$n2++] = $item2;
+              $res['ssubmarray'][$n1][$n2] = $item2;
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -441,12 +448,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($this->ssubmmarray as $item1) {
           if(is_array($item1)) {
-            $res['ssubmmarray'][$n1++] = [];
+            $res['ssubmmarray'][$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $res['ssubmmarray'][$n1++][$n2++] = null !== $item2 ? $item2->toArray($noStream) : $item2;
+              $res['ssubmmarray'][$n1][$n2] = null !== $item2 ? $item2->toArray($noStream) : $item2;
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -457,11 +466,12 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($this->maparray as $item1) {
           if(is_array($item1)) {
-            $res['maparray'][$n1++] = [];
+            $res['maparray'][$n1] = [];
             foreach($item1 as $key2 => $value2) {
-              $res['maparray'][$n1++][$key2] = $value2;
+              $res['maparray'][$n1][$key2] = $value2;
             }
           }
+          $n1++;
         }
       }
     }
@@ -472,11 +482,12 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($this->mapsubmarray as $item1) {
           if(is_array($item1)) {
-            $res['mapsubmarray'][$n1++] = [];
+            $res['mapsubmarray'][$n1] = [];
             foreach($item1 as $key2 => $value2) {
-              $res['mapsubmarray'][$n1++][$key2] = $value2;
+              $res['mapsubmarray'][$n1][$key2] = $value2;
             }
           }
+          $n1++;
         }
       }
     }
@@ -543,12 +554,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($this->complexList as $item1) {
           if(is_array($item1)) {
-            $res['complexList'][$n1++] = [];
+            $res['complexList'][$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $res['complexList'][$n1++][$n2++] = $item2;
+              $res['complexList'][$n1][$n2] = $item2;
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -641,7 +654,8 @@ class MyModel extends Model {
         $model->stringarrayfield = [];
         $n1 = 0;
         foreach($map['stringarrayfield'] as $item1) {
-          $model->stringarrayfield[$n1++] = $item1;
+          $model->stringarrayfield[$n1] = $item1;
+          $n1++;
         }
       }
     }
@@ -686,7 +700,8 @@ class MyModel extends Model {
         $model->subarraymodel = [];
         $n1 = 0;
         foreach($map['subarraymodel'] as $item1) {
-          $model->subarraymodel[$n1++] = subarraymodel::fromMap($item1);
+          $model->subarraymodel[$n1] = subarraymodel::fromMap($item1);
+          $n1++;
         }
       }
     }
@@ -696,7 +711,8 @@ class MyModel extends Model {
         $model->subarray = [];
         $n1 = 0;
         foreach($map['subarray'] as $item1) {
-          $model->subarray[$n1++] = M::fromMap($item1);
+          $model->subarray[$n1] = M::fromMap($item1);
+          $n1++;
         }
       }
     }
@@ -707,12 +723,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($map['ssubarray'] as $item1) {
           if(!empty($item1)) {
-            $model->ssubarray[$n1++] = [];
+            $model->ssubarray[$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $model->ssubarray[$n1++][$n2++] = M::fromMap($item2);
+              $model->ssubarray[$n1][$n2] = M::fromMap($item2);
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -723,12 +741,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($map['ssubmarray'] as $item1) {
           if(!empty($item1)) {
-            $model->ssubmarray[$n1++] = [];
+            $model->ssubmarray[$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $model->ssubmarray[$n1++][$n2++] = $item2;
+              $model->ssubmarray[$n1][$n2] = $item2;
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -739,12 +759,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($map['ssubmmarray'] as $item1) {
           if(!empty($item1)) {
-            $model->ssubmmarray[$n1++] = [];
+            $model->ssubmmarray[$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $model->ssubmmarray[$n1++][$n2++] = Request::fromMap($item2);
+              $model->ssubmmarray[$n1][$n2] = Request::fromMap($item2);
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
@@ -755,11 +777,12 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($map['maparray'] as $item1) {
           if(!empty($item1)) {
-            $model->maparray[$n1++] = [];
+            $model->maparray[$n1] = [];
             foreach($item1 as $key2 => $value2) {
-              $model->maparray[$n1++][$key2] = $value2;
+              $model->maparray[$n1][$key2] = $value2;
             }
           }
+          $n1++;
         }
       }
     }
@@ -770,11 +793,12 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($map['mapsubmarray'] as $item1) {
           if(!empty($item1)) {
-            $model->mapsubmarray[$n1++] = [];
+            $model->mapsubmarray[$n1] = [];
             foreach($item1 as $key2 => $value2) {
-              $model->mapsubmarray[$n1++][$key2] = $value2;
+              $model->mapsubmarray[$n1][$key2] = $value2;
             }
           }
+          $n1++;
         }
       }
     }
@@ -841,12 +865,14 @@ class MyModel extends Model {
         $n1 = 0;
         foreach($map['complexList'] as $item1) {
           if(!empty($item1)) {
-            $model->complexList[$n1++] = [];
+            $model->complexList[$n1] = [];
             $n2 = 0;
             foreach($item1 as $item2) {
-              $model->complexList[$n1++][$n2++] = $item2;
+              $model->complexList[$n1][$n2] = $item2;
+              $n2++;
             }
           }
+          $n1++;
         }
       }
     }
