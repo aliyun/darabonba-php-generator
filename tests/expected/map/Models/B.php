@@ -31,7 +31,8 @@ class B extends Model {
         $res['mm'] = [];
         $n1 = 0;
         foreach($this->mm as $item1) {
-          $res['mm'][$n1++] = null !== $item1 ? $item1->toArray($noStream) : $item1;
+          $res['mm'][$n1] = null !== $item1 ? $item1->toArray($noStream) : $item1;
+          $n1++;
         }
       }
     }
@@ -52,7 +53,8 @@ class B extends Model {
         $model->mm = [];
         $n1 = 0;
         foreach($map['mm'] as $item1) {
-          $model->mm[$n1++] = A::fromMap($item1);
+          $model->mm[$n1] = A::fromMap($item1);
+          $n1++;
         }
       }
     }
