@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.0.4 2025-06-12
+
+- Fix the model to/from map error.
+
 ## 2.0.3 2025-02-26
 
 - Fix the composer.json authors repeat error.
