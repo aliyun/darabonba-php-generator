@@ -1,5 +1,10 @@
 # ChangeLog
 
+## 2.0.5 2025-06-27
+
+- Fix the model FileField error.
+
+
 ## 2.0.4 2025-06-12
 
 - Fix the model to/from map error.
