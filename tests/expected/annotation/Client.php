@@ -53,8 +53,8 @@ class Client {
       $_retriesAttempted++;
       try {
         $_request = new Request();
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         return null;

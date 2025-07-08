@@ -52,8 +52,8 @@ class ApiClient {
           'test' => UserModel::test1(),
         ];
         $_request->query = UtilClient::getQuery();
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         Client::log('test');
