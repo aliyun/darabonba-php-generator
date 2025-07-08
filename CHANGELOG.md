@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 2.0.6 2025-07-08
+- Fix declare lastrequest before do action.
+
 ## 2.0.5 2025-06-27
 
 - Fix the model FileField error.
