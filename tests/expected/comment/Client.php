@@ -90,8 +90,8 @@ class Client {
         $num = 123;
         // static function call comment
         self::staticFunc();
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         // static async function call
@@ -159,8 +159,8 @@ class Client {
         // api function call comment
         $this->testAPI();
         // back comment
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         // empty return comment

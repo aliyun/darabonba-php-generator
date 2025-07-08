@@ -79,8 +79,8 @@ class Client extends SourceClient {
           'test' => @$mapVal['test'],
         ], $request->header));
         $_request->body = SourceClient::body();
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         if (true && true) {

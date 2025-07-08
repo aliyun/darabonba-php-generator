@@ -72,8 +72,8 @@ class Client {
         $_request->headers = [
           'host' => 'www.test.com',
         ];
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         return null;
@@ -122,8 +122,8 @@ class Client {
           'accept' => 'text/event-stream',
         ];
         $_runtime['stream'] = true;
-        $_response = Dara::send($_request, $_runtime);
         $_lastRequest = $_request;
+        $_response = Dara::send($_request, $_runtime);
         $_lastResponse = $_response;
 
         return null;
