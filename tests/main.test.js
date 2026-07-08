@@ -117,6 +117,17 @@ describe('new Generator', function() {
     });
   });
 
+  it('websocket inner module static call should ok', function () {
+    const outputDir = path.join(__dirname, 'output/websocket');
+    const mainFilePath = path.join(__dirname, 'fixtures/websocket/main.dara');
+    const pkgContent = fs.readFileSync(path.join(__dirname, 'fixtures/websocket/Darafile'), 'utf8');
+    const pkg = JSON.parse(pkgContent);
+    check(mainFilePath, outputDir, path.join(__dirname, 'expected/websocket'), {
+      pkgDir: path.join(__dirname, 'fixtures/websocket'),
+      ...pkg
+    });
+  });
+
   it('complex should ok', function () {
     const outputDir = path.join(__dirname, 'output/complex');
     const mainFilePath = path.join(__dirname, 'fixtures/complex/main.dara');
