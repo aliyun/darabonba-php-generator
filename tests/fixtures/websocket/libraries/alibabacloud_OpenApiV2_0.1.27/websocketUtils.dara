@@ -1,0 +1,9 @@
+@clientName("WebSocketClient")
+@overwrite(false)
+
+model WebSocketClient {
+}
+
+static function createWebSocketClient(client: any): WebSocketClient {
+  return client;
+}
