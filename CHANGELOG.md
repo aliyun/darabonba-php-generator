@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 2.0.7 2026-07-14
+- Resolve WebSocketUtils inner module import.
+
 ## 2.0.6 2025-07-08
 - Fix declare lastrequest before do action.
 
